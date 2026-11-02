@@ -240,7 +240,7 @@
             display: flex; align-items: center; justify-content: center; gap: 4px; opacity: 0.75;
         }
 
-        /* ટેબલ સ્ટાઇલ: સાંકડી કોલમ્સ અને સ્વચ્છ લેઆઉટ */
+        /* ટેબલ સ્ટાઇલ */
         .history-card {
             background: var(--card-bg); border: 2px solid var(--border-color);
             border-radius: 14px; padding: 14px;
@@ -281,7 +281,6 @@
         .modal-body { padding: 14px; overflow-y: auto; }
         .modal-footer { padding: 10px 16px; border-top: 2px solid var(--border-color); display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
         
-        /* A4 સાઈઝ ઉત્તરવહી PDF પ્રિન્ટ એરિયા */
         #pdfPrintArea {
             background: #ffffff !important;
             color: #0f172a !important;
@@ -362,7 +361,7 @@
     <div id="loginScreen">
         <div style="font-size: 32px; color: #3b82f6; margin-bottom: 8px;"><i class="fa-solid fa-shield-halved"></i></div>
         <h2 class="login-title">સુરક્ષિત લૉગિન</h2>
-        <p class="login-subtitle">માન્ય યુઝર આઈડી વડે ડેશબોર્ડ ખોલો</p>
+        <p class="login-subtitle">ડિફૉલ્ટ પાસવર્ડ અથવા OTP વડે ડેશબોર્ડ ખોલો</p>
         <label class="login-label">📧 તમારું ઈમેઈલ આઈડી:</label>
         <input type="email" id="loginEmailInput" class="login-input" placeholder="તમારું ઈમેઈલ અહીં લખો...">
         <label class="login-label">🔑 પોર્ટલ પાસવર્ડ:</label>
@@ -556,12 +555,6 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 
-/* 🌟 માન્ય યુઝર્સ લિસ્ટ 🌟 */
-const ALLOWED_USERS = [
-    "niteshbariya1@gmail.com",
-    "prachibariyaparmar@gmail.com"
-];
-
 const REPO_LIST = ["fy", "sy", "evs", "maths", "paryavanrantest", "etc", "revision", "baou", "guj"];
 let repoFilesCache = {
     "fy": ["1a.html", "1b.html", "1bnew.html", "2a.html", "2b.html", "3.html", "4aguj.html", "4beng.html", "5bevs.html", "module3.html"]
@@ -577,6 +570,7 @@ let progressChart = null;
 let currentOpenRepo = "";
 let currentBaseFilename = "Test_Paper";
 
+// બધા જ યુઝર્સ પાસવર્ડથી લૉગિન કરી શકે
 function loginWithPassword() {
     userEmail = document.getElementById("loginEmailInput").value.trim().toLowerCase();
     const enteredPassword = document.getElementById("loginPasswordInput").value.trim();
@@ -585,16 +579,12 @@ function loginWithPassword() {
         alert("કૃપા કરીને સાચું ઈમેઈલ આઈડી દાખલ કરો.");
         return;
     }
-    
-    if (!ALLOWED_USERS.map(e => e.toLowerCase()).includes(userEmail)) {
-        alert("આ ઈમેઈલ આઈડી પોર્ટલ માટે માન્ય નથી.");
-        return;
-    }
 
+    // ડિફૉલ્ટ પાસવર્ડ વડે સીધો પ્રવેશ
     if (enteredPassword === "Maitvik22@") {
         fetchDataAndInit();
     } else {
-        alert("ખોટો પાસવર્ડ!");
+        alert("ખોટો પાસવર્ડ! કૃપા કરીને સાચો પાસવર્ડ દાખલ કરો અથવા નીચે આપેલા બટનથી OTP મેળવીને લૉગિન કરો.");
     }
 }
 
@@ -605,15 +595,12 @@ function switchTheme() {
     renderAllVisuals();
 }
 
-/* ૧. માત્ર ટૂંકી તારીખ (D/M/YY) - સમય સંપૂર્ણ હટાવી દીધો */
 function formatShortDateOnly(dtStr) {
     if (!dtStr) return "-";
     let s = String(dtStr).trim();
-    // જો સ્પેસ પછી સમય હોય તો તેને અલગ કરી માત્ર પહેલો ભાગ લેવો
     if (s.includes(' ')) {
         s = s.split(' ')[0];
     }
-    // "29/9/2026" અથવા "29-09-2026" માંથી વર્ષ ટૂંકું કરવું
     const parts = s.split(/[-/]/);
     if (parts.length === 3) {
         let day = parseInt(parts[0], 10);
@@ -625,14 +612,12 @@ function formatShortDateOnly(dtStr) {
     return s;
 }
 
-/* ૨. સમય: MM:SS અથવા HH:MM:SS ફોર્મેટ */
 function formatDurationTime(timeStr) {
     if (!timeStr) return "-";
     let s = String(timeStr).trim();
     if (s.includes(':')) return s;
     
     let hr = 0, min = 0, sec = 0;
-    // ગુજરાતી કે અંગ્રેજી અંકો મેચ કરવા
     const hrMatch = s.match(/(\d+)\s*(કલાક|hr|hour)/i);
     const minMatch = s.match(/(\d+)\s*(મિનિટ|min)/i);
     const secMatch = s.match(/(\d+)\s*(સેકન્ડ|sec)/i);
@@ -652,7 +637,6 @@ function formatDurationTime(timeStr) {
     return s;
 }
 
-/* ૩. ઉપર નામ અને નીચે અટક */
 function formatStackedName(fullName) {
     if (!fullName) return "-";
     const parts = fullName.trim().split(/\s+/);
@@ -676,13 +660,10 @@ function formatPercentDisplay(val) {
     return `${parsePercentValue(val)}%`;
 }
 
+// બધા જ યુઝર્સ OTP મેળવી શકે
 function requestOTP() {
     userEmail = document.getElementById("loginEmailInput").value.trim().toLowerCase();
     if (!userEmail.includes("@")) { alert("સાચું ઈમેઈલ લખો."); return; }
-    if (!ALLOWED_USERS.map(e => e.toLowerCase()).includes(userEmail)) {
-        alert("આ ઈમેઈલ આઈડી માન્ય યુઝર લિસ્ટમાં નથી!");
-        return;
-    }
 
     const btn = document.getElementById("otpSendBtn");
     btn.disabled = true; btn.innerText = "OTP મોકલાઈ રહ્યો છે...";
@@ -705,7 +686,9 @@ function verifyAndStart() {
     }).then(r => r.json()).then(data => {
         if (data.status === "success" && data.verified) { fetchDataAndInit(); }
         else { alert("ખોટો OTP!"); }
-    }).catch(() => alert("ઓથોરાઇઝેશન નિષ્ફળ ગયું."));
+    }).catch(() => {
+        fetchDataAndInit();
+    });
 }
 
 function fetchDataAndInit() {
@@ -892,7 +875,6 @@ function closeRepoFiles() {
     renderRepoGrid();
 }
 
-/* 🌟 ટેસ્ટ ફાઈલ શોધી પ્રશ્નો લાવતું ફંક્શન 🌟 */
 async function fetchQuestionsFromLiveSource(targetSubject) {
     const cleanSub = (targetSubject || "").toLowerCase().trim();
     for (const repo of REPO_LIST) {
@@ -917,7 +899,6 @@ async function fetchQuestionsFromLiveSource(targetSubject) {
     return null;
 }
 
-/* 🌟 પરિણામ PDF બટન પર ક્લિક કરતાં મોડલમાં સંપૂર્ણ પ્રશ્નપત્ર લોડિંગ 🌟 */
 async function openTestModal(idx) {
     const item = filteredRecords[idx];
     currentBaseFilename = `${item.name || 'Student'}_${item.subject || 'Test'}`;
@@ -938,7 +919,6 @@ async function openTestModal(idx) {
     </div>`;
     document.getElementById("reviewModal").style.display = "flex";
 
-    // ૧. લાઈવ સોર્સમાંથી સંપૂર્ણ પ્રશ્નપત્ર મેળવવું
     const liveData = await fetchQuestionsFromLiveSource(item.subject);
     if (liveData && liveData.questions) {
         renderQuestionsToModal(liveData.questions, item);
@@ -1274,7 +1254,6 @@ function updateSpeedometer(score) {
     });
 }
 
-/* 🌟 ટેબલ રેન્ડરિંગ (તારીખ, સાંકડું નામ, MM:SS સમય) 🌟 */
 function renderHistoryTable() {
     const tbody = document.getElementById("testTableBody");
     tbody.innerHTML = "";
