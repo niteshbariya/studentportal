@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>સ્માર્ટ પર્ફોર્મન્સ & ટેસ્ટ પોર્ટલ</title>
+    <title>પર્ફોર્મન્સ & ટેસ્ટ પોર્ટલ</title>
     <!-- Chart.js અને html2pdf.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -11,21 +11,38 @@
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #06b6d4 100%);
-            --bg-color: #0f172a;
-            --container-bg: #1e293b;
-            --card-bg: #0f172a;
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
-            --heading-color: #93c5fd;
-            --border-color: #334155;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            --bg-color: #f1f5f9;
+            --container-bg: #ffffff;
+            --card-bg: #ffffff;
+            --inner-box: #f8fafc;
+            --text-color: #0f172a;
+            --text-muted: #64748b;
+            --heading-color: #1e3a8a;
+            --border-color: #cbd5e1;
+            --table-border: #94a3b8;
+            --table-header: #1e3a8a;
+            --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
 
             --gradient-violet: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
             --gradient-emerald: linear-gradient(135deg, #059669 0%, #10b981 100%);
             --gradient-amber: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
             --gradient-rose: linear-gradient(135deg, #e11d48 0%, #f43f5e 100%);
             --gradient-cyan: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
-            --gradient-blue: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+        }
+
+        body.dark-mode {
+            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #38bdf8 100%);
+            --bg-color: #030712;
+            --container-bg: #0b1329;
+            --card-bg: #111c44;
+            --inner-box: #1e293b;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --heading-color: #93c5fd;
+            --border-color: #334155;
+            --table-border: #475569;
+            --table-header: #0f172a;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,6 +54,7 @@
             display: flex;
             justify-content: center;
             padding: 15px;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         .portal-wrapper {
@@ -78,11 +96,16 @@
         .nav-controls { display: flex; align-items: center; gap: 12px; }
         .badge-role {
             padding: 6px 14px; border-radius: 30px; font-size: 12px; font-weight: 700;
-            background: #1e3a8a; color: #93c5fd; border: 1.5px solid #3b82f6;
+            background: rgba(37, 99, 235, 0.1); color: #2563eb; border: 1.5px solid #60a5fa;
         }
-        .btn-action-sm {
-            padding: 8px 16px; font-size: 13px; font-weight: 600; border-radius: 8px;
-            border: none; cursor: pointer; color: white; display: inline-flex; align-items: center; gap: 6px;
+        body.dark-mode .badge-role {
+            background: #1e3a8a; color: #93c5fd; border-color: #3b82f6;
+        }
+        .theme-toggle-btn {
+            background: var(--inner-box); color: var(--text-color);
+            border: 1.5px solid var(--border-color); padding: 8px 16px;
+            font-size: 13px; font-weight: 700; border-radius: 20px; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; transition: all 0.2s;
         }
 
         #loginScreen {
@@ -93,7 +116,7 @@
         .login-input {
             width: 100%; padding: 14px 16px; border: 2px solid var(--border-color);
             border-radius: 12px; font-size: 15px; margin: 15px 0;
-            background: #1e293b; color: var(--text-color); outline: none;
+            background: var(--inner-box); color: var(--text-color); outline: none;
         }
         .btn-gradient {
             background: var(--primary-gradient); color: white; border: none;
@@ -110,7 +133,7 @@
         }
         .select-styled {
             padding: 10px 14px; border-radius: 10px; border: 2px solid var(--border-color);
-            background: #1e293b; color: var(--text-color); font-size: 14px; font-weight: 600;
+            background: var(--inner-box); color: var(--text-color); font-size: 14px; font-weight: 600;
             min-width: 250px;
         }
 
@@ -129,7 +152,7 @@
         }
         .contact-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
         .pill-contact {
-            background: #1e293b; padding: 6px 12px; border-radius: 8px;
+            background: var(--inner-box); padding: 6px 12px; border-radius: 8px;
             font-size: 13px; font-weight: 600; color: var(--text-color); border: 1.5px solid var(--border-color);
             display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
         }
@@ -162,85 +185,64 @@
         .gauge-value-display { position: absolute; bottom: 5px; text-align: center; }
         .gauge-percent { font-size: 36px; font-weight: 900; color: var(--heading-color); }
 
-        /* ૧. મુખ્ય રિપોઝિટરી હબ */
+        /* ૧. મુખ્ય રિપોઝિટરી હબ (બરાબર નામ સાથે) */
         .repo-hub-card {
             background: var(--card-bg); border: 2px solid var(--border-color);
             border-radius: 18px; padding: 24px;
         }
         .repo-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
             gap: 16px; margin-top: 18px;
         }
         .repo-box {
-            background: #1e293b; border-radius: 16px; padding: 20px;
+            background: var(--inner-box); border-radius: 16px; padding: 18px;
             border: 2px solid var(--border-color); cursor: pointer;
-            transition: all 0.25s ease; position: relative; overflow: hidden;
+            transition: all 0.25s ease; position: relative;
             display: flex; flex-direction: column; justify-content: space-between;
         }
         .repo-box:hover, .repo-box.active-repo {
-            border-color: #38bdf8; transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(56, 189, 248, 0.2);
-            background: #24344d;
+            border-color: #2563eb; transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
         }
-        .repo-top-row {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
-        }
-        .repo-icon {
-            width: 44px; height: 44px; border-radius: 12px;
-            background: var(--gradient-cyan); display: flex; align-items: center; justify-content: center;
-            font-size: 20px; color: white;
-        }
-        .repo-title {
-            font-size: 18px; font-weight: 800; color: #f8fafc; margin-bottom: 6px;
-        }
-        .repo-meta {
-            font-size: 12px; color: var(--text-muted); font-weight: 600;
+        .repo-name-tag {
+            font-size: 20px; font-weight: 900; color: var(--heading-color);
+            font-family: monospace; letter-spacing: 0.5px;
         }
 
-        /* ૨. રિપોઝિટરીની અંદરની ટેસ્ટ ફાઈલ્સ વ્યુ */
+        /* ૨. પસંદ કરેલ રિપોઝિટરીની અંદરની ટેસ્ટ ફાઈલ્સ વ્યુ */
         #repoFilesContainer {
-            margin-top: 20px;
-            background: #0b1329;
-            border: 2px solid #38bdf8;
+            margin-top: 22px;
+            background: var(--inner-box);
+            border: 2px solid #2563eb;
             border-radius: 16px;
             padding: 24px;
             display: none;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         .files-header {
             display: flex; justify-content: space-between; align-items: center;
-            padding-bottom: 14px; border-bottom: 1.5px solid var(--border-color);
+            padding-bottom: 14px; border-bottom: 2px solid var(--border-color);
             margin-bottom: 18px; flex-wrap: wrap; gap: 10px;
         }
         .files-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 16px;
         }
         .file-card {
-            background: #1e293b; border-radius: 14px; padding: 18px;
-            border: 1.5px solid var(--border-color); display: flex;
+            background: var(--card-bg); border-radius: 14px; padding: 18px;
+            border: 2px solid var(--border-color); display: flex;
             flex-direction: column; justify-content: space-between; gap: 14px;
             transition: all 0.2s;
         }
-        .file-card:hover { border-color: #60a5fa; background: #24344d; }
-        .file-name {
-            font-size: 16px; font-weight: 800; color: #93c5fd; font-family: monospace;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .file-badge-row {
-            display: flex; justify-content: space-between; align-items: center; gap: 8px;
+        .file-card:hover { border-color: #2563eb; transform: translateY(-2px); }
+        .file-exact-name {
+            font-size: 18px; font-weight: 800; color: var(--heading-color); font-family: monospace;
+            display: flex; align-items: center; gap: 8px; word-break: break-all;
         }
         .btn-take-test {
-            background: var(--gradient-cyan); color: white; text-decoration: none;
-            text-align: center; padding: 10px 14px; font-size: 13px; font-weight: 700;
-            border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: all 0.2s;
+            background: var(--primary-gradient); color: white; text-decoration: none;
+            text-align: center; padding: 11px 16px; font-size: 14px; font-weight: 700;
+            border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn-take-test:hover { opacity: 0.95; transform: scale(1.02); }
 
         /* પ્રીમિયમ ટેબલ */
         .history-card {
@@ -248,21 +250,26 @@
             border-radius: 18px; padding: 24px;
         }
         .table-wrap {
-            overflow-x: auto; border-radius: 14px; border: 2px solid #475569; margin-top: 16px;
+            overflow-x: auto; border-radius: 14px; border: 2px solid var(--table-border); margin-top: 16px;
         }
         table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 14px; }
-        th, td { padding: 14px 16px; border-right: 1.5px solid #334155; border-bottom: 1.5px solid #334155; }
+        th, td { padding: 14px 16px; border-right: 1.5px solid var(--border-color); border-bottom: 1.5px solid var(--border-color); }
         th:last-child, td:last-child { border-right: none; }
         tr:last-child td { border-bottom: none; }
-        th { background: #1e3a8a; color: #ffffff; font-weight: 700; }
-        tbody tr:nth-child(even) { background-color: rgba(30, 41, 59, 0.4); }
+        th { background: var(--table-header); color: #ffffff; font-weight: 700; }
+        tbody tr:nth-child(even) { background-color: rgba(148, 163, 184, 0.08); }
+
+        .btn-action-sm {
+            padding: 8px 16px; font-size: 13px; font-weight: 600; border-radius: 8px;
+            border: none; cursor: pointer; color: white; display: inline-flex; align-items: center; gap: 6px;
+        }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px;
         }
         .modal-box {
-            background: #1e293b; border-radius: 20px; width: 100%; max-width: 860px; max-height: 88vh;
+            background: var(--card-bg); border-radius: 20px; width: 100%; max-width: 860px; max-height: 88vh;
             display: flex; flex-direction: column; overflow: hidden; border: 2px solid var(--border-color);
         }
         .modal-header { padding: 18px 24px; border-bottom: 2px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
@@ -270,7 +277,7 @@
         .modal-footer { padding: 16px 24px; border-top: 2px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; }
     </style>
 </head>
-<body>
+<body class="dark-mode">
 
 <div class="portal-wrapper">
     <header class="top-navbar">
@@ -278,10 +285,14 @@
             <div class="portal-logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
             <div class="brand-text">
                 <h1>સ્માર્ટ પર્ફોર્મન્સ & ટેસ્ટ પોર્ટલ</h1>
-                <p>રિપોઝિટરી સિલેક્ટર, ફાઈલ મુજબ ટેસ્ટ લિંક્સ અને બાકી/પૂર્ણ સ્ટેટસ</p>
+                <p>રિપોઝિટરી અને ફાઈલ મુજબ સીધી કસોટીઓ તથા મૂલ્યાંકન</p>
             </div>
         </div>
         <div class="nav-controls">
+            <!-- લાઇટ અને ડાર્ક મોડ સ્વિચ બટન -->
+            <button id="themeToggleBtn" class="theme-toggle-btn" onclick="switchTheme()">
+                <i class="fa-solid fa-sun" id="themeIcon"></i> <span id="themeText">લાઈટ મોડ</span>
+            </button>
             <span id="roleBadge" class="badge-role"><i class="fa-solid fa-user-graduate"></i> વિદ્યાર્થી પોર્ટલ</span>
             <button id="logoutBtn" style="display:none;" onclick="location.reload()" class="btn-action-sm" style="background:var(--gradient-rose);">
                 <i class="fa-solid fa-right-from-bracket"></i> લૉગ આઉટ
@@ -291,7 +302,7 @@
 
     <!-- ૧. લૉગિન પેનલ -->
     <div id="loginScreen">
-        <div style="font-size: 40px; color: #38bdf8; margin-bottom: 12px;"><i class="fa-solid fa-shield-halved"></i></div>
+        <div style="font-size: 40px; color: #3b82f6; margin-bottom: 12px;"><i class="fa-solid fa-shield-halved"></i></div>
         <h2 style="font-size: 24px; font-weight: 800; color: var(--heading-color); margin-bottom: 8px;">સુરક્ષિત લૉગિન</h2>
         <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">કસોટી આપવા અને તમારો રિપોર્ટ જોવા ઈમેઈલ દાખલ કરો</p>
 
@@ -315,7 +326,7 @@
                 <select id="studentDropdown" class="select-styled" onchange="onStudentSelectChange()"></select>
             </div>
             <div class="filter-group">
-                <span style="font-size: 13px; font-weight: 700; color: #38bdf8;"><i class="fa-solid fa-book-open"></i> વિષય ફિલ્ટર:</span>
+                <span style="font-size: 13px; font-weight: 700; color: #2563eb;"><i class="fa-solid fa-book-open"></i> વિષય ફિલ્ટર:</span>
                 <select id="subjectDropdown" class="select-styled" onchange="onSubjectFilterChange()">
                     <option value="ALL">📋 તમામ કસોટીઓ</option>
                 </select>
@@ -332,9 +343,9 @@
                         <span id="rankBadge" class="badge-role" style="background:#fef3c7; color:#b45309;">🌟 A+ ગ્રેડ</span>
                     </div>
                     <div class="contact-pills">
-                        <a id="phoneLink" href="#" class="pill-contact"><i class="fa-solid fa-phone" style="color: #38bdf8;"></i> <span id="profPhone">-</span></a>
-                        <a id="whatsappLink" href="#" target="_blank" class="pill-contact" style="background:#064e3b; color:#6ee7b7;"><i class="fa-brands fa-whatsapp" style="color:#10b981;"></i> WhatsApp</a>
-                        <span class="pill-contact"><i class="fa-solid fa-envelope" style="color: #94a3b8;"></i> <span id="profEmail">-</span></span>
+                        <a id="phoneLink" href="#" class="pill-contact"><i class="fa-solid fa-phone" style="color: #2563eb;"></i> <span id="profPhone">-</span></a>
+                        <a id="whatsappLink" href="#" target="_blank" class="pill-contact" style="background:rgba(16, 185, 129, 0.1); color:#10b981;"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+                        <span class="pill-contact"><i class="fa-solid fa-envelope" style="color: var(--text-muted);"></i> <span id="profEmail">-</span></span>
                     </div>
                 </div>
             </div>
@@ -364,7 +375,7 @@
         <section class="analytics-two-col">
             <div class="speedometer-card">
                 <h4 style="font-size:16px; color:var(--heading-color); font-weight:700; margin-bottom:12px; text-align:center;">
-                    <i class="fa-solid fa-gauge-high" style="color:#38bdf8;"></i> ઓવરઓલ પર્ફોર્મન્સ સ્પીડોમીટર
+                    <i class="fa-solid fa-gauge-high" style="color:#2563eb;"></i> ઓવરઓલ પર્ફોર્મન્સ સ્પીડોમીટર
                 </h4>
                 <div class="gauge-wrapper">
                     <canvas id="gaugeCanvas" width="280" height="140"></canvas>
@@ -377,7 +388,7 @@
 
             <div class="chart-box-card">
                 <h3 style="font-size:16px; font-weight:700; color:var(--heading-color); margin-bottom:12px;">
-                    <i class="fa-solid fa-chart-column" style="color:#38bdf8;"></i> કસોટીવાર ટકાવારી પ્રગતિ (Test Progress)
+                    <i class="fa-solid fa-chart-column" style="color:#2563eb;"></i> કસોટીવાર ટકાવારી પ્રગતિ (Test Progress)
                 </h3>
                 <div style="height: 250px; width: 100%;">
                     <canvas id="verticalProgressChart"></canvas>
@@ -385,33 +396,33 @@
             </div>
         </section>
 
-        <!-- ૩. મુખ્ય રિપોઝિટરી હબ -->
+        <!-- ૩. મુખ્ય રિપોઝિટરી હબ (તમારા સાચા નામ જેમ છે તેમ) -->
         <section class="repo-hub-card">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
                     <h3 style="font-size:18px; font-weight:800; color:var(--heading-color);">
-                        <i class="fa-solid fa-folder-tree" style="color:#38bdf8;"></i> કસોટી રિપોઝિટરી કેન્દ્ર (Repositories Hub)
+                        <i class="fa-solid fa-folder-tree" style="color:#2563eb;"></i> કસોટી રિપોઝિટરી કેન્દ્ર
                     </h3>
                     <p style="font-size:13px; color:var(--text-muted); margin-top:2px;">
-                        નીચે આપેલી કોઈપણ રિપોઝિટરી પર ક્લિક કરો, જેથી અંદરની તમામ કસોટી ફાઈલો અને તેનું સ્ટેટસ ખૂલશે:
+                        રિપોઝિટરી પર ક્લિક કરો એટલે અંદરની તમામ HTML ફાઈલો તેમના મૂળ નામ સાથે ખૂલશે:
                     </p>
                 </div>
-                <span class="badge-role" style="background:#064e3b; color:#6ee7b7; border-color:#059669;">
-                    <i class="fa-solid fa-folder-open"></i> સીધું રિપોઝિટરી સિલેક્શન
+                <span class="badge-role" style="background:rgba(5, 150, 105, 0.1); color:#059669; border-color:#10b981;">
+                    <i class="fa-solid fa-folder-open"></i> repositories
                 </span>
             </div>
 
-            <!-- રિપોઝિટરી કાર્ડ્સ -->
+            <!-- રિપોઝિટરી કાર્ડ્સ ગ્રીડ (જેમ નામ છે તેમ જ) -->
             <div class="repo-grid" id="repoCardsGrid"></div>
 
-            <!-- પસંદ કરેલ રિપોઝિટરીની અંદરની ટેસ્ટ ફાઈલ્સ દર્શાવતું કન્ટેનર -->
+            <!-- રિપોઝિટરીની અંદરની ટેસ્ટ ફાઈલ્સ (જેમ નામ છે તેમ જ) -->
             <div id="repoFilesContainer">
                 <div class="files-header">
                     <div>
-                        <h4 id="activeRepoTitle" style="font-size: 18px; color: #38bdf8; font-weight: 800;"></h4>
+                        <h4 id="activeRepoTitle" style="font-size: 20px; color: var(--heading-color); font-weight: 800; font-family: monospace;"></h4>
                         <span id="activeRepoSubtitle" style="font-size: 13px; color: var(--text-muted);"></span>
                     </div>
-                    <button onclick="closeRepoFiles()" class="btn-action-sm" style="background:#475569;">✕ બંધ કરો</button>
+                    <button onclick="closeRepoFiles()" class="btn-action-sm" style="background:#64748b;">✕ બંધ કરો</button>
                 </div>
                 <!-- અંદરની ફાઈલોનું લિસ્ટ -->
                 <div class="files-grid" id="filesListGrid"></div>
@@ -421,7 +432,7 @@
         <!-- ૪. આપેલી કસોટીઓનું પત્રક -->
         <section class="history-card">
             <h3 style="font-size:17px; font-weight:700; color:var(--heading-color); margin-bottom:12px;">
-                <i class="fa-solid fa-table-list" style="color:#38bdf8;"></i> આપેલી કસોટીઓનું વિગતવાર પત્રક
+                <i class="fa-solid fa-table-list" style="color:#2563eb;"></i> આપેલી કસોટીઓનું વિગતવાર પત્રક
             </h3>
             <div class="table-wrap">
                 <table>
@@ -448,10 +459,10 @@
     <div class="modal-box">
         <div class="modal-header">
             <h3 id="modalHeading" style="font-size: 18px; font-weight: 800; color: var(--heading-color);">વિગતવાર કસોટી રિવ્યૂ</h3>
-            <button onclick="closeModal()" style="background:none; border:none; font-size:22px; cursor:pointer; color:white;">&times;</button>
+            <button onclick="closeModal()" style="background:none; border:none; font-size:22px; cursor:pointer; color:var(--text-color);">&times;</button>
         </div>
         <div class="modal-body" id="modalPrintDoc">
-            <div id="modalStudentHeader" style="background: #0f172a; border-radius: 12px; padding: 16px; margin-bottom: 20px; border: 1.5px solid #334155;"></div>
+            <div id="modalStudentHeader" style="background: var(--inner-box); border-radius: 12px; padding: 16px; margin-bottom: 20px; border: 1.5px solid var(--border-color);"></div>
             <div id="modalQuestionContainer"></div>
         </div>
         <div class="modal-footer">
@@ -464,89 +475,20 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 
-/* 🌟 તમારી રિપોઝિટરીઝ અને અંદરની સાચી HTML ફાઈલોનું સ્પષ્ટ માળખું 🌟 */
-const REPO_DATA = {
-    "fy": {
-        title: "પ્રથમ વર્ષ કસોટીઓ (fy)",
-        icon: "fa-graduation-cap",
-        color: "linear-gradient(135deg, #0284c7, #06b6d4)",
-        files: [
-            { name: "1a.html", title: "કોર્સ 1(અ): બાળપણ અને બાળવિકાસ" },
-            { name: "1b.html", title: "કોર્સ 1(બ): શિક્ષણના સમાજશાસ્ત્રીય પરિપ્રેક્ષ્ય" },
-            { name: "1bnew.html", title: "કોર્સ 1(બ) - નવીન મોક ટેસ્ટ" },
-            { name: "2a.html", title: "કોર્સ 2(અ): બોધ, પ્રત્યાયન અને અધ્યયન" },
-            { name: "2b.html", title: "કોર્સ 2(બ): શૈક્ષણિક મૂલ્યાંકન" },
-            { name: "3.html", title: "કોર્સ 3: માતૃભાષા શિક્ષણ (ગુજરાતી)" },
-            { name: "4aguj.html", title: "કોર્સ 4(અ): ગુજરાતી પદ્ધતિશાસ્ત્ર" },
-            { name: "4beng.html", title: "કોર્સ 4(બ): અંગ્રેજી પદ્ધતિશાસ્ત્ર" },
-            { name: "5bevs.html", title: "કોર્સ 5(બ): પર્યાવરણ અધ્યયન" },
-            { name: "module3.html", title: "મોડ્યુલ ૩ વિશેષ પ્રશ્નબેંક" }
-        ]
-    },
-    "sy": {
-        title: "દ્વિતીય વર્ષ કસોટીઓ (sy)",
-        icon: "fa-book-bookmark",
-        color: "linear-gradient(135deg, #e11d48, #f43f5e)",
-        files: [
-            { name: "index.html", title: "દ્વિતીય વર્ષ (S.Y.) મુખ્ય મોક ટેસ્ટ" }
-        ]
-    },
-    "paryavanrantest": {
-        title: "પર્યાવરણ ટેસ્ટ (paryavanrantest)",
-        icon: "fa-leaf",
-        color: "linear-gradient(135deg, #059669, #10b981)",
-        files: [
-            { name: "index.html", title: "પર્યાવરણ સંપૂર્ણ મોક ટેસ્ટ (૧૫૫ પ્રશ્નો)" }
-        ]
-    },
-    "maths": {
-        title: "ગણિત પ્રશ્નબેંક (maths)",
-        icon: "fa-calculator",
-        color: "linear-gradient(135deg, #2563eb, #3b82f6)",
-        files: [
-            { name: "index.html", title: "ગણિત પાયાના ખ્યાલો કસોટી" }
-        ]
-    },
-    "evs": {
-        title: "પર્યાવરણ સંકલ્પના (evs)",
-        icon: "fa-seedling",
-        color: "linear-gradient(135deg, #16a34a, #22c55e)",
-        files: [
-            { name: "index.html", title: "EVS સંકલ્પના કસોટી" }
-        ]
-    },
-    "guj": {
-        title: "ગુજરાતી સાહિત્ય (guj)",
-        icon: "fa-feather",
-        color: "linear-gradient(135deg, #7c3aed, #a855f7)",
-        files: [
-            { name: "index.html", title: "ગુજરાતી વ્યાકરણ & સાહિત્ય કસોટી" }
-        ]
-    },
-    "baou": {
-        title: "BAOU વિશેષ શ્રેણી (baou)",
-        icon: "fa-building-columns",
-        color: "linear-gradient(135deg, #d97706, #f59e0b)",
-        files: [
-            { name: "index.html", title: "BAOU ઓનલાઇન મોક ટેસ્ટ" }
-        ]
-    },
-    "revision": {
-        title: "સંપૂર્ણ રિવિઝન (revision)",
-        icon: "fa-rotate",
-        color: "linear-gradient(135deg, #4f46e5, #6366f1)",
-        files: [
-            { name: "index.html", title: "સંપૂર્ણ રિવિઝન મોક ટેસ્ટ" }
-        ]
-    },
-    "etc": {
-        title: "શિક્ષણ સહાયક (etc)",
-        icon: "fa-shapes",
-        color: "linear-gradient(135deg, #ea580c, #f97316)",
-        files: [
-            { name: "index.html", title: "શિક્ષણ સહાયક વિશેષ કસોટી" }
-        ]
-    }
+/* 🌟 તમારી રિપોઝિટરીઝ અને અંદરની સાચી ફાઈલોનાં અસલ નામ (No Fake Titles) 🌟 */
+const REPO_REGISTRY = {
+    "fy": [
+        "1a.html", "1b.html", "1bnew.html", "2a.html", "2b.html",
+        "3.html", "4aguj.html", "4beng.html", "5bevs.html", "module3.html"
+    ],
+    "sy": ["index.html"],
+    "evs": ["index.html"],
+    "maths": ["index.html"],
+    "paryavanrantest": ["index.html"],
+    "etc": ["index.html"],
+    "revision": ["index.html"],
+    "baou": ["index.html"],
+    "guj": ["index.html"]
 };
 
 let userEmail = "";
@@ -558,6 +500,23 @@ let selectedStudentEmail = "";
 let gaugeChart = null;
 let progressChart = null;
 let currentOpenRepo = "";
+
+// ૧. વાઈટ / ડાર્ક મોડ સ્વિચર
+function switchTheme() {
+    const isDark = document.body.classList.toggle("dark-mode");
+    const themeBtn = document.getElementById("themeToggleBtn");
+    const themeIcon = document.getElementById("themeIcon");
+    const themeText = document.getElementById("themeText");
+
+    if (isDark) {
+        themeIcon.className = "fa-solid fa-sun";
+        themeText.innerText = "લાઈટ મોડ";
+    } else {
+        themeIcon.className = "fa-solid fa-moon";
+        themeText.innerText = "ડાર્ક મોડ";
+    }
+    renderAllVisuals();
+}
 
 function parsePercentValue(val) {
     if (!val && val !== 0) return 0;
@@ -664,108 +623,118 @@ function filterAndRefreshData() {
 
     updateProfileCard();
     renderAllVisuals();
-    renderRepoCards();
+    renderRepoGrid();
     if (currentOpenRepo) { openRepoFiles(currentOpenRepo); }
     renderHistoryTable();
 }
 
-/* ૧. રિપોઝિટરી કાર્ડ્સ રેન્ડર કરવા (Repository Grid) */
-function renderRepoCards() {
+/* ૧. રીપોઝીટરી કાર્ડ્સ (મૂળ નામો જેમ છે તેમ જ) */
+function renderRepoGrid() {
     const grid = document.getElementById("repoCardsGrid");
     grid.innerHTML = "";
 
     const userSubjects = filteredRecords.map(r => (r.subject || "").toLowerCase().trim());
-    let totalPendingAllRepos = 0;
+    let totalPendingAll = 0;
 
-    Object.keys(REPO_DATA).forEach(repoKey => {
-        const repo = REPO_DATA[repoKey];
-        const files = repo.files;
-
-        // ગણતરી: આ રિપોઝિટરીની કેટલી ટેસ્ટ બાકી છે
+    Object.keys(REPO_REGISTRY).forEach(repoName => {
+        const files = REPO_REGISTRY[repoName];
         let repoPending = 0;
-        files.forEach(f => {
+
+        files.forEach(fileName => {
+            const cleanName = fileName.replace('.html', '').toLowerCase();
             const isDone = userSubjects.some(sub => 
-                sub.includes(f.name.toLowerCase().replace('.html','')) || 
-                sub.includes(f.title.toLowerCase())
+                sub.includes(cleanName) || sub.includes(repoName.toLowerCase())
             );
             if (!isDone) repoPending++;
         });
 
-        totalPendingAllRepos += repoPending;
+        totalPendingAll += repoPending;
 
         const card = document.createElement("div");
-        card.className = `repo-box ${currentOpenRepo === repoKey ? 'active-repo' : ''}`;
-        card.onclick = () => openRepoFiles(repoKey);
+        card.className = `repo-box ${currentOpenRepo === repoName ? 'active-repo' : ''}`;
+        card.onclick = () => openRepoFiles(repoName);
 
         card.innerHTML = `
             <div>
-                <div class="repo-top-row">
-                    <div class="repo-icon" style="background:${repo.color};">
-                        <i class="fa-solid ${repo.icon}"></i>
-                    </div>
-                    <span style="font-size:11px; font-weight:800; padding:4px 8px; border-radius:12px; background:${repoPending > 0 ? '#fee2e2' : '#dcfce7'}; color:${repoPending > 0 ? '#b91c1c' : '#15803d'};">
-                        ${repoPending > 0 ? `⏳ ${repoPending} બાકી` : '✅ બધી પૂર્ણ'}
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <span class="repo-name-tag"><i class="fa-regular fa-folder" style="color:#2563eb;"></i> ${repoName}</span>
+                    <span style="font-size:11px; font-weight:800; padding:4px 8px; border-radius:12px; background:${repoPending > 0 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)'}; color:${repoPending > 0 ? '#ef4444' : '#10b981'};">
+                        ${repoPending > 0 ? `⏳ ${repoPending} બાકી` : '✅ પૂર્ણ'}
                     </span>
                 </div>
-                <div class="repo-title">${repo.title}</div>
-                <div class="repo-meta">📂 રિપોઝિટરી: <strong>${repoKey}</strong></div>
+                <div style="font-size:13px; color:var(--text-muted); font-weight:600;">કુલ ટેસ્ટ: ${files.length}</div>
             </div>
-            <div style="margin-top:14px; font-size:12px; color:#38bdf8; font-weight:700; display:flex; align-items:center; gap:6px;">
-                <span>ટેસ્ટ ફાઈલો જુઓ (${files.length})</span> <i class="fa-solid fa-arrow-right"></i>
+            <div style="margin-top:12px; font-size:12px; color:#2563eb; font-weight:700;">
+                ટેસ્ટ ખોલો <i class="fa-solid fa-chevron-right"></i>
             </div>
         `;
         grid.appendChild(card);
     });
 
-    document.getElementById("statPendingTests").innerText = totalPendingAllRepos;
+    document.getElementById("statPendingTests").innerText = totalPendingAll;
 }
 
-/* ૨. રિપોઝિટરી પર ક્લિક કરતાં અંદરની ફાઈલો બતાવવી */
-function openRepoFiles(repoKey) {
-    currentOpenRepo = repoKey;
-    const repo = REPO_DATA[repoKey];
-    if (!repo) return;
-
-    renderRepoCards();
+/* ૨. રીપોઝીટરી ક્લિક કરતાં અંદરની ફાઈલોનું મૂળ નામ અને સ્ટેટસ */
+async function openRepoFiles(repoName) {
+    currentOpenRepo = repoName;
+    renderRepoGrid();
 
     const container = document.getElementById("repoFilesContainer");
     const listGrid = document.getElementById("filesListGrid");
     container.style.display = "block";
 
-    document.getElementById("activeRepoTitle").innerHTML = `<i class="fa-solid fa-folder-open"></i> રિપોઝિટરી: ${repoKey} (${repo.title})`;
-    document.getElementById("activeRepoSubtitle").innerText = `નીચે આ રિપોઝિટરીની તમામ ટેસ્ટ ફાઈલો છે. સીધી કસોટી આપવા માટે બટન દબાવો:`;
+    document.getElementById("activeRepoTitle").innerHTML = `<i class="fa-regular fa-folder-open"></i> ${repoName}`;
+    document.getElementById("activeRepoSubtitle").innerText = `રિપોઝિટરીની અંદર ઉપલબ્ધ ટેસ્ટ ફાઈલ્સ:`;
+
+    listGrid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:15px; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> ફાઈલો ચકાસી રહ્યા છીએ...</div>`;
+
+    let fileList = REPO_REGISTRY[repoName] || ["index.html"];
+
+    // GitHub API થી તાજેતરની ફાઈલો તપાસવી
+    try {
+        const res = await fetch(`https://api.github.com/repos/niteshbariya/${repoName}/contents/`);
+        if (res.ok) {
+            const ghFiles = await res.json();
+            const htmlFiles = ghFiles.filter(f => f.name.endsWith('.html')).map(f => f.name);
+            if (htmlFiles.length > 0) {
+                fileList = htmlFiles;
+            }
+        }
+    } catch (e) {
+        // API મર્યાદા હોય તો રજીસ્ટ્રીની ફાઈલો રહેશે
+    }
 
     listGrid.innerHTML = "";
     const userSubjects = filteredRecords.map(r => (r.subject || "").toLowerCase().trim());
 
-    repo.files.forEach(f => {
-        // આ ફાઈલની ટેસ્ટ આપી છે કે બાકી?
+    fileList.forEach(fileName => {
+        const cleanName = fileName.replace('.html', '').toLowerCase();
+        
+        // આપેલ છે કે બાકી તેની સરખામણી
         const isAttempted = userSubjects.some(sub => 
-            sub.includes(f.name.toLowerCase().replace('.html','')) || 
-            sub.includes(f.title.toLowerCase())
+            sub.includes(cleanName) || sub.includes(repoName.toLowerCase())
         );
 
-        // ટેસ્ટનું લાઈવ URL
-        const testUrl = (f.name === "index.html")
-            ? `https://niteshbariya.github.io/${repoKey}/`
-            : `https://niteshbariya.github.io/${repoKey}/${f.name}`;
+        const testUrl = (fileName === "index.html")
+            ? `https://niteshbariya.github.io/${repoName}/`
+            : `https://niteshbariya.github.io/${repoName}/${fileName}`;
 
         const fileCard = document.createElement("div");
         fileCard.className = "file-card";
-        fileCard.style.borderLeft = `5px solid ${isAttempted ? '#10b981' : '#f43f5e'}`;
+        fileCard.style.borderLeft = `5px solid ${isAttempted ? '#10b981' : '#ef4444'}`;
 
         fileCard.innerHTML = `
             <div>
-                <div class="file-badge-row">
-                    <span class="file-name"><i class="fa-regular fa-file-code"></i> ${f.name}</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span class="file-exact-name"><i class="fa-regular fa-file-lines"></i> ${fileName}</span>
                     ${isAttempted 
-                        ? `<span style="color:#6ee7b7; background:#064e3b; padding:3px 8px; border-radius:12px; font-size:11px; font-weight:800;">✅ કસોટી પૂર્ણ થયેલ</span>` 
-                        : `<span style="color:#fca5a5; background:#7f1d1d; padding:3px 8px; border-radius:12px; font-size:11px; font-weight:800;">⏳ આપવાની બાકી</span>`
+                        ? `<span style="color:#10b981; background:rgba(16, 185, 129, 0.15); padding:3px 8px; border-radius:12px; font-size:11px; font-weight:800;">✅ કસોટી પૂર્ણ થયેલ</span>` 
+                        : `<span style="color:#ef4444; background:rgba(239, 68, 68, 0.15); padding:3px 8px; border-radius:12px; font-size:11px; font-weight:800;">⏳ આપવાની બાકી</span>`
                     }
                 </div>
-                <div style="font-size:14px; font-weight:700; color:#f8fafc; margin-top:8px;">${f.title}</div>
+                <div style="font-size:12px; color:var(--text-muted); font-family:monospace;">${repoName}/${fileName}</div>
             </div>
-            <a href="${testUrl}" target="_blank" class="btn-take-test" style="background:${isAttempted ? 'linear-gradient(135deg, #475569, #64748b)' : repo.color};">
+            <a href="${testUrl}" target="_blank" class="btn-take-test" style="background:${isAttempted ? '#64748b' : 'var(--primary-gradient)'};">
                 <i class="fa-solid ${isAttempted ? 'fa-rotate-right' : 'fa-play'}"></i> 
                 ${isAttempted ? 'પુનઃ પ્રયાસ કરો 🔄' : 'કસોટી આપો 🚀'}
             </a>
@@ -779,7 +748,7 @@ function openRepoFiles(repoKey) {
 function closeRepoFiles() {
     currentOpenRepo = "";
     document.getElementById("repoFilesContainer").style.display = "none";
-    renderRepoCards();
+    renderRepoGrid();
 }
 
 function updateProfileCard() {
@@ -821,8 +790,9 @@ function updateProfileCard() {
 }
 
 function renderAllVisuals() {
-    const textColor = "#94a3b8";
-    const gridColor = "#334155";
+    const isDark = document.body.classList.contains("dark-mode");
+    const textColor = isDark ? "#94a3b8" : "#475569";
+    const gridColor = isDark ? "#334155" : "#e2e8f0";
 
     let totalP = 0;
     filteredRecords.forEach(r => totalP += parsePercentValue(r.percentage));
@@ -843,7 +813,7 @@ function renderAllVisuals() {
             datasets: [{
                 label: 'ટકાવારી (%)',
                 data: progData,
-                backgroundColor: progData.map(v => v >= 75 ? '#10b981' : (v >= 40 ? '#38bdf8' : '#ef4444')),
+                backgroundColor: progData.map(v => v >= 75 ? '#10b981' : (v >= 40 ? '#3b82f6' : '#ef4444')),
                 borderRadius: 8
             }]
         },
@@ -861,16 +831,17 @@ function renderAllVisuals() {
 function updateSpeedometer(score) {
     const val = parseFloat(score) || 0;
     document.getElementById("gaugeDisplayValue").innerText = `${val}%`;
-    let statusColor = val >= 75 ? "#10b981" : (val < 40 ? "#ef4444" : "#38bdf8");
+    let statusColor = val >= 75 ? "#10b981" : (val < 40 ? "#ef4444" : "#3b82f6");
     document.getElementById("gaugeStatusText").style.color = statusColor;
 
     if (gaugeChart) gaugeChart.destroy();
+    const isDark = document.body.classList.contains("dark-mode");
     gaugeChart = new Chart(document.getElementById("gaugeCanvas"), {
         type: 'doughnut',
         data: {
             datasets: [{
                 data: [val, 100 - val],
-                backgroundColor: [statusColor, '#334155'],
+                backgroundColor: [statusColor, isDark ? '#334155' : '#e2e8f0'],
                 borderWidth: 0, circumference: 180, rotation: 270
             }]
         },
@@ -882,19 +853,19 @@ function renderHistoryTable() {
     const tbody = document.getElementById("testTableBody");
     tbody.innerHTML = "";
     if (filteredRecords.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#64748b;">કોઈ રેકોર્ડ મળ્યો નથી.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">કોઈ રેકોર્ડ મળ્યો નથી.</td></tr>`;
         return;
     }
     filteredRecords.forEach((item, idx) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>${item.dateTime || "-"}</td>
-            <td><strong>${item.name || "-"}</strong><br><small style="color:#64748b;">${item.email || ""}</small></td>
-            <td><strong style="color:#38bdf8;">${item.subject || "-"}</strong></td>
-            <td><span style="background:#1e3a8a; color:#93c5fd; padding:4px 10px; border-radius:12px; font-weight:700;">${item.score || "-"}</span></td>
-            <td><strong style="color:#34d399; font-size:15px;">${formatPercentDisplay(item.percentage)}</strong></td>
+            <td><strong>${item.name || "-"}</strong><br><small style="color:var(--text-muted);">${item.email || ""}</small></td>
+            <td><strong style="color:#2563eb;">${item.subject || "-"}</strong></td>
+            <td><span style="background:rgba(37, 99, 235, 0.1); color:#2563eb; padding:4px 10px; border-radius:12px; font-weight:700;">${item.score || "-"}</span></td>
+            <td><strong style="color:#10b981; font-size:15px;">${formatPercentDisplay(item.percentage)}</strong></td>
             <td>${item.timeTaken || "-"}</td>
-            <td><button class="btn-action-sm" onclick="openTestModal(${idx})" style="background:var(--gradient-cyan);"><i class="fa-solid fa-magnifying-glass"></i> રિવ્યૂ & PDF</button></td>
+            <td><button class="btn-action-sm" onclick="openTestModal(${idx})" style="background:var(--primary-gradient);"><i class="fa-solid fa-magnifying-glass"></i> રિવ્યૂ & PDF</button></td>
         `;
         tbody.appendChild(tr);
     });
@@ -915,7 +886,7 @@ function openTestModal(idx) {
     const container = document.getElementById("modalQuestionContainer");
     container.innerHTML = selectedModalRecord.reviewHtml && selectedModalRecord.reviewHtml.length > 20 
         ? selectedModalRecord.reviewHtml 
-        : `<div style="text-align:center; padding:30px; color:#64748b;">આ ટેસ્ટ માટે કોઈ વિગતવાર રિવ્યૂ ઉપલબ્ધ નથી.</div>`;
+        : `<div style="text-align:center; padding:30px; color:var(--text-muted);">આ ટેસ્ટ માટે કોઈ વિગતવાર રિવ્યૂ ઉપલબ્ધ નથી.</div>`;
     document.getElementById("reviewModal").style.display = "flex";
 }
 
