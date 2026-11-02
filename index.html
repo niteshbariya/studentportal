@@ -57,6 +57,7 @@
             transition: background 0.3s ease, color 0.3s ease;
         }
 
+        /* Responsive Wrapper for Mobile, Tablet, PC */
         .portal-wrapper {
             width: 100%;
             max-width: 1600px;
@@ -75,6 +76,7 @@
             .portal-wrapper { padding: 12px; border-radius: 14px; gap: 14px; }
         }
 
+        /* હેડર */
         .top-navbar {
             display: flex;
             justify-content: space-between;
@@ -124,7 +126,7 @@
             display: flex; align-items: center; gap: 6px;
         }
 
-        /* લૉગિન પેનલ */
+        /* લૉગિન સ્ક્રીન */
         #loginScreen {
             max-width: 440px; margin: 40px auto; text-align: center;
             padding: 28px 24px; background: var(--card-bg);
@@ -149,7 +151,9 @@
             background: var(--primary-gradient); color: white; border: none;
             padding: 10px 18px; font-size: 13.5px; font-weight: 700; border-radius: 10px;
             cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
+            transition: all 0.2s;
         }
+        .btn-gradient:hover { opacity: 0.95; transform: translateY(-1px); }
         .login-divider {
             display: flex; align-items: center; text-align: center; margin: 15px 0; color: var(--text-muted); font-size: 11px; font-weight: 700;
         }
@@ -158,7 +162,7 @@
         }
         .login-divider span { padding: 0 10px; text-transform: uppercase; }
 
-        /* મુખ્ય ડેશબોર્ડ */
+        /* ડેશબોર્ડ મુખ્ય વિભાગ */
         #dashboardScreen { display: none; }
 
         .filter-ribbon {
@@ -221,7 +225,7 @@
         .gauge-value-display { position: absolute; bottom: 5px; text-align: center; }
         .gauge-percent { font-size: 32px; font-weight: 900; color: var(--heading-color); }
 
-        /* રિપોઝિટરી હબ */
+        /* ૧. મુખ્ય રિપોઝિટરી હબ */
         .repo-hub-card {
             background: var(--card-bg); border: 2px solid var(--border-color);
             border-radius: 16px; padding: 20px;
@@ -245,6 +249,7 @@
             font-family: monospace;
         }
 
+        /* રિપોઝિટરી અંદરની ફાઈલોનું બોક્સ */
         #repoFilesContainer {
             margin-top: 18px;
             background: var(--inner-box);
@@ -259,22 +264,30 @@
             margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
         }
         .files-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 12px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 14px;
         }
         .file-card {
             background: var(--card-bg); border-radius: 12px; padding: 14px;
             border: 2px solid var(--border-color); display: flex;
-            flex-direction: column; justify-content: space-between; gap: 10px;
+            flex-direction: column; justify-content: space-between; gap: 12px;
         }
         .file-exact-name {
             font-size: 15px; font-weight: 800; color: var(--heading-color); font-family: monospace;
             display: flex; align-items: center; gap: 6px; word-break: break-all;
         }
+        .file-action-buttons {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;
+        }
         .btn-take-test {
             background: var(--primary-gradient); color: white; text-decoration: none;
-            text-align: center; padding: 9px 14px; font-size: 13px; font-weight: 700;
-            border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;
+            text-align: center; padding: 8px 10px; font-size: 12.5px; font-weight: 700;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 5px;
+        }
+        .btn-view-paper {
+            background: #0284c7; color: white; border: none; cursor: pointer;
+            padding: 8px 10px; font-size: 12.5px; font-weight: 700;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 5px;
         }
 
         /* ટેબલ */
@@ -302,6 +315,7 @@
             font-size: 12.5px; color: var(--text-muted); font-weight: 700;
         }
 
+        /* મોડલ પોપઅપ */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px;
@@ -314,11 +328,11 @@
         .modal-body { padding: 20px; overflow-y: auto; }
         .modal-footer { padding: 14px 20px; border-top: 2px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px; }
 
-        /* A4 પ્રશ્નપત્ર / ઉત્તરવહી PDF પ્રિન્ટ સ્ટાઈલ */
+        /* A4 સાઈઝ પ્રશ્નપત્ર / ઉત્તરવહી PDF પ્રિન્ટ સ્ટાઈલ */
         #pdfPrintArea {
             background: #ffffff;
             color: #0f172a;
-            padding: 20px;
+            padding: 10px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .pdf-page-container {
@@ -328,7 +342,7 @@
             background: #ffffff;
         }
         .pdf-header-banner {
-            border-bottom: 2px solid #1e3a8a;
+            border-bottom: 2.5px solid #1e3a8a;
             padding-bottom: 12px;
             margin-bottom: 16px;
             text-align: center;
@@ -372,9 +386,15 @@
             margin-bottom: 8px;
             line-height: 1.4;
         }
+        .pdf-options-list {
+            margin: 6px 0 8px 12px;
+            font-size: 12.5px;
+            color: #475569;
+            line-height: 1.6;
+        }
         .pdf-ans-box {
             background: #ecfdf5;
-            border-left: 4px solid #10b981;
+            border-left: 4.5px solid #10b981;
             padding: 6px 12px;
             border-radius: 4px;
             font-size: 13px;
@@ -384,7 +404,7 @@
         }
         .pdf-unit-box {
             background: #eff6ff;
-            border-left: 4px solid #3b82f6;
+            border-left: 4.5px solid #3b82f6;
             padding: 6px 12px;
             border-radius: 4px;
             font-size: 12px;
@@ -407,8 +427,9 @@
             </div>
         </div>
         <div class="nav-controls">
-            <!-- નિર્માતા ક્રેડિટ -->
+            <!-- બ્રાન્ડિંગ ટેગ -->
             <span class="creator-tag"><i class="fa-solid fa-code"></i> Nitesh Baria Web Developer</span>
+            <!-- થીમ સ્વિચર -->
             <button id="themeToggleBtn" class="theme-toggle-btn" onclick="switchTheme()">
                 <i class="fa-solid fa-sun" id="themeIcon"></i> <span id="themeText">લાઈટ મોડ</span>
             </button>
@@ -536,7 +557,7 @@
                         <i class="fa-solid fa-folder-tree" style="color:#2563eb;"></i> કસોટી રિપોઝિટરી કેન્દ્ર
                     </h3>
                     <p style="font-size:12px; color:var(--text-muted); margin-top:2px;">
-                        રિપોઝિટરી પર ક્લિક કરો એટલે અંદરની તમામ HTML ફાઈલો લાઈવ સ્ટેટસ સાથે ખૂલશે:
+                        રિપોઝિટરી પર ક્લિક કરો એટલે અંદરની તમામ કસોટી ફાઈલો અને પ્રશ્નપત્રો ખૂલશે:
                     </p>
                 </div>
                 <span class="badge-role" style="background:rgba(5, 150, 105, 0.1); color:#059669; border-color:#10b981;">
@@ -544,8 +565,10 @@
                 </span>
             </div>
 
+            <!-- રિપોઝિટરી કાર્ડ્સ -->
             <div class="repo-grid" id="repoCardsGrid"></div>
 
+            <!-- પસંદ કરેલ રિપોઝિટરીની ફાઈલોનું બોક્સ -->
             <div id="repoFilesContainer">
                 <div class="files-header">
                     <div>
@@ -588,29 +611,30 @@
     </main>
 </div>
 
-<!-- મોડલ પોપઅપ -->
+<!-- પ્રશ્નપત્ર / ઉત્તરવહી A4 પ્રિન્ટ મોડલ -->
 <div id="reviewModal" class="modal-overlay">
     <div class="modal-box">
         <div class="modal-header">
-            <h3 id="modalHeading" style="font-size: 16px; font-weight: 800; color: var(--heading-color);">વિગતવાર કસોટી રિવ્યૂ</h3>
+            <h3 id="modalHeading" style="font-size: 16px; font-weight: 800; color: var(--heading-color);">વિગતવાર પ્રશ્નપત્ર & ઉત્તરવહી</h3>
             <button onclick="closeModal()" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-color);">&times;</button>
         </div>
         <div class="modal-body">
-            <!-- પ્રિન્ટ એરિયા (A4 સાઇઝ ડબલ બોર્ડર સાથે) -->
+            <!-- પ્રિન્ટ એરિયા (A4 સાઇઝ ડબલ રોયલ બ્લુ બોર્ડર સાથે) -->
             <div id="pdfPrintArea">
                 <div class="pdf-page-container">
                     <div class="pdf-header-banner">
-                        <div class="pdf-developer-badge">Nitesh Baria Web Developer - Evaluation Report</div>
-                        <h2 class="pdf-main-title" id="pdfDocSubject">કસોટી મૂલ્યાંકન પત્રક</h2>
+                        <div class="pdf-developer-badge">Nitesh Baria Web Developer - Official Evaluation</div>
+                        <h2 class="pdf-main-title" id="pdfDocSubject">કસોટી પ્રશ્નપત્ર & ઉત્તરવહી</h2>
                     </div>
                     <div class="pdf-info-grid" id="pdfDocMeta"></div>
+                    <!-- અહીં સીધા પ્રશ્નો અને જવાબો લોડ થશે -->
                     <div id="pdfDocQuestions"></div>
                 </div>
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn-action-sm" onclick="exportReviewPDF()" style="background:var(--gradient-emerald); padding: 8px 16px;">
-                <i class="fa-solid fa-file-pdf"></i> 📥 પ્રશ્નપત્ર PDF ડાઉનલોડ કરો
+            <button class="btn-action-sm" onclick="exportReviewPDF()" style="background:var(--gradient-emerald); padding: 8px 18px;">
+                <i class="fa-solid fa-file-pdf"></i> 📥 A4 પ્રશ્નપત્ર PDF ડાઉનલોડ કરો
             </button>
             <button class="btn-action-sm" onclick="closeModal()" style="background:#64748b; padding: 8px 16px;">બંધ કરો</button>
         </div>
@@ -641,9 +665,9 @@ let selectedStudentEmail = "";
 let gaugeChart = null;
 let progressChart = null;
 let currentOpenRepo = "";
-let currentSelectedModalItem = null;
+let currentPdfFilename = "Test_Paper.pdf";
 
-// પાસવર્ડ વડે લૉગિન લોજિક
+// ૧. પાસવર્ડ વડે લૉગિન લોજિક
 function loginWithPassword() {
     userEmail = document.getElementById("loginEmailInput").value.trim().toLowerCase();
     const enteredPassword = document.getElementById("loginPasswordInput").value.trim();
@@ -660,7 +684,7 @@ function loginWithPassword() {
     }
 }
 
-// થીમ સ્વિચ
+// ૨. થીમ સ્વિચ
 function switchTheme() {
     const isDark = document.body.classList.toggle("dark-mode");
     const themeIcon = document.getElementById("themeIcon");
@@ -905,10 +929,14 @@ async function openRepoFiles(repoName) {
                 </div>
                 <div style="font-size:11.5px; color:var(--text-muted); font-family:monospace;">${repoName}/${fileName}</div>
             </div>
-            <a href="${testUrl}" target="_blank" class="btn-take-test" style="background:${isAttempted ? '#64748b' : 'var(--primary-gradient)'};">
-                <i class="fa-solid ${isAttempted ? 'fa-rotate-right' : 'fa-play'}"></i> 
-                ${isAttempted ? 'પુનઃ પ્રયાસ કરો 🔄' : 'કસોટી આપો 🚀'}
-            </a>
+            <div class="file-action-buttons">
+                <a href="${testUrl}" target="_blank" class="btn-take-test">
+                    <i class="fa-solid fa-play"></i> કસોટી આપો
+                </a>
+                <button class="btn-view-paper" onclick="loadDirectQuestionPaper('${repoName}', '${fileName}')">
+                    <i class="fa-solid fa-file-pdf"></i> પ્રશ્નપત્ર PDF
+                </button>
+            </div>
         `;
         listGrid.appendChild(fileCard);
     });
@@ -920,6 +948,146 @@ function closeRepoFiles() {
     currentOpenRepo = "";
     document.getElementById("repoFilesContainer").style.display = "none";
     renderRepoGrid();
+}
+
+/* 🌟 સીધું રીપોઝીટરી ફાઈલમાંથી પ્રશ્નો, જવાબો અને સમજૂતી મેળવીને A4 PDF મોડલ બનાવતું ફંક્શન 🌟 */
+async function loadDirectQuestionPaper(repoName, fileName) {
+    const testUrl = (fileName === "index.html")
+        ? `https://niteshbariya.github.io/${repoName}/`
+        : `https://niteshbariya.github.io/${repoName}/${fileName}`;
+
+    document.getElementById("modalHeading").innerText = `${repoName}/${fileName} - પ્રશ્નપત્ર & ઉત્તરવહી`;
+    document.getElementById("pdfDocSubject").innerText = `${repoName}/${fileName} - મૂલ્યાંકન પ્રશ્નપત્ર`;
+    
+    document.getElementById("pdfDocMeta").innerHTML = `
+        <div><strong>રિપોઝિટરી:</strong> ${repoName}</div>
+        <div><strong>ફાઈલ નામ:</strong> ${fileName}</div>
+        <div><strong>નિર્માતા:</strong> Nitesh Baria Web Developer</div>
+        <div><strong>તારીખ:</strong> ${new Date().toLocaleDateString('gu-IN')}</div>
+    `;
+
+    const qContainer = document.getElementById("pdfDocQuestions");
+    qContainer.innerHTML = `<div style="text-align:center; padding:30px; color:#2563eb;">
+        <i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>
+        રિપોઝિટરીમાંથી પ્રશ્નપત્ર, વિકલ્પો અને જવાબો લોડ થઈ રહ્યા છે...
+    </div>`;
+
+    document.getElementById("reviewModal").style.display = "flex";
+    currentPdfFilename = `${repoName}_${fileName.replace('.html','')}_Question_Paper.pdf`;
+
+    try {
+        const response = await fetch(testUrl);
+        const htmlText = await response.text();
+
+        // સ્ક્રિપ્ટમાંથી પ્રશ્નો શોધવા (questions array)
+        let foundQuestions = null;
+        const scriptMatches = htmlText.match(/const\s+questions\s*=\s*(\[[^;]+\]);/s) ||
+                              htmlText.match(/var\s+questions\s*=\s*(\[[^;]+\]);/s) ||
+                              htmlText.match(/let\s+questions\s*=\s*(\[[^;]+\]);/s);
+
+        if (scriptMatches) {
+            try {
+                foundQuestions = eval(scriptMatches[1]);
+            } catch (e) {}
+        }
+
+        let questionsHtml = "";
+
+        if (foundQuestions && foundQuestions.length > 0) {
+            foundQuestions.forEach((q, idx) => {
+                const qText = q.question || q.q || `પ્રશ્ન ${idx + 1}`;
+                const opts = q.options || q.opts || [];
+                const ans = q.answer !== undefined ? q.answer : q.ans;
+                const correctOptText = (opts.length > 0 && typeof ans === 'number') ? opts[ans] : ans;
+                const unit = q.unit || q.chapter || "";
+                const exp = q.explanation || q.exp || "";
+
+                questionsHtml += `
+                    <div class="pdf-q-item">
+                        <div class="pdf-q-title">પ્રશ્ન ${idx + 1}: ${qText}</div>
+                        ${opts.length > 0 ? `
+                            <div class="pdf-options-list">
+                                ${opts.map((opt, oIdx) => `<div>(${String.fromCharCode(65 + oIdx)}) ${opt}</div>`).join('')}
+                            </div>
+                        ` : ''}
+                        <div class="pdf-ans-box">
+                            ✅ સાચો જવાબ: <strong>${correctOptText}</strong>
+                        </div>
+                        ${(unit || exp) ? `
+                            <div class="pdf-unit-box">
+                                ${unit ? `<div>📐 <strong>એકમ / પ્રકરણ:</strong> ${unit}</div>` : ''}
+                                ${exp ? `<div>💡 <strong>વિગતવાર સમજૂતી:</strong> ${exp}</div>` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            qContainer.innerHTML = questionsHtml;
+        } else {
+            // જો HTML એલિમેન્ટ્સ તરીકે પ્રશ્નો હોય
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, "text/html");
+            const qDivs = doc.querySelectorAll(".question, .quiz-card, .question-box, .q-item");
+
+            if (qDivs.length > 0) {
+                qDivs.forEach((div, idx) => {
+                    questionsHtml += `<div class="pdf-q-item"><strong>પ્રશ્ન ${idx + 1}:</strong> ${div.innerHTML}</div>`;
+                });
+                qContainer.innerHTML = questionsHtml;
+            } else {
+                qContainer.innerHTML = `
+                    <div class="pdf-q-item" style="text-align:center;">
+                        <div class="pdf-q-title">આ ફાઈલમાંથી પ્રશ્નો સફળતાપૂર્વક મેળવાયા છે. કસોટી લાઈવ જોવા નીચે ક્લિક કરો:</div>
+                        <a href="${testUrl}" target="_blank" class="btn-take-test" style="display:inline-flex; margin-top:10px;">
+                            કસોટી પેજ ખોલીને જુઓ ↗
+                        </a>
+                    </div>
+                `;
+            }
+        }
+    } catch (err) {
+        qContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444;">
+            પ્રશ્નપત્ર લોડ કરવામાં ક્ષતિ આવી. કૃપા કરીને ફાઈલ લિંક ચકાસો.
+        </div>`;
+    }
+}
+
+// આપેલી કસોટીનું પત્રકમાંથી પ્રશ્નપત્ર ખોલવું
+function openTestModal(idx) {
+    const item = filteredRecords[idx];
+    currentPdfFilename = `${item.name || 'પરીક્ષાર્થી'}_${item.subject || 'કસોટી'}_મૂલ્યાંકન.pdf`;
+
+    document.getElementById("modalHeading").innerText = `${item.subject || 'કસોટી'} - પરિણામ & પ્રશ્નપત્ર`;
+    document.getElementById("pdfDocSubject").innerText = `${item.subject || 'કસોટી મૂલ્યાંકન પત્રક'}`;
+    document.getElementById("pdfDocMeta").innerHTML = `
+        <div><strong>પરીક્ષાર્થીનું નામ:</strong> ${item.name || '-'}</div>
+        <div><strong>ઈમેઈલ આઈડી:</strong> ${item.email || '-'}</div>
+        <div><strong>તારીખ & સમય:</strong> ${item.dateTime || '-'}</div>
+        <div><strong>મેળવેલ ગુણ / ટકાવારી:</strong> <span style="color:#10b981; font-weight:bold;">${item.score || '-'} (${formatPercentDisplay(item.percentage)})</span></div>
+    `;
+
+    const qContainer = document.getElementById("pdfDocQuestions");
+    if (item.reviewHtml && item.reviewHtml.length > 20) {
+        qContainer.innerHTML = item.reviewHtml;
+        const allItems = qContainer.querySelectorAll("div[style*='border']");
+        allItems.forEach(box => {
+            box.style.border = "1.5px solid #cbd5e1";
+            box.style.borderRadius = "8px";
+            box.style.padding = "12px";
+            box.style.marginBottom = "14px";
+            box.style.backgroundColor = "#ffffff";
+            box.style.pageBreakInside = "avoid";
+        });
+    } else {
+        qContainer.innerHTML = `
+            <div class="pdf-q-item">
+                <div class="pdf-q-title">આ કસોટીનું પરિણામ Google Sheet માં નોંધાયેલ છે.</div>
+                <div class="pdf-ans-box">કુલ સ્કોર: ${item.score || '-'} | ટકાવારી: ${formatPercentDisplay(item.percentage)}</div>
+            </div>
+        `;
+    }
+
+    document.getElementById("reviewModal").style.display = "flex";
 }
 
 function updateProfileCard() {
@@ -1034,51 +1202,10 @@ function renderHistoryTable() {
             <td><span style="background:rgba(37, 99, 235, 0.1); color:#2563eb; padding:3px 8px; border-radius:10px; font-weight:700;">${item.score || "-"}</span></td>
             <td><strong style="color:#10b981; font-size:14px;">${formatPercentDisplay(item.percentage)}</strong></td>
             <td>${item.timeTaken || "-"}</td>
-            <td><button class="btn-action-sm" onclick="openTestModal(${idx})" style="background:var(--primary-gradient);"><i class="fa-solid fa-file-lines"></i> પ્રશ્નપત્ર & PDF</button></td>
+            <td><button class="btn-action-sm" onclick="openTestModal(${idx})" style="background:var(--primary-gradient);"><i class="fa-solid fa-file-lines"></i> પરિણામ PDF</button></td>
         `;
         tbody.appendChild(tr);
     });
-}
-
-// મોડલમાં પ્રશ્નપત્ર અને ઉત્તરવહીને સુંદર રીતે ગોઠવવી
-function openTestModal(idx) {
-    currentSelectedModalItem = filteredRecords[idx];
-    document.getElementById("modalHeading").innerText = `${currentSelectedModalItem.subject || 'કસોટી'} - પ્રશ્નપત્ર & ઉત્તરવહી`;
-    
-    // PDF Header Data
-    document.getElementById("pdfDocSubject").innerText = `${currentSelectedModalItem.subject || 'કસોટી મૂલ્યાંકન પત્રક'}`;
-    document.getElementById("pdfDocMeta").innerHTML = `
-        <div><strong>પરીક્ષાર્થીનું નામ:</strong> ${currentSelectedModalItem.name || '-'}</div>
-        <div><strong>ઈમેઈલ આઈડી:</strong> ${currentSelectedModalItem.email || '-'}</div>
-        <div><strong>તારીખ & સમય:</strong> ${currentSelectedModalItem.dateTime || '-'}</div>
-        <div><strong>મેળવેલ ગુણ / ટકાવારી:</strong> <span style="color:#10b981; font-weight:bold;">${currentSelectedModalItem.score || '-'} (${formatPercentDisplay(currentSelectedModalItem.percentage)})</span></div>
-    `;
-
-    const qContainer = document.getElementById("pdfDocQuestions");
-    if (currentSelectedModalItem.reviewHtml && currentSelectedModalItem.reviewHtml.length > 20) {
-        // જો HTML રિવ્યૂ મળે તો તેને પ્રીમિયમ લુક આપવો
-        qContainer.innerHTML = currentSelectedModalItem.reviewHtml;
-        
-        // તમામ જવાબો અને એકમ બોક્સને અલગ આકર્ષક કલર આપવા
-        const allItems = qContainer.querySelectorAll("div[style*='border']");
-        allItems.forEach(box => {
-            box.style.border = "1.5px solid #cbd5e1";
-            box.style.borderRadius = "8px";
-            box.style.padding = "12px";
-            box.style.marginBottom = "14px";
-            box.style.backgroundColor = "#ffffff";
-            box.style.pageBreakInside = "avoid";
-        });
-    } else {
-        qContainer.innerHTML = `
-            <div class="pdf-q-item">
-                <div class="pdf-q-title">પ્રશ્નપત્ર પરિણામ વિગતો ઉપલબ્ધ છે પરંતુ વિગતવાર પ્રશ્ન-ઉત્તર રિપોર્ટ શીટમાં નોંધાયેલ નથી.</div>
-                <div class="pdf-ans-box">કુલ સ્કોર: ${currentSelectedModalItem.score || '-'}</div>
-            </div>
-        `;
-    }
-
-    document.getElementById("reviewModal").style.display = "flex";
 }
 
 function closeModal() { document.getElementById("reviewModal").style.display = "none"; }
@@ -1086,11 +1213,9 @@ function closeModal() { document.getElementById("reviewModal").style.display = "
 // A4 સાઇઝ પરફેક્ટ PDF ડાઉનલોડ ફંક્શન
 function exportReviewPDF() {
     const element = document.getElementById("pdfPrintArea");
-    const filename = `${currentSelectedModalItem.name || 'પરીક્ષાર્થી'}_${currentSelectedModalItem.subject || 'કસોટી'}_પ્રશ્નપત્ર.pdf`;
-
     const opt = {
         margin: [8, 8, 8, 8],
-        filename: filename,
+        filename: currentPdfFilename,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, logging: false },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
