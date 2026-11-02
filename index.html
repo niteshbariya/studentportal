@@ -717,7 +717,7 @@
             </div>
         </section>
 
-        <!-- ૪. ઓનલાઇન મોક ટેસ્ટ કેન્દ્ર (તારીખ + બાકી/પૂર્ણ સ્ટેટસ સાથે) -->
+        <!-- ૪. ઓનલાઇન મોક ટેસ્ટ કેન્દ્ર (GitHub API થી તમામ રેપોઝીટરી લાવીને, studentportal બાદ કરીને) -->
         <section class="test-hub-card">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
@@ -803,48 +803,28 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 
-/* 🌟 તમારી અલગ-અલગ રિપોઝિટરીની કસોટીઓ (તારીખ, બેજ કલર અને લિંક સાથે) 🌟 */
-const AVAILABLE_TESTS = [
-    {
-        id: "STD4_ENV",
-        title: "ધોરણ-૪ પર્યાવરણ (૧૫૫ પ્રશ્નો)",
-        badge: "પ્રાથમિક શાળા",
-        postDate: "02-11-2026",
-        color: "linear-gradient(135deg, #0284c7, #06b6d4)",
-        url: "https://niteshbariya.github.io/paryavaran-std4/"
-    },
-    {
-        id: "NEP_2020",
-        title: "રાષ્ટ્રીય શિક્ષણ નીતિ ૨૦૨૦ (NEP 2020) - ૧૫૦ પ્રશ્નો",
-        badge: "શિક્ષક સજ્જતા",
-        postDate: "01-11-2026",
-        color: "linear-gradient(135deg, #7c3aed, #a855f7)",
-        url: "https://niteshbariya.github.io/nep2020-quiz/"
-    },
-    {
-        id: "DELED_1A",
-        title: "D.El.Ed. કોર્સ-૧(અ) - ૧૦૦ પ્રશ્નો કસોટી",
-        badge: "D.El.Ed. સ્પેશિયલ",
-        postDate: "28-10-2026",
-        color: "linear-gradient(135deg, #059669, #10b981)",
-        url: "https://niteshbariya.github.io/deled-course1a/"
-    },
-    {
-        id: "TET_MATHS",
-        title: "TET / CTET સ્પેશિયલ: ગણિત પાયાના ખ્યાલો પ્રશ્નબેંક",
-        badge: "TET / CTET",
-        postDate: "25-10-2026",
-        color: "linear-gradient(135deg, #d97706, #f59e0b)",
-        url: "https://niteshbariya.github.io/tet-maths-quiz/"
-    },
-    {
-        id: "DELED_2ND",
-        title: "D.El.Ed. દ્વિતીય વર્ષ - કોર્સ 1 (અ): બોધ અને અધ્યયન",
-        badge: "D.El.Ed. દ્વિતીય વર્ષ",
-        postDate: "20-10-2026",
-        color: "linear-gradient(135deg, #e11d48, #f43f5e)",
-        url: "https://niteshbariya.github.io/deled-second-year/"
-    }
+/* 🌟 રિપોઝિટરીઝના ડિસ્પ્લે નામો (જો જરૂર હોય તો કસ્ટમાઇઝ કરી શકાય) 🌟 */
+const REPO_TITLES = {
+    "paryavanrantest": "પર્યાવરણ મોક ટેસ્ટ (EVS)",
+    "evs": "પર્યાવરણ પ્રશ્નબેંક (EVS)",
+    "maths": "ગણિત પ્રશ્નબેંક (Maths Test)",
+    "guj": "ગુજરાતી વ્યાકરણ & સાહિત્ય",
+    "fy": "પ્રથમ વર્ષ અભ્યાસક્રમ કસોટી (F.Y.)",
+    "sy": "દ્વિતીય વર્ષ કસોટી (S.Y.)",
+    "baou": "BAOU વિશેષ ટેસ્ટ શ્રેણી",
+    "revision": "સંપૂર્ણ રિવિઝન મોક ટેસ્ટ",
+    "etc": "શિક્ષણ સહાયક ટેસ્ટ સિરીઝ"
+};
+
+// વિવિધ મલ્ટી-કલર ગ્રેડિયન્ટ્સ
+const CARD_COLORS = [
+    "linear-gradient(135deg, #0284c7, #06b6d4)",
+    "linear-gradient(135deg, #7c3aed, #a855f7)",
+    "linear-gradient(135deg, #059669, #10b981)",
+    "linear-gradient(135deg, #d97706, #f59e0b)",
+    "linear-gradient(135deg, #e11d48, #f43f5e)",
+    "linear-gradient(135deg, #4f46e5, #6366f1)",
+    "linear-gradient(135deg, #ea580c, #f97316)"
 ];
 
 let userEmail = "";
@@ -1038,20 +1018,54 @@ function filterAndRefreshData() {
     renderHistoryTable();
 }
 
-// ઓનલાઇન મોક ટેસ્ટ કેન્દ્ર રેન્ડર કરવું (તારીખ + સ્ટેટસ સાથે)
-function renderTestHubCards() {
+// ઓનલાઇન મોક ટેસ્ટ કેન્દ્ર રેન્ડર કરવું (GitHub API થી તમામ રેપોઝીટરી લાવીને, studentportal બાદ કરીને)
+async function renderTestHubCards() {
     const hub = document.getElementById("testHubGrid");
+    hub.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:20px; color:#64748b;">
+        <i class="fa-solid fa-spinner fa-spin"></i> લાઈવ કસોટીઓ લોડ થઈ રહી છે...
+    </div>`;
+
+    let repos = [];
+    try {
+        const res = await fetch("https://api.github.com/users/niteshbariya/repos?per_page=100&sort=updated");
+        repos = await res.json();
+    } catch (e) {
+        console.error("GitHub API Error", e);
+    }
+
     hub.innerHTML = "";
 
-    // વિદ્યાર્થીએ આપેલી કસોટીઓનું લિસ્ટ
+    // studentportal અને અન્ય નોન-ટેસ્ટ રેપોઝીટરીઝને સંપૂર્ણપણે બાદ (Exclude) કરવી
+    const ignoreList = ["studentportal", "niteshbariya.github.io", "niteshbariya"];
+    const testRepos = Array.isArray(repos) ? repos.filter(r => !ignoreList.includes(r.name.toLowerCase().trim())) : [];
+
     const userSubmittedSubjects = filteredRecords.map(r => (r.subject || "").trim().toLowerCase());
     let pendingCount = 0;
 
-    AVAILABLE_TESTS.forEach(t => {
-        const tTitleLower = t.title.toLowerCase();
-        // કસોટી આપી છે કે નહીં તે સરખાવો
-        const isAttempted = userSubmittedSubjects.some(sub => sub.includes(tTitleLower) || tTitleLower.includes(sub));
-        
+    if (testRepos.length === 0) {
+        hub.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:20px; color:#64748b;">કોઈ સક્રિય કસોટી મળી નથી.</div>`;
+        return;
+    }
+
+    testRepos.forEach((repo, idx) => {
+        const repoName = repo.name;
+        // શીર્ષક: કસ્ટમ ગુજરાતી નામ અથવા રિપોઝીટરી ડિસ્ક્રિપ્શન અથવા રિપોઝીટરીનું નામ
+        const title = REPO_TITLES[repoName.toLowerCase()] || repo.description || repoName.toUpperCase();
+
+        // તારીખ ફોર્મેટિંગ (DD-MM-YYYY)
+        const dateObj = new Date(repo.created_at || repo.updated_at);
+        const postDate = `${String(dateObj.getDate()).padStart(2, '0')}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${dateObj.getFullYear()}`;
+
+        // લાઈવ પેજ URL
+        const testUrl = `https://niteshbariya.github.io/${repoName}/`;
+        const color = CARD_COLORS[idx % CARD_COLORS.length];
+
+        // વિદ્યાર્થીએ આ કસોટી આપી છે કે નહીં તે સરખામણી
+        const isAttempted = userSubmittedSubjects.some(sub => 
+            sub.includes(repoName.toLowerCase()) || 
+            sub.includes(title.toLowerCase())
+        );
+
         if (!isAttempted) pendingCount++;
 
         const card = document.createElement("div");
@@ -1061,12 +1075,12 @@ function renderTestHubCards() {
         card.innerHTML = `
             <div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span class="test-card-badge" style="background:${t.color};">${t.badge}</span>
+                    <span class="test-card-badge" style="background:${color};">${repoName.toUpperCase()}</span>
                     <span style="font-size:11px; color:#64748b; font-weight:700;">
-                        <i class="fa-regular fa-calendar-days"></i> ${t.postDate}
+                        <i class="fa-regular fa-calendar-days"></i> ${postDate}
                     </span>
                 </div>
-                <div class="test-card-title">${t.title}</div>
+                <div class="test-card-title">${title}</div>
                 <div style="margin: 12px 0 16px 0;">
                     ${isAttempted 
                         ? `<span style="color:#065f46; background:#d1fae5; border:1px solid #a7f3d0; padding:5px 12px; border-radius:20px; font-size:12px; font-weight:800; display:inline-flex; align-items:center; gap:5px;">
@@ -1078,7 +1092,7 @@ function renderTestHubCards() {
                     }
                 </div>
             </div>
-            <a href="${t.url}" target="_blank" class="btn-start-test" style="background:${isAttempted ? 'linear-gradient(135deg, #475569, #64748b)' : t.color};">
+            <a href="${testUrl}" target="_blank" class="btn-start-test" style="background:${isAttempted ? 'linear-gradient(135deg, #475569, #64748b)' : color};">
                 <i class="fa-solid ${isAttempted ? 'fa-rotate-right' : 'fa-play'}"></i> 
                 ${isAttempted ? 'પુનઃ પ્રયાસ કરો 🔄' : 'કસોટી આપો 🚀'}
             </a>
@@ -1086,8 +1100,9 @@ function renderTestHubCards() {
         hub.appendChild(card);
     });
 
-    // બાકી કસોટીઓનો આંકડો દર્શાવો
-    document.getElementById("statPendingTests").innerText = pendingCount;
+    // બાકી કસોટીઓનો આંકડો અપડેટ કરવો
+    const statPendingEl = document.getElementById("statPendingTests");
+    if (statPendingEl) statPendingEl.innerText = pendingCount;
 }
 
 function updateProfileCard() {
