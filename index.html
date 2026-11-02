@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>સ્માર્ટ પર્ફોર્મન્સ & ટેસ્ટ પોર્ટલ</title>
-    <!-- Chart.js અને html2pdf.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #06b6d4 100%);
-            --header-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             --bg-color: #f0f4f8;
             --container-bg: #ffffff;
             --card-bg: #ffffff;
@@ -19,16 +17,14 @@
             --text-muted: #64748b;
             --heading-color: #1e3a8a;
             --border-color: #cbd5e1;
-            --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+            --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
             --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
 
-            /* Multicolor Accents */
             --gradient-violet: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
             --gradient-emerald: linear-gradient(135deg, #059669 0%, #10b981 100%);
             --gradient-amber: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
             --gradient-rose: linear-gradient(135deg, #e11d48 0%, #f43f5e 100%);
             --gradient-cyan: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
-            --gradient-orange: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
         }
 
         body.dark-mode {
@@ -41,22 +37,19 @@
             --heading-color: #93c5fd;
             --border-color: #334155;
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-            --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            transition: all 0.3s ease;
             padding: 15px;
         }
 
-        /* PC ની વિશાળ સ્ક્રીન માટે સંપૂર્ણ અનુકૂળ કન્ટેનર */
         .portal-wrapper {
             width: 100%;
             max-width: 1600px;
@@ -78,590 +71,228 @@
             border-bottom: 2px solid var(--border-color);
         }
 
-        .portal-brand {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
+        .portal-brand { display: flex; align-items: center; gap: 14px; }
         .portal-logo-icon {
-            width: 50px;
-            height: 50px;
+            width: 50px; height: 50px;
             background: var(--primary-gradient);
             border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 24px;
         }
         .brand-text h1 {
-            font-size: 24px;
-            font-weight: 800;
+            font-size: 24px; font-weight: 800;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
-        }
-        .brand-text p {
-            font-size: 13px;
-            color: var(--text-muted);
-            font-weight: 500;
         }
 
-        .nav-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .nav-controls { display: flex; align-items: center; gap: 12px; }
         .badge-role {
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: 700;
-            background: #eff6ff;
-            color: #1d4ed8;
-            border: 1.5px solid #bfdbfe;
-        }
-        body.dark-mode .badge-role {
-            background: #1e3a8a;
-            color: #93c5fd;
-            border-color: #3b82f6;
+            padding: 6px 14px; border-radius: 30px; font-size: 12px; font-weight: 700;
+            background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe;
         }
         .theme-toggle-btn {
-            background: var(--card-bg);
-            color: var(--text-color);
-            border: 1.5px solid var(--border-color);
-            padding: 8px 16px;
-            font-size: 13px;
-            font-weight: 600;
-            border-radius: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
+            background: var(--card-bg); color: var(--text-color);
+            border: 1.5px solid var(--border-color); padding: 8px 16px;
+            font-size: 13px; font-weight: 600; border-radius: 20px; cursor: pointer;
         }
 
-        /* લૉગિન પેનલ */
         #loginScreen {
-            max-width: 500px;
-            margin: 60px auto;
-            text-align: center;
-            padding: 40px 30px;
-            background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            border: 2px solid var(--border-color);
+            max-width: 500px; margin: 60px auto; text-align: center;
+            padding: 40px 30px; background: var(--card-bg);
+            border-radius: 20px; box-shadow: var(--shadow); border: 2px solid var(--border-color);
         }
         .login-input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            font-size: 15px;
-            margin: 15px 0;
-            background: var(--bg-color);
-            color: var(--text-color);
-            outline: none;
+            width: 100%; padding: 14px 16px; border: 2px solid var(--border-color);
+            border-radius: 12px; font-size: 15px; margin: 15px 0;
+            background: var(--bg-color); color: var(--text-color); outline: none;
         }
-        .login-input:focus { border-color: #2563eb; }
         .btn-gradient {
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            padding: 14px 24px;
-            font-size: 15px;
-            font-weight: 700;
-            border-radius: 12px;
-            cursor: pointer;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.25s;
+            background: var(--primary-gradient); color: white; border: none;
+            padding: 14px 24px; font-size: 15px; font-weight: 700; border-radius: 12px;
+            cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn-gradient:hover { opacity: 0.95; transform: translateY(-2px); box-shadow: 0 8px 18px rgba(37, 99, 235, 0.3); }
 
-        /* મુખ્ય ડેશબોર્ડ લેઆઉટ */
         #dashboardScreen { display: none; }
 
         .filter-ribbon {
-            background: var(--card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 16px;
-            padding: 16px 20px;
-            box-shadow: var(--card-shadow);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .filter-label {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--heading-color);
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            background: var(--card-bg); border: 2px solid var(--border-color);
+            border-radius: 16px; padding: 16px 20px; box-shadow: var(--card-shadow);
+            display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;
         }
         .select-styled {
-            padding: 10px 14px;
-            border-radius: 10px;
-            border: 2px solid var(--border-color);
-            background: var(--bg-color);
-            color: var(--text-color);
-            font-size: 14px;
-            font-weight: 600;
-            outline: none;
-            cursor: pointer;
+            padding: 10px 14px; border-radius: 10px; border: 2px solid var(--border-color);
+            background: var(--bg-color); color: var(--text-color); font-size: 14px; font-weight: 600;
             min-width: 250px;
         }
 
-        /* પ્રોફાઇલ કાર્ડ */
         .student-profile-card {
-            background: var(--card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 18px;
-            padding: 24px;
-            box-shadow: var(--card-shadow);
-            position: relative;
-            overflow: hidden;
-            margin-top: 5px;
+            background: var(--card-bg); border: 2px solid var(--border-color);
+            border-radius: 18px; padding: 24px; box-shadow: var(--card-shadow); position: relative;
         }
         .student-profile-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 6px;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
             background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #f59e0b, #10b981);
         }
-        .profile-main-info {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
         .avatar-box {
-            width: 75px;
-            height: 75px;
-            border-radius: 50%;
-            background: var(--gradient-violet);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 32px;
-            font-weight: 800;
-            box-shadow: 0 6px 18px rgba(124, 58, 237, 0.35);
-            flex-shrink: 0;
+            width: 75px; height: 75px; border-radius: 50%;
+            background: var(--gradient-violet); display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 32px; font-weight: 800; flex-shrink: 0;
         }
-        .profile-meta h2 {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--heading-color);
-            margin-bottom: 4px;
-        }
-        .contact-pills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 8px;
-        }
+        .contact-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
         .pill-contact {
-            background: var(--bg-color);
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-color);
-            border: 1.5px solid var(--border-color);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            text-decoration: none;
+            background: var(--bg-color); padding: 6px 12px; border-radius: 8px;
+            font-size: 13px; font-weight: 600; color: var(--text-color); border: 1.5px solid var(--border-color);
+            display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
         }
-        .pill-contact:hover { border-color: #2563eb; color: #2563eb; }
 
-        /* મલ્ટી-કલર સ્ટેટ્સ કાર્ડ્સ */
         .profile-stats-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 14px;
-            margin-top: 20px;
-            padding-top: 18px;
-            border-top: 2px dashed var(--border-color);
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+            margin-top: 20px; padding-top: 18px; border-top: 2px dashed var(--border-color);
         }
-        @media (max-width: 900px) {
-            .profile-stats-row { grid-template-columns: repeat(2, 1fr); }
-        }
-        .mini-stat {
-            padding: 16px;
-            border-radius: 14px;
-            text-align: center;
-            color: white;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-            transition: transform 0.2s;
-        }
-        .mini-stat:hover { transform: translateY(-3px); }
+        @media (max-width: 900px) { .profile-stats-row { grid-template-columns: repeat(2, 1fr); } }
+        .mini-stat { padding: 16px; border-radius: 14px; text-align: center; color: white; }
         .stat-blue { background: var(--gradient-cyan); }
         .stat-emerald { background: var(--gradient-emerald); }
         .stat-amber { background: var(--gradient-amber); }
         .stat-rose { background: var(--gradient-rose); }
-        .mini-stat-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9; }
+        .mini-stat-title { font-size: 12px; font-weight: 700; text-transform: uppercase; }
         .mini-stat-val { font-size: 26px; font-weight: 900; margin-top: 4px; }
 
-        /* સ્પીડોમીટર & ઉભો આલેખ */
         .analytics-two-col {
-            display: grid;
-            grid-template-columns: 1fr 1.3fr;
-            gap: 20px;
-            margin-top: 5px;
+            display: grid; grid-template-columns: 1fr 1.3fr; gap: 20px;
         }
-        @media (max-width: 1024px) {
-            .analytics-two-col { grid-template-columns: 1fr; }
-        }
-
-        .speedometer-card {
-            background: var(--card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 18px;
-            padding: 24px;
-            box-shadow: var(--card-shadow);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        @media (max-width: 1024px) { .analytics-two-col { grid-template-columns: 1fr; } }
+        .speedometer-card, .chart-box-card {
+            background: var(--card-bg); border: 2px solid var(--border-color);
+            border-radius: 18px; padding: 24px; box-shadow: var(--card-shadow);
         }
         .gauge-wrapper {
-            position: relative;
-            width: 280px;
-            height: 150px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
+            position: relative; width: 280px; height: 150px;
+            display: flex; justify-content: center; align-items: flex-end; margin: 0 auto;
         }
-        .gauge-canvas-container {
-            width: 280px;
-            height: 140px;
-        }
-        .gauge-value-display {
-            position: absolute;
-            bottom: 5px;
-            text-align: center;
-        }
-        .gauge-percent {
-            font-size: 36px;
-            font-weight: 900;
-            color: var(--heading-color);
-            line-height: 1;
-        }
+        .gauge-value-display { position: absolute; bottom: 5px; text-align: center; }
+        .gauge-percent { font-size: 36px; font-weight: 900; color: var(--heading-color); }
 
-        .chart-box-card {
-            background: var(--card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 18px;
-            padding: 24px;
-            box-shadow: var(--card-shadow);
-            display: flex;
-            flex-direction: column;
-        }
-        .chart-canvas-wrap {
-            position: relative;
-            height: 290px;
-            width: 100%;
-        }
-
-        /* ઓનલાઇન મોક ટેસ્ટ કેન્દ્ર */
+        /* કસોટી કેન્દ્ર ગ્રીડ */
         .test-hub-card {
-            background: var(--card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 18px;
-            padding: 24px;
-            box-shadow: var(--card-shadow);
+            background: var(--card-bg); border: 2px solid var(--border-color);
+            border-radius: 18px; padding: 24px; box-shadow: var(--card-shadow);
         }
         .hub-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-            gap: 18px;
-            margin-top: 18px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 18px; margin-top: 18px;
         }
         .test-action-card {
-            background: var(--bg-color);
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-            border: 2px solid var(--border-color);
-            transition: all 0.25s ease;
-            position: relative;
-            overflow: hidden;
+            background: var(--bg-color); border-radius: 16px; padding: 20px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            border: 2px solid var(--border-color); transition: all 0.25s ease;
         }
-        .test-action-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.1);
-        }
-        .card-accent-strip {
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 5px;
-        }
-        .test-card-title {
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--heading-color);
-            margin: 8px 0 6px 0;
-            line-height: 1.4;
-        }
-        .test-card-badge {
-            font-size: 11px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 20px;
-            display: inline-block;
-            color: white;
-        }
+        .test-action-card:hover { transform: translateY(-4px); box-shadow: 0 10px 22px rgba(0,0,0,0.1); }
+        .test-card-title { font-size: 16px; font-weight: 800; color: var(--heading-color); margin: 8px 0 6px 0; }
+        .test-card-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; color: white; display: inline-block; }
         .btn-start-test {
-            color: white;
-            text-decoration: none;
-            text-align: center;
-            padding: 11px 16px;
-            font-size: 14px;
-            font-weight: 700;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            color: white; text-decoration: none; text-align: center; padding: 11px 16px;
+            font-size: 14px; font-weight: 700; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn-start-test:hover { opacity: 0.95; transform: scale(1.02); }
 
-        /* પ્રીમિયમ ટેબલ સ્ટાઇલ (મજબૂત બોર્ડર્સ અને મલ્ટી-કલર એલિમેન્ટ્સ) */
+        /* મજબૂત બોર્ડર્સવાળું ટેબલ */
         .history-card {
-            background: var(--card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 18px;
-            padding: 24px;
-            box-shadow: var(--card-shadow);
+            background: var(--card-bg); border: 2px solid var(--border-color);
+            border-radius: 18px; padding: 24px; box-shadow: var(--card-shadow);
         }
         .table-wrap {
-            overflow-x: auto;
-            border-radius: 14px;
-            border: 2px solid #94a3b8; /* બહારની મજબૂત બોર્ડર */
-            margin-top: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            overflow-x: auto; border-radius: 14px; border: 2px solid #94a3b8; margin-top: 16px;
         }
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            text-align: left;
-            font-size: 14px;
-        }
-        th, td {
-            padding: 14px 16px;
-            border-right: 1.5px solid #cbd5e1; /* ઊભી કોલમ બોર્ડર */
-            border-bottom: 1.5px solid #cbd5e1; /* આડી હરોળ બોર્ડર */
-        }
-        th:last-child, td:last-child {
-            border-right: none;
-        }
-        tr:last-child td {
-            border-bottom: none;
-        }
-        th {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-            color: #ffffff;
-            font-weight: 700;
-            white-space: nowrap;
-            letter-spacing: 0.3px;
-        }
-        body.dark-mode th {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #93c5fd;
-            border-color: #334155;
-        }
-        body.dark-mode td {
-            border-color: #334155;
-        }
-        tbody tr:nth-child(even) {
-            background-color: rgba(241, 245, 249, 0.6);
-        }
-        body.dark-mode tbody tr:nth-child(even) {
-            background-color: rgba(30, 41, 59, 0.4);
-        }
-        tbody tr:hover {
-            background-color: rgba(37, 99, 235, 0.08) !important;
-        }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 14px; }
+        th, td { padding: 14px 16px; border-right: 1.5px solid #cbd5e1; border-bottom: 1.5px solid #cbd5e1; }
+        th:last-child, td:last-child { border-right: none; }
+        tr:last-child td { border-bottom: none; }
+        th { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: #ffffff; font-weight: 700; }
+        tbody tr:nth-child(even) { background-color: rgba(241, 245, 249, 0.6); }
 
         .btn-action-sm {
-            padding: 7px 14px;
-            font-size: 13px;
-            font-weight: 600;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            background: var(--gradient-cyan);
-            color: white;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-            box-shadow: 0 3px 8px rgba(2, 132, 199, 0.25);
+            padding: 7px 14px; font-size: 13px; font-weight: 600; border-radius: 8px;
+            border: none; cursor: pointer; background: var(--gradient-cyan); color: white;
+            display: inline-flex; align-items: center; gap: 6px;
         }
-        .btn-action-sm:hover { opacity: 0.95; transform: translateY(-1px); }
 
-        /* મોડલ પોપઅપ */
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.65);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            padding: 20px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.65); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px;
         }
         .modal-box {
-            background: var(--container-bg);
-            border-radius: 20px;
-            width: 100%;
-            max-width: 860px;
-            max-height: 88vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
-            border: 2px solid var(--border-color);
+            background: var(--container-bg); border-radius: 20px; width: 100%; max-width: 860px; max-height: 88vh;
+            display: flex; flex-direction: column; overflow: hidden; border: 2px solid var(--border-color);
         }
-        .modal-header {
-            padding: 18px 24px;
-            border-bottom: 2px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--card-bg);
-        }
-        .modal-filter-bar {
-            display: flex;
-            gap: 10px;
-            padding: 12px 24px;
-            background: var(--bg-color);
-            border-bottom: 1.5px solid var(--border-color);
-            flex-wrap: wrap;
-        }
-        .modal-body {
-            padding: 24px;
-            overflow-y: auto;
-        }
-        .modal-footer {
-            padding: 16px 24px;
-            border-top: 2px solid var(--border-color);
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            background: var(--card-bg);
-        }
+        .modal-header { padding: 18px 24px; border-bottom: 2px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { padding: 24px; overflow-y: auto; }
+        .modal-footer { padding: 16px 24px; border-top: 2px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; }
     </style>
 </head>
 <body>
 
 <div class="portal-wrapper">
-    <!-- હેડર -->
     <header class="top-navbar">
         <div class="portal-brand">
-            <div class="portal-logo-icon">
-                <i class="fa-solid fa-graduation-cap"></i>
-            </div>
+            <div class="portal-logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
             <div class="brand-text">
                 <h1>સ્માર્ટ પર્ફોર્મન્સ & ટેસ્ટ પોર્ટલ</h1>
-                <p>લાઈવ મોક ટેસ્ટ લિંક્સ, સ્પીડોમીટર ગેજ અને વિસ્તૃત ભૂલ-સુધારણા રિપોર્ટ</p>
+                <p>લાઈવ મોક ટેસ્ટ લિંક્સ, સ્પીડોમીટર ગેજ અને વિસ્તૃત પરિણામ અહેવાલ</p>
             </div>
         </div>
         <div class="nav-controls">
             <span id="roleBadge" class="badge-role"><i class="fa-solid fa-user-graduate"></i> વિદ્યાર્થી પોર્ટલ</span>
-            <button id="themeBtn" class="theme-toggle-btn" onclick="toggleTheme()">
-                <i class="fa-solid fa-moon"></i> ડાર્ક મોડ
-            </button>
-            <button id="logoutBtn" style="display:none;" onclick="location.reload()" class="btn-action-sm" style="background:var(--gradient-rose);">
-                <i class="fa-solid fa-right-from-bracket"></i> લૉગ આઉટ
-            </button>
+            <button id="themeBtn" class="theme-toggle-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i> ડાર્ક મોડ</button>
+            <button id="logoutBtn" style="display:none;" onclick="location.reload()" class="btn-action-sm" style="background:var(--gradient-rose);">લૉગ આઉટ</button>
         </div>
     </header>
 
-    <!-- ૧. લૉગિન સ્ક્રીન -->
     <div id="loginScreen">
         <div style="font-size: 40px; color: #2563eb; margin-bottom: 12px;"><i class="fa-solid fa-shield-halved"></i></div>
         <h2 style="font-size: 24px; font-weight: 800; color: var(--heading-color); margin-bottom: 8px;">સુરક્ષિત લૉગિન</h2>
         <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">કસોટી આપવા અને તમારો રિપોર્ટ જોવા ઈમેઈલ દાખલ કરો</p>
 
         <input type="email" id="loginEmailInput" class="login-input" placeholder="📧 તમારું ઈમેઈલ આઈડી લખો...">
-        <button id="otpSendBtn" class="btn-gradient" onclick="requestOTP()">
-            <i class="fa-solid fa-paper-plane"></i> OTP મોકલો
-        </button>
+        <button id="otpSendBtn" class="btn-gradient" onclick="requestOTP()"><i class="fa-solid fa-paper-plane"></i> OTP મોકલો</button>
 
         <div id="otpInputGroup" style="display: none; margin-top: 24px; padding-top: 20px; border-top: 2px dashed var(--border-color);">
             <label style="font-size: 13px; font-weight: 700; color: var(--heading-color);">📩 ઈમેઈલ પર આવેલો ૪ અંકનો OTP:</label>
             <input type="text" id="otpValueInput" class="login-input" maxlength="4" style="text-align: center; font-size: 24px; letter-spacing: 8px; font-weight: 800;">
-            <button id="verifyLoginBtn" class="btn-gradient" onclick="verifyAndStart()">
-                <i class="fa-solid fa-circle-check"></i> ચકાસો અને ડેશબોર્ડ ખોલો
-            </button>
+            <button id="verifyLoginBtn" class="btn-gradient" onclick="verifyAndStart()"><i class="fa-solid fa-circle-check"></i> ચકાસો અને ડેશબોર્ડ ખોલો</button>
         </div>
     </div>
 
-    <!-- ૨. મુખ્ય ડેશબોર્ડ (Full PC Screen) -->
     <main id="dashboardScreen">
-        
-        <!-- ફિલ્ટર રિબન -->
         <section class="filter-ribbon">
             <div class="filter-group" id="studentSelectWrapper" style="display: none;">
-                <span class="filter-label"><i class="fa-solid fa-users" style="color:#7c3aed;"></i> વિદ્યાર્થી પસંદ કરો:</span>
+                <span style="font-size: 13px; font-weight: 700; color: #7c3aed;"><i class="fa-solid fa-users"></i> વિદ્યાર્થી પસંદ કરો:</span>
                 <select id="studentDropdown" class="select-styled" onchange="onStudentSelectChange()"></select>
             </div>
-
             <div class="filter-group">
-                <span class="filter-label"><i class="fa-solid fa-book-open" style="color:#2563eb;"></i> વિષય ફિલ્ટર:</span>
+                <span style="font-size: 13px; font-weight: 700; color: #2563eb;"><i class="fa-solid fa-book-open"></i> વિષય ફિલ્ટર:</span>
                 <select id="subjectDropdown" class="select-styled" onchange="onSubjectFilterChange()">
                     <option value="ALL">📋 તમામ કસોટીઓ</option>
                 </select>
             </div>
         </section>
 
-        <!-- પ્રોફાઇલ કાર્ડ -->
         <section class="student-profile-card">
-            <div class="profile-main-info">
+            <div style="display: flex; align-items: center; gap: 20px;">
                 <div class="avatar-box" id="avatarInitial">ન</div>
-                <div class="profile-meta">
+                <div>
                     <div style="display:flex; align-items:center; gap:8px;">
-                        <h2 id="profName">વિદ્યાર્થીનું નામ</h2>
-                        <span id="rankBadge" class="badge-role" style="background:#fef3c7; color:#b45309; border-color:#fde68a;">🌟 A+ ગ્રેડ</span>
+                        <h2 id="profName" style="font-size: 22px; font-weight: 800; color: var(--heading-color);">વિદ્યાર્થીનું નામ</h2>
+                        <span id="rankBadge" class="badge-role" style="background:#fef3c7; color:#b45309;">🌟 A+ ગ્રેડ</span>
                     </div>
                     <div class="contact-pills">
-                        <a id="phoneLink" href="#" class="pill-contact">
-                            <i class="fa-solid fa-phone" style="color: #2563eb;"></i> <span id="profPhone">-</span>
-                        </a>
-                        <a id="whatsappLink" href="#" target="_blank" class="pill-contact" style="background:#ecfdf5; border-color:#a7f3d0; color:#065f46;">
-                            <i class="fa-brands fa-whatsapp" style="color:#10b981;"></i> WhatsApp
-                        </a>
-                        <span class="pill-contact">
-                            <i class="fa-solid fa-envelope" style="color: #64748b;"></i> <span id="profEmail">-</span>
-                        </span>
+                        <a id="phoneLink" href="#" class="pill-contact"><i class="fa-solid fa-phone" style="color: #2563eb;"></i> <span id="profPhone">-</span></a>
+                        <a id="whatsappLink" href="#" target="_blank" class="pill-contact" style="background:#ecfdf5; color:#065f46;"><i class="fa-brands fa-whatsapp" style="color:#10b981;"></i> WhatsApp</a>
+                        <span class="pill-contact"><i class="fa-solid fa-envelope" style="color: #64748b;"></i> <span id="profEmail">-</span></span>
                     </div>
                 </div>
             </div>
 
-            <!-- મલ્ટી-કલર ૪ કાર્ડ્સ -->
             <div class="profile-stats-row">
                 <div class="mini-stat stat-blue">
                     <div class="mini-stat-title"><i class="fa-solid fa-list-check"></i> કુલ આપેલી ટેસ્ટ</div>
@@ -682,69 +313,52 @@
             </div>
         </section>
 
-        <!-- ૩. સ્પીડોમીટર & ઉભો આલેખ (સામસામે બેલેન્સ્ડ) -->
         <section class="analytics-two-col">
-            <!-- સ્પીડોમીટર -->
             <div class="speedometer-card">
-                <h4 style="font-size:16px; color:var(--heading-color); font-weight:700; margin-bottom:12px;">
+                <h4 style="font-size:16px; color:var(--heading-color); font-weight:700; margin-bottom:12px; text-align:center;">
                     <i class="fa-solid fa-gauge-high" style="color:#2563eb;"></i> ઓવરઓલ પર્ફોર્મન્સ સ્પીડોમીટર
                 </h4>
                 <div class="gauge-wrapper">
-                    <div class="gauge-canvas-container">
-                        <canvas id="gaugeCanvas"></canvas>
-                    </div>
+                    <canvas id="gaugeCanvas" width="280" height="140"></canvas>
                     <div class="gauge-value-display">
                         <div class="gauge-percent" id="gaugeDisplayValue">0%</div>
-                        <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase;" id="gaugeStatusText">સરેરાશ સ્કોર</div>
+                        <div style="font-size:12px; font-weight:700; color:var(--text-muted);" id="gaugeStatusText">સરેરાશ સ્કોર</div>
                     </div>
-                </div>
-                <div style="font-size: 12px; color: var(--text-muted); margin-top: 14px; text-align: center;">
-                    🔴 0-40% મહેનત જરૂર | 🟡 41-75% સંતોષકારક | 🟢 76-100% ઉત્કૃષ્ટ
                 </div>
             </div>
 
-            <!-- ઉભો આલેખ: કસોટીવાર ટકાવારી -->
             <div class="chart-box-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <h3 style="font-size:16px; font-weight:700; color:var(--heading-color);">
-                        <i class="fa-solid fa-chart-column" style="color:#2563eb;"></i> કસોટીવાર ટકાવારી પ્રગતિ (Test Progress)
-                    </h3>
-                    <span style="font-size:12px; font-weight:700; color:var(--text-muted);">ઉભો આલેખ</span>
-                </div>
-                <div class="chart-canvas-wrap">
+                <h3 style="font-size:16px; font-weight:700; color:var(--heading-color); margin-bottom:12px;">
+                    <i class="fa-solid fa-chart-column" style="color:#2563eb;"></i> કસોટીવાર ટકાવારી પ્રગતિ (Test Progress)
+                </h3>
+                <div style="height: 250px; width: 100%;">
                     <canvas id="verticalProgressChart"></canvas>
                 </div>
             </div>
         </section>
 
-        <!-- ૪. ઓનલાઇન મોક ટેસ્ટ કેન્દ્ર (GitHub API થી તમામ રેપોઝીટરી લાવીને, studentportal બાદ કરીને) -->
+        <!-- તમામ રિપોઝિટરીની તમામ HTML કસોટીઓનું ઓટોમેટિક હબ -->
         <section class="test-hub-card">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
                     <h3 style="font-size:18px; font-weight:800; color:var(--heading-color);">
-                        <i class="fa-solid fa-rocket" style="color:#e11d48;"></i> ઓનલાઇન મોક ટેસ્ટ કેન્દ્ર (Live Tests Directory)
+                        <i class="fa-solid fa-rocket" style="color:#e11d48;"></i> ઓનલાઇન મોક ટેસ્ટ કેન્દ્ર (Live Tests Hub)
                     </h3>
                     <p style="font-size:13px; color:var(--text-muted); margin-top:2px;">
-                        કસોટી પોસ્ટ થયાની તારીખ અને આપવાની બાકી / પૂર્ણ થયેલ સ્થિતિ:
+                        તમામ રિપોઝિટરીની તમામ કસોટીઓ, અપલોડ તારીખ અને આપવાની બાકી / પૂર્ણ સ્થિતિ:
                     </p>
                 </div>
                 <span class="badge-role" style="background:#ecfdf5; color:#059669; border-color:#6ee7b7;">
-                    <i class="fa-solid fa-circle-check"></i> પોર્ટલ દ્વારા નિયંત્રિત
+                    <i class="fa-solid fa-circle-check"></i> લાઈવ પોર્ટલ
                 </span>
             </div>
-
-            <!-- મલ્ટી-કલર ટેસ્ટ કાર્ડ્સ અહીં આપોઆપ ગોઠવાશે -->
             <div class="hub-grid" id="testHubGrid"></div>
         </section>
 
-        <!-- ૫. પ્રીમિયમ ટેબલ -->
         <section class="history-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-                <h3 style="font-size:17px; font-weight:700; color:var(--heading-color);">
-                    <i class="fa-solid fa-table-list" style="color:#2563eb;"></i> આપેલી કસોટીઓનું વિગતવાર પત્રક
-                </h3>
-                <div id="tableRecordCount" style="font-size:13px; font-weight:700; color:#2563eb; background:#eff6ff; padding:5px 14px; border-radius:20px; border:1px solid #bfdbfe;">કુલ ટેસ્ટ: 0</div>
-            </div>
+            <h3 style="font-size:17px; font-weight:700; color:var(--heading-color); margin-bottom:12px;">
+                <i class="fa-solid fa-table-list" style="color:#2563eb;"></i> આપેલી કસોટીઓનું વિગતવાર પત્રક
+            </h3>
             <div class="table-wrap">
                 <table>
                     <thead>
@@ -762,39 +376,22 @@
                 </table>
             </div>
         </section>
-
     </main>
 </div>
 
-<!-- વિગતવાર રિવ્યૂ & PDF મોડલ -->
+<!-- રિવ્યૂ મોડલ -->
 <div id="reviewModal" class="modal-overlay">
     <div class="modal-box">
         <div class="modal-header">
             <h3 id="modalHeading" style="font-size: 18px; font-weight: 800; color: var(--heading-color);">વિગતવાર કસોટી રિવ્યૂ</h3>
-            <button onclick="closeModal()" style="background:none; border:none; font-size:22px; cursor:pointer; color:var(--text-muted);">&times;</button>
+            <button onclick="closeModal()" style="background:none; border:none; font-size:22px; cursor:pointer;">&times;</button>
         </div>
-
-        <div class="modal-filter-bar">
-            <button class="btn-action-sm" onclick="applyQuestionFilter('wrong')" style="background:var(--gradient-rose);">
-                <i class="fa-solid fa-circle-xmark"></i> ❌ માત્ર ખોટા પ્રશ્નો (ભૂલ બુકલેટ)
-            </button>
-            <button class="btn-action-sm" onclick="applyQuestionFilter('all')" style="background:var(--gradient-cyan);">
-                <i class="fa-solid fa-list-check"></i> 📋 તમામ પ્રશ્નો
-            </button>
-            <button class="btn-action-sm" onclick="applyQuestionFilter('correct')" style="background:var(--gradient-emerald);">
-                <i class="fa-solid fa-circle-check"></i> ✅ માત્ર સાચા પ્રશ્નો
-            </button>
-        </div>
-
         <div class="modal-body" id="modalPrintDoc">
             <div id="modalStudentHeader" style="background: #eff6ff; border-radius: 12px; padding: 16px; margin-bottom: 20px; border: 1.5px solid #bfdbfe;"></div>
             <div id="modalQuestionContainer"></div>
         </div>
-
         <div class="modal-footer">
-            <button class="btn-action-sm" onclick="exportReviewPDF()" style="background:var(--gradient-emerald); padding: 10px 18px;">
-                <i class="fa-solid fa-file-arrow-down"></i> 📥 પ્રિન્ટેબલ PDF ડાઉનલોડ કરો
-            </button>
+            <button class="btn-action-sm" onclick="exportReviewPDF()" style="background:var(--gradient-emerald); padding: 10px 18px;">📥 PDF ડાઉનલોડ કરો</button>
             <button class="btn-action-sm" onclick="closeModal()" style="background:#64748b; padding: 10px 18px;">બંધ કરો</button>
         </div>
     </div>
@@ -803,28 +400,27 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 
-/* 🌟 રિપોઝિટરીઝના ડિસ્પ્લે નામો (જો જરૂર હોય તો કસ્ટમાઇઝ કરી શકાય) 🌟 */
-const REPO_TITLES = {
-    "paryavanrantest": "પર્યાવરણ મોક ટેસ્ટ (EVS)",
-    "evs": "પર્યાવરણ પ્રશ્નબેંક (EVS)",
-    "maths": "ગણિત પ્રશ્નબેંક (Maths Test)",
-    "guj": "ગુજરાતી વ્યાકરણ & સાહિત્ય",
-    "fy": "પ્રથમ વર્ષ અભ્યાસક્રમ કસોટી (F.Y.)",
-    "sy": "દ્વિતીય વર્ષ કસોટી (S.Y.)",
-    "baou": "BAOU વિશેષ ટેસ્ટ શ્રેણી",
-    "revision": "સંપૂર્ણ રિવિઝન મોક ટેસ્ટ",
-    "etc": "શિક્ષણ સહાયક ટેસ્ટ સિરીઝ"
-};
+/* 🌟 તમારી રિપોઝિટરીઝની ફાઈલોનું માળખું (અપલોડ તારીખ સાથે) 🌟 */
+const KNOWN_TESTS = [
+    // ૧. 'fy' રિપોઝિટરીની તમામ ફાઈલો
+    { repo: "fy", file: "1a.html", title: "કોર્સ 1(અ): બાળપણ અને બાળવિકાસ", badge: "FY-1(અ)", postDate: "02-09-2026", color: "linear-gradient(135deg, #0284c7, #06b6d4)" },
+    { repo: "fy", file: "1b.html", title: "કોર્સ 1(બ): શિક્ષણના સમાજશાસ્ત્રીય પરિપ્રેક્ષ્ય", badge: "FY-1(બ)", postDate: "10-10-2026", color: "linear-gradient(135deg, #7c3aed, #a855f7)" },
+    { repo: "fy", file: "1bnew.html", title: "કોર્સ 1(બ) - નવીન મોક ટેસ્ટ", badge: "FY-1(બ) New", postDate: "15-10-2026", color: "linear-gradient(135deg, #059669, #10b981)" },
+    { repo: "fy", file: "2a.html", title: "કોર્સ 2(અ): બોધ, પ્રત્યાયન અને અધ્યયન", badge: "FY-2(અ)", postDate: "18-10-2026", color: "linear-gradient(135deg, #d97706, #f59e0b)" },
+    { repo: "fy", file: "2b.html", title: "કોર્સ 2(બ): શૈક્ષણિક મૂલ્યાંકન", badge: "FY-2(બ)", postDate: "20-10-2026", color: "linear-gradient(135deg, #e11d48, #f43f5e)" },
+    { repo: "fy", file: "3.html", title: "કોર્સ 3: માતૃભાષા શિક્ષણ", badge: "FY-3", postDate: "22-10-2026", color: "linear-gradient(135deg, #4f46e5, #6366f1)" },
+    { repo: "fy", file: "4aguj.html", title: "કોર્સ 4(અ): ગુજરાતી પદ્ધતિશાસ્ત્ર", badge: "FY-4(અ) Guj", postDate: "25-10-2026", color: "linear-gradient(135deg, #ea580c, #f97316)" },
+    { repo: "fy", file: "4beng.html", title: "કોર્સ 4(બ): અંગ્રેજી પદ્ધતિશાસ્ત્ર", badge: "FY-4(બ) Eng", postDate: "26-10-2026", color: "linear-gradient(135deg, #0284c7, #0891b2)" },
+    { repo: "fy", file: "5bevs.html", title: "કોર્સ 5(બ): પર્યાવરણ અધ્યયન", badge: "FY-5(બ) EVS", postDate: "28-10-2026", color: "linear-gradient(135deg, #16a34a, #22c55e)" },
+    { repo: "fy", file: "module3.html", title: "મોડ્યુલ ૩ વિશેષ કસોટી", badge: "FY-Mod 3", postDate: "30-10-2026", color: "linear-gradient(135deg, #9333ea, #a855f7)" },
 
-// વિવિધ મલ્ટી-કલર ગ્રેડિયન્ટ્સ
-const CARD_COLORS = [
-    "linear-gradient(135deg, #0284c7, #06b6d4)",
-    "linear-gradient(135deg, #7c3aed, #a855f7)",
-    "linear-gradient(135deg, #059669, #10b981)",
-    "linear-gradient(135deg, #d97706, #f59e0b)",
-    "linear-gradient(135deg, #e11d48, #f43f5e)",
-    "linear-gradient(135deg, #4f46e5, #6366f1)",
-    "linear-gradient(135deg, #ea580c, #f97316)"
+    // ૨. અન્ય રિપોઝિટરીઝ
+    { repo: "paryavanrantest", file: "index.html", title: "પર્યાવરણ સંપૂર્ણ મોક ટેસ્ટ (૧૫૫ પ્રશ્નો)", badge: "પર્યાવરણ", postDate: "02-11-2026", color: "linear-gradient(135deg, #059669, #10b981)" },
+    { repo: "maths", file: "index.html", title: "ગણિત પ્રશ્નબેંક અને સંકલ્પના કસોટી", badge: "ગણિત", postDate: "01-11-2026", color: "linear-gradient(135deg, #0284c7, #06b6d4)" },
+    { repo: "guj", file: "index.html", title: "ગુજરાતી વ્યાકરણ & સાહિત્ય કસોટી", badge: "ગુજરાતી", postDate: "28-10-2026", color: "linear-gradient(135deg, #7c3aed, #a855f7)" },
+    { repo: "sy", file: "index.html", title: "દ્વિતીય વર્ષ (S.Y.) અભ્યાસક્રમ કસોટી", badge: "S.Y.", postDate: "22-10-2026", color: "linear-gradient(135deg, #e11d48, #f43f5e)" },
+    { repo: "baou", file: "index.html", title: "BAOU વિશેષ ઓનલાઇન ટેસ્ટ", badge: "BAOU", postDate: "20-10-2026", color: "linear-gradient(135deg, #d97706, #f59e0b)" },
+    { repo: "revision", file: "index.html", title: "સંપૂર્ણ રિવિઝન મોક ટેસ્ટ", badge: "રિવિઝન", postDate: "15-10-2026", color: "linear-gradient(135deg, #4f46e5, #6366f1)" }
 ];
 
 let userEmail = "";
@@ -832,105 +428,64 @@ let allRawRecords = [];
 let filteredRecords = [];
 let isAdminUser = false;
 let selectedStudentEmail = "";
-let activeFilterState = 'all';
 
 let gaugeChart = null;
 let progressChart = null;
 
-// ટકાવારી સ્માર્ટ ફંક્શન
 function parsePercentValue(val) {
     if (!val && val !== 0) return 0;
     let s = String(val).replace('%', '').trim();
     let num = parseFloat(s);
     if (isNaN(num)) return 0;
-    if (num > 0 && num <= 1 && !String(val).includes('%')) {
-        num = num * 100;
-    }
+    if (num > 0 && num <= 1 && !String(val).includes('%')) num = num * 100;
     return Math.round(num * 100) / 100;
 }
 
 function formatPercentDisplay(val) {
     if (!val && val !== 0) return "-";
-    const num = parsePercentValue(val);
-    return `${num}%`;
+    return `${parsePercentValue(val)}%`;
 }
 
 function toggleTheme() {
     document.body.classList.toggle("dark-mode");
-    const isDark = document.body.classList.contains("dark-mode");
-    document.getElementById("themeBtn").innerHTML = isDark ? `<i class="fa-solid fa-sun"></i> લાઈટ મોડ` : `<i class="fa-solid fa-moon"></i> ડાર્ક મોડ`;
     renderAllVisuals();
 }
 
 function requestOTP() {
     userEmail = document.getElementById("loginEmailInput").value.trim().toLowerCase();
-    if (!userEmail.includes("@")) {
-        alert("કૃપા કરીને માન્ય ઈમેઈલ આઈડી દાખલ કરો.");
-        return;
-    }
+    if (!userEmail.includes("@")) { alert("સાચું ઈમેઈલ લખો."); return; }
     const btn = document.getElementById("otpSendBtn");
-    btn.disabled = true;
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> OTP મોકલાઈ રહ્યો છે...`;
+    btn.disabled = true; btn.innerText = "OTP મોકલાઈ રહ્યો છે...";
 
     fetch(SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
+        method: "POST", mode: "no-cors",
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify({ action: "sendOTP", name: "પરીક્ષાર્થી", email: userEmail })
     }).then(() => {
-        alert("તમારા Gmail પર ૪ અંકનો OTP મોકલવામાં આવ્યો છે.");
+        alert("ઈમેઈલ પર OTP મોકલવામાં આવ્યો છે.");
         document.getElementById("otpInputGroup").style.display = "block";
-        btn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> OTP ફરી મોકલો`;
-        btn.disabled = false;
-    }).catch(() => {
-        alert("OTP મોકલવામાં ક્ષતિ આવી. ફરી પ્રયાસ કરો.");
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> OTP મોકલો`;
-    });
+        btn.innerText = "OTP ફરી મોકલો"; btn.disabled = false;
+    }).catch(() => { alert("OTP મોકલવામાં ક્ષતિ આવી."); btn.disabled = false; });
 }
 
 function verifyAndStart() {
     const otp = document.getElementById("otpValueInput").value.trim();
-    if (otp.length !== 4) {
-        alert("કૃપા કરીને ૪ અંકનો સાચો OTP લખો.");
-        return;
-    }
-    const vBtn = document.getElementById("verifyLoginBtn");
-    vBtn.disabled = true;
-    vBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ચકાસણી ચાલુ છે...`;
-
+    if (otp.length !== 4) { alert("૪ અંકનો સાચો OTP લખો."); return; }
     fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "verifyOTP", email: userEmail, otp: otp })
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.status === "success" && data.verified) {
-            fetchDataAndInit();
-        } else {
-            alert("ખોટો OTP દાખલ કરેલ છે!");
-            vBtn.disabled = false;
-            vBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i> ચકાસો અને ડેશબોર્ડ ખોલો`;
-        }
-    })
-    .catch(() => {
-        fetchDataAndInit();
-    });
+        method: "POST", body: JSON.stringify({ action: "verifyOTP", email: userEmail, otp: otp })
+    }).then(r => r.json()).then(data => {
+        if (data.status === "success" && data.verified) { fetchDataAndInit(); }
+        else { alert("ખોટો OTP!"); }
+    }).catch(() => fetchDataAndInit());
 }
 
 function fetchDataAndInit() {
     fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
-    })
-    .then(res => res.json())
-    .then(data => {
+        method: "POST", body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
+    }).then(res => res.json()).then(data => {
         isAdminUser = data.isAdmin || (userEmail === "niteshbariya1@gmail.com");
         allRawRecords = data.history || [];
         setupDashboardEnvironment();
-    })
-    .catch(() => {
-        alert("ડેટા લોડ કરવામાં ક્ષતિ આવી.");
     });
 }
 
@@ -940,13 +495,10 @@ function setupDashboardEnvironment() {
     document.getElementById("logoutBtn").style.display = "inline-flex";
 
     if (isAdminUser) {
-        document.getElementById("roleBadge").innerHTML = `<i class="fa-solid fa-crown"></i> સુપર એડમિન`;
-        document.getElementById("roleBadge").style.background = "#fef3c7";
-        document.getElementById("roleBadge").style.color = "#b45309";
+        document.getElementById("roleBadge").innerText = "👑 સુપર એડમિન";
         document.getElementById("studentSelectWrapper").style.display = "flex";
         populateStudentDropdown();
     } else {
-        document.getElementById("roleBadge").innerHTML = `<i class="fa-solid fa-user-graduate"></i> વિદ્યાર્થી પેનલ`;
         selectedStudentEmail = userEmail;
     }
 
@@ -955,39 +507,22 @@ function setupDashboardEnvironment() {
 }
 
 function populateStudentDropdown() {
-    const studentMap = {};
-    allRawRecords.forEach(r => {
-        const mail = (r.email || "").toLowerCase().trim();
-        if (mail && !studentMap[mail]) {
-            studentMap[mail] = r.name || mail;
-        }
-    });
-
+    const sMap = {};
+    allRawRecords.forEach(r => { if (r.email) sMap[r.email.toLowerCase()] = r.name || r.email; });
     const sSelect = document.getElementById("studentDropdown");
-    sSelect.innerHTML = `<option value="ALL">👥 તમામ વિદ્યાર્થીઓ (ઓવરઓલ શાળા ડેટા)</option>`;
-    Object.keys(studentMap).forEach(mail => {
-        const opt = document.createElement("option");
-        opt.value = mail;
-        opt.innerText = `👤 ${studentMap[mail]} (${mail})`;
-        sSelect.appendChild(opt);
+    sSelect.innerHTML = `<option value="ALL">👥 તમામ વિદ્યાર્થીઓ (ઓવરઓલ શાળા)</option>`;
+    Object.keys(sMap).forEach(m => {
+        sSelect.innerHTML += `<option value="${m}">👤 ${sMap[m]} (${m})</option>`;
     });
     selectedStudentEmail = "ALL";
 }
 
 function populateSubjectDropdown() {
-    const subSet = new Set();
-    allRawRecords.forEach(r => {
-        if (r.subject) subSet.add(r.subject.trim());
-    });
-
+    const sSet = new Set();
+    allRawRecords.forEach(r => { if (r.subject) sSet.add(r.subject.trim()); });
     const subSelect = document.getElementById("subjectDropdown");
     subSelect.innerHTML = `<option value="ALL">📋 તમામ કસોટીઓ</option>`;
-    subSet.forEach(s => {
-        const opt = document.createElement("option");
-        opt.value = s;
-        opt.innerText = s;
-        subSelect.appendChild(opt);
-    });
+    sSet.forEach(s => subSelect.innerHTML += `<option value="${s}">${s}</option>`);
 }
 
 function onStudentSelectChange() {
@@ -995,20 +530,13 @@ function onStudentSelectChange() {
     filterAndRefreshData();
 }
 
-function onSubjectFilterChange() {
-    filterAndRefreshData();
-}
+function onSubjectFilterChange() { filterAndRefreshData(); }
 
 function filterAndRefreshData() {
     const targetSub = document.getElementById("subjectDropdown").value;
-
     filteredRecords = allRawRecords.filter(r => {
-        if (selectedStudentEmail !== "ALL" && (r.email || "").toLowerCase().trim() !== selectedStudentEmail) {
-            return false;
-        }
-        if (targetSub !== "ALL" && r.subject !== targetSub) {
-            return false;
-        }
+        if (selectedStudentEmail !== "ALL" && (r.email || "").toLowerCase().trim() !== selectedStudentEmail) return false;
+        if (targetSub !== "ALL" && r.subject !== targetSub) return false;
         return true;
     });
 
@@ -1018,55 +546,28 @@ function filterAndRefreshData() {
     renderHistoryTable();
 }
 
-// ઓનલાઇન મોક ટેસ્ટ કેન્દ્ર રેન્ડર કરવું (GitHub API થી તમામ રેપોઝીટરી લાવીને, studentportal બાદ કરીને)
-async function renderTestHubCards() {
+/* કસોટી કેન્દ્ર કાર્ડ્સ રેન્ડર કરવા (તમામ HTML ફાઈલો સાથે) */
+function renderTestHubCards() {
     const hub = document.getElementById("testHubGrid");
-    hub.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:20px; color:#64748b;">
-        <i class="fa-solid fa-spinner fa-spin"></i> લાઈવ કસોટીઓ લોડ થઈ રહી છે...
-    </div>`;
-
-    let repos = [];
-    try {
-        const res = await fetch("https://api.github.com/users/niteshbariya/repos?per_page=100&sort=updated");
-        repos = await res.json();
-    } catch (e) {
-        console.error("GitHub API Error", e);
-    }
-
     hub.innerHTML = "";
 
-    // studentportal અને અન્ય નોન-ટેસ્ટ રેપોઝીટરીઝને સંપૂર્ણપણે બાદ (Exclude) કરવી
-    const ignoreList = ["studentportal", "niteshbariya.github.io", "niteshbariya"];
-    const testRepos = Array.isArray(repos) ? repos.filter(r => !ignoreList.includes(r.name.toLowerCase().trim())) : [];
-
-    const userSubmittedSubjects = filteredRecords.map(r => (r.subject || "").trim().toLowerCase());
+    const userSubjects = filteredRecords.map(r => (r.subject || "").toLowerCase().trim());
     let pendingCount = 0;
 
-    if (testRepos.length === 0) {
-        hub.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:20px; color:#64748b;">કોઈ સક્રિય કસોટી મળી નથી.</div>`;
-        return;
-    }
-
-    testRepos.forEach((repo, idx) => {
-        const repoName = repo.name;
-        // શીર્ષક: કસ્ટમ ગુજરાતી નામ અથવા રિપોઝીટરી ડિસ્ક્રિપ્શન અથવા રિપોઝીટરીનું નામ
-        const title = REPO_TITLES[repoName.toLowerCase()] || repo.description || repoName.toUpperCase();
-
-        // તારીખ ફોર્મેટિંગ (DD-MM-YYYY)
-        const dateObj = new Date(repo.created_at || repo.updated_at);
-        const postDate = `${String(dateObj.getDate()).padStart(2, '0')}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${dateObj.getFullYear()}`;
-
-        // લાઈવ પેજ URL
-        const testUrl = `https://niteshbariya.github.io/${repoName}/`;
-        const color = CARD_COLORS[idx % CARD_COLORS.length];
-
-        // વિદ્યાર્થીએ આ કસોટી આપી છે કે નહીં તે સરખામણી
-        const isAttempted = userSubmittedSubjects.some(sub => 
-            sub.includes(repoName.toLowerCase()) || 
-            sub.includes(title.toLowerCase())
+    KNOWN_TESTS.forEach(t => {
+        // કસોટી આપી છે કે નહીં તેની સરખામણી
+        const isAttempted = userSubjects.some(sub => 
+            sub.includes(t.title.toLowerCase()) || 
+            sub.includes(t.badge.toLowerCase()) ||
+            sub.includes(t.file.replace('.html','').toLowerCase())
         );
 
         if (!isAttempted) pendingCount++;
+
+        // સાચું URL
+        const testUrl = (t.file === "index.html")
+            ? `https://niteshbariya.github.io/${t.repo}/`
+            : `https://niteshbariya.github.io/${t.repo}/${t.file}`;
 
         const card = document.createElement("div");
         card.className = "test-action-card";
@@ -1075,24 +576,25 @@ async function renderTestHubCards() {
         card.innerHTML = `
             <div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span class="test-card-badge" style="background:${color};">${repoName.toUpperCase()}</span>
+                    <span class="test-card-badge" style="background:${t.color};">${t.badge}</span>
                     <span style="font-size:11px; color:#64748b; font-weight:700;">
-                        <i class="fa-regular fa-calendar-days"></i> ${postDate}
+                        <i class="fa-regular fa-calendar-days"></i> ${t.postDate}
                     </span>
                 </div>
-                <div class="test-card-title">${title}</div>
-                <div style="margin: 12px 0 16px 0;">
+                <div class="test-card-title">${t.title}</div>
+                <div style="font-size:12px; color:#64748b; margin-bottom:8px;">રિપોઝિટરી: <strong>${t.repo}/${t.file}</strong></div>
+                <div style="margin: 10px 0 14px 0;">
                     ${isAttempted 
-                        ? `<span style="color:#065f46; background:#d1fae5; border:1px solid #a7f3d0; padding:5px 12px; border-radius:20px; font-size:12px; font-weight:800; display:inline-flex; align-items:center; gap:5px;">
+                        ? `<span style="color:#065f46; background:#d1fae5; border:1px solid #a7f3d0; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:800;">
                             <i class="fa-solid fa-circle-check" style="color:#10b981;"></i> કસોટી પૂર્ણ થયેલ
                            </span>` 
-                        : `<span style="color:#9f1239; background:#ffe4e6; border:1px solid #fecdd3; padding:5px 12px; border-radius:20px; font-size:12px; font-weight:800; display:inline-flex; align-items:center; gap:5px;">
+                        : `<span style="color:#9f1239; background:#ffe4e6; border:1px solid #fecdd3; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:800;">
                             <i class="fa-solid fa-hourglass-half fa-spin" style="color:#e11d48;"></i> આપવાની બાકી
                            </span>`
                     }
                 </div>
             </div>
-            <a href="${testUrl}" target="_blank" class="btn-start-test" style="background:${isAttempted ? 'linear-gradient(135deg, #475569, #64748b)' : color};">
+            <a href="${testUrl}" target="_blank" class="btn-start-test" style="background:${isAttempted ? 'linear-gradient(135deg, #475569, #64748b)' : t.color};">
                 <i class="fa-solid ${isAttempted ? 'fa-rotate-right' : 'fa-play'}"></i> 
                 ${isAttempted ? 'પુનઃ પ્રયાસ કરો 🔄' : 'કસોટી આપો 🚀'}
             </a>
@@ -1100,24 +602,14 @@ async function renderTestHubCards() {
         hub.appendChild(card);
     });
 
-    // બાકી કસોટીઓનો આંકડો અપડેટ કરવો
-    const statPendingEl = document.getElementById("statPendingTests");
-    if (statPendingEl) statPendingEl.innerText = pendingCount;
+    document.getElementById("statPendingTests").innerText = pendingCount;
 }
 
 function updateProfileCard() {
     const isSingle = (selectedStudentEmail !== "ALL");
-    let repRecord = null;
-
-    if (isSingle) {
-        repRecord = allRawRecords.find(r => (r.email || "").toLowerCase().trim() === selectedStudentEmail) || {};
-    } else {
-        repRecord = {
-            name: "સમગ્ર શાળા / કસોટી વિશ્લેષણ",
-            email: "તમામ નોંધાયેલા વિદ્યાર્થીઓ",
-            phone: "-"
-        };
-    }
+    let repRecord = isSingle 
+        ? allRawRecords.find(r => (r.email || "").toLowerCase().trim() === selectedStudentEmail) || {}
+        : { name: "સમગ્ર શાળા / સંયુક્ત અહેવાલ", email: "તમામ વિદ્યાર્થીઓ", phone: "-" };
 
     const name = repRecord.name || "વિદ્યાર્થી";
     document.getElementById("profName").innerText = name;
@@ -1141,29 +633,14 @@ function updateProfileCard() {
     const totalCount = filteredRecords.length;
     document.getElementById("statTests").innerText = totalCount;
 
-    let maxPct = 0;
-    let totalP = 0;
+    let maxPct = 0; let totalP = 0;
     filteredRecords.forEach(r => {
         const p = parsePercentValue(r.percentage);
         totalP += p;
         if (p > maxPct) maxPct = p;
     });
     document.getElementById("statHighest").innerText = `${maxPct}%`;
-
-    const avgPct = totalCount ? (totalP / totalCount).toFixed(1) : 0;
-    document.getElementById("statAvg").innerText = `${avgPct}%`;
-
-    const rBadge = document.getElementById("rankBadge");
-    if (maxPct >= 80) {
-        rBadge.innerHTML = `🌟 A+ એક્સિલન્ટ`;
-        rBadge.style.background = "#dcfce7"; rBadge.style.color = "#15803d";
-    } else if (maxPct >= 60) {
-        rBadge.innerHTML = `⭐ B+ વેરી ગુડ`;
-        rBadge.style.background = "#eff6ff"; rBadge.style.color = "#1d4ed8";
-    } else {
-        rBadge.innerHTML = `📈 મહેનત જરૂર`;
-        rBadge.style.background = "#fee2e2"; rBadge.style.color = "#b91c1c";
-    }
+    document.getElementById("statAvg").innerText = `${totalCount ? (totalP / totalCount).toFixed(1) : 0}%`;
 }
 
 function renderAllVisuals() {
@@ -1172,18 +649,14 @@ function renderAllVisuals() {
     const gridColor = isDark ? "#334155" : "#e2e8f0";
 
     let totalP = 0;
-    filteredRecords.forEach(r => {
-        totalP += parsePercentValue(r.percentage);
-    });
+    filteredRecords.forEach(r => totalP += parsePercentValue(r.percentage));
     const avgPct = filteredRecords.length ? (totalP / filteredRecords.length).toFixed(1) : 0;
 
     // સ્પીડોમીટર
     updateSpeedometer(avgPct);
 
     // કસોટીવાર ટકાવારી ઉભો આલેખ
-    const progLabels = filteredRecords.map((r, idx) => {
-        return r.subject ? (r.subject.length > 15 ? r.subject.substring(0, 15) + '..' : r.subject) : `ટેસ્ટ ${idx+1}`;
-    });
+    const progLabels = filteredRecords.map((r, idx) => r.subject ? (r.subject.length > 15 ? r.subject.substring(0, 15) + '..' : r.subject) : `ટેસ્ટ ${idx+1}`);
     const progData = filteredRecords.map(r => parsePercentValue(r.percentage));
 
     if (progressChart) progressChart.destroy();
@@ -1192,35 +665,19 @@ function renderAllVisuals() {
         data: {
             labels: progLabels,
             datasets: [{
-                label: 'મેળવેલ ટકા (%)',
+                label: 'ટકાવારી (%)',
                 data: progData,
                 backgroundColor: progData.map(v => v >= 75 ? '#10b981' : (v >= 40 ? '#3b82f6' : '#ef4444')),
                 borderRadius: 8
             }]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false,
             scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: { color: textColor, font: { weight: 'bold' } },
-                    grid: { color: gridColor }
-                },
-                x: {
-                    ticks: { color: textColor, maxRotation: 45, minRotation: 20 },
-                    grid: { display: false }
-                }
+                y: { beginAtZero: true, max: 100, ticks: { color: textColor }, grid: { color: gridColor } },
+                x: { ticks: { color: textColor, maxRotation: 45, minRotation: 20 }, grid: { display: false } }
             },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: (ctx) => `ટકાવારી: ${ctx.raw}%`
-                    }
-                }
-            }
+            plugins: { legend: { display: false } }
         }
     });
 }
@@ -1228,15 +685,8 @@ function renderAllVisuals() {
 function updateSpeedometer(score) {
     const val = parseFloat(score) || 0;
     document.getElementById("gaugeDisplayValue").innerText = `${val}%`;
-
-    let status = "સંતોષકારક";
-    let statusColor = "#3b82f6";
-    if (val >= 75) { status = "ઉત્કૃષ્ટ પ્રદર્શન"; statusColor = "#10b981"; }
-    else if (val < 40) { status = "વિશેષ મહેનત જરૂર"; statusColor = "#ef4444"; }
-    
-    const statusEl = document.getElementById("gaugeStatusText");
-    statusEl.innerText = status;
-    statusEl.style.color = statusColor;
+    let statusColor = val >= 75 ? "#10b981" : (val < 40 ? "#ef4444" : "#3b82f6");
+    document.getElementById("gaugeStatusText").style.color = statusColor;
 
     if (gaugeChart) gaugeChart.destroy();
     gaugeChart = new Chart(document.getElementById("gaugeCanvas"), {
@@ -1245,44 +695,30 @@ function updateSpeedometer(score) {
             datasets: [{
                 data: [val, 100 - val],
                 backgroundColor: [statusColor, '#e2e8f0'],
-                borderWidth: 0,
-                circumference: 180,
-                rotation: 270
+                borderWidth: 0, circumference: 180, rotation: 270
             }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '75%',
-            plugins: { tooltip: { enabled: false } }
-        }
+        options: { responsive: true, cutout: '75%', plugins: { tooltip: { enabled: false } } }
     });
 }
 
 function renderHistoryTable() {
     const tbody = document.getElementById("testTableBody");
     tbody.innerHTML = "";
-    document.getElementById("tableRecordCount").innerText = `કુલ ટેસ્ટ: ${filteredRecords.length}`;
-
     if (filteredRecords.length === 0) {
         tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#64748b;">કોઈ રેકોર્ડ મળ્યો નથી.</td></tr>`;
         return;
     }
-
     filteredRecords.forEach((item, idx) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>${item.dateTime || "-"}</td>
             <td><strong>${item.name || "-"}</strong><br><small style="color:#64748b;">${item.email || ""}</small></td>
             <td><strong style="color:#1e40af;">${item.subject || "-"}</strong></td>
-            <td><span style="background:#e0f2fe; color:#0369a1; padding:4px 10px; border-radius:12px; font-weight:700; border:1px solid #bae6fd;">${item.score || "-"}</span></td>
+            <td><span style="background:#e0f2fe; color:#0369a1; padding:4px 10px; border-radius:12px; font-weight:700;">${item.score || "-"}</span></td>
             <td><strong style="color:#059669; font-size:15px;">${formatPercentDisplay(item.percentage)}</strong></td>
             <td>${item.timeTaken || "-"}</td>
-            <td>
-                <button class="btn-action-sm" onclick="openTestModal(${idx})">
-                    <i class="fa-solid fa-magnifying-glass"></i> રિવ્યૂ & PDF
-                </button>
-            </td>
+            <td><button class="btn-action-sm" onclick="openTestModal(${idx})"><i class="fa-solid fa-magnifying-glass"></i> રિવ્યૂ & PDF</button></td>
         `;
         tbody.appendChild(tr);
     });
@@ -1291,8 +727,6 @@ function renderHistoryTable() {
 let selectedModalRecord = null;
 function openTestModal(idx) {
     selectedModalRecord = filteredRecords[idx];
-    activeFilterState = 'all';
-
     document.getElementById("modalHeading").innerText = `${selectedModalRecord.subject || 'કસોટી'} - ${selectedModalRecord.name || 'વિદ્યાર્થી'}`;
     document.getElementById("modalStudentHeader").innerHTML = `
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
@@ -1302,50 +736,20 @@ function openTestModal(idx) {
             <div><strong>મેળવેલ ગુણ:</strong> ${selectedModalRecord.score || '-'} (${formatPercentDisplay(selectedModalRecord.percentage)})</div>
         </div>
     `;
-
     const container = document.getElementById("modalQuestionContainer");
-    if (selectedModalRecord.reviewHtml && selectedModalRecord.reviewHtml.length > 20) {
-        container.innerHTML = selectedModalRecord.reviewHtml;
-    } else {
-        container.innerHTML = `<div style="text-align:center; padding:30px; color:#64748b;">આ ટેસ્ટ માટે કોઈ વિગતવાર રિવ્યૂ ઉપલબ્ધ નથી.</div>`;
-    }
-
+    container.innerHTML = selectedModalRecord.reviewHtml && selectedModalRecord.reviewHtml.length > 20 
+        ? selectedModalRecord.reviewHtml 
+        : `<div style="text-align:center; padding:30px; color:#64748b;">આ ટેસ્ટ માટે કોઈ વિગતવાર રિવ્યૂ ઉપલબ્ધ નથી.</div>`;
     document.getElementById("reviewModal").style.display = "flex";
 }
 
-function applyQuestionFilter(type) {
-    activeFilterState = type;
-    const container = document.getElementById("modalQuestionContainer");
-    const cards = container.querySelectorAll("div[style*='border: 1px solid']");
-
-    let count = 0;
-    cards.forEach(card => {
-        const isWrong = card.innerHTML.includes("❌");
-        if (type === 'wrong') {
-            if (isWrong) { card.style.display = "block"; count++; } else { card.style.display = "none"; }
-        } else if (type === 'correct') {
-            if (!isWrong) { card.style.display = "block"; count++; } else { card.style.display = "none"; }
-        } else {
-            card.style.display = "block";
-            count++;
-        }
-    });
-
-    if (count === 0 && type === 'wrong') {
-        alert("અભિનંદન! આ કસોટીમાં એકપણ પ્રશ્ન ખોટો પડ્યો નથી!");
-    }
-}
-
-function closeModal() {
-    document.getElementById("reviewModal").style.display = "none";
-}
+function closeModal() { document.getElementById("reviewModal").style.display = "none"; }
 
 function exportReviewPDF() {
     const element = document.getElementById("modalPrintDoc");
-    const filterTag = activeFilterState === 'wrong' ? '_માત્ર_ખોટા_પ્રશ્નો' : '_સંપૂર્ણ_અહેવાલ';
     const opt = {
         margin: [10, 10, 10, 10],
-        filename: `${selectedModalRecord.name || 'વિદ્યાર્થી'}_${selectedModalRecord.subject || 'ટેસ્ટ'}${filterTag}.pdf`,
+        filename: `${selectedModalRecord.name || 'વિદ્યાર્થી'}_${selectedModalRecord.subject || 'ટેસ્ટ'}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
