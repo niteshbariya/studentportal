@@ -64,322 +64,254 @@
             border-radius: 20px;
             box-shadow: var(--shadow);
             border: 2px solid var(--border-color);
-            padding: 20px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 16px;
         }
         @media (max-width: 768px) {
-            body { padding: 6px; }
-            .portal-wrapper { padding: 12px; border-radius: 14px; gap: 14px; }
+            body { padding: 4px; }
+            .portal-wrapper { padding: 10px; border-radius: 12px; gap: 12px; }
         }
         .top-navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 14px;
+            padding-bottom: 12px;
             border-bottom: 2px solid var(--border-color);
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
         }
-        .portal-brand { display: flex; align-items: center; gap: 12px; }
+        .portal-brand { display: flex; align-items: center; gap: 10px; }
         .portal-logo-icon {
-            width: 44px; height: 44px;
+            width: 42px; height: 42px;
             background: var(--primary-gradient);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 20px;
+            color: white; font-size: 18px;
             flex-shrink: 0;
         }
         .brand-text h1 {
-            font-size: 20px; font-weight: 800;
+            font-size: 19px; font-weight: 800;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .brand-text p {
-            font-size: 12px; color: var(--text-muted); font-weight: 600;
-        }
-        .nav-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .brand-text p { font-size: 11.5px; color: var(--text-muted); font-weight: 600; }
+        .nav-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .badge-role {
-            padding: 5px 12px; border-radius: 30px; font-size: 11px; font-weight: 700;
+            padding: 4px 10px; border-radius: 30px; font-size: 11px; font-weight: 700;
             background: rgba(37, 99, 235, 0.1); color: #2563eb; border: 1.5px solid #60a5fa;
         }
-        body.dark-mode .badge-role {
-            background: #1e3a8a; color: #93c5fd; border-color: #3b82f6;
-        }
+        body.dark-mode .badge-role { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; }
         .creator-tag {
-            padding: 6px 14px; border-radius: 20px; font-size: 11.5px; font-weight: 800;
-            background: var(--gradient-violet); color: white; display: inline-flex; align-items: center; gap: 6px;
-            box-shadow: 0 4px 10px rgba(124, 58, 237, 0.25);
+            padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 800;
+            background: var(--gradient-violet); color: white; display: inline-flex; align-items: center; gap: 5px;
         }
         .theme-toggle-btn {
             background: var(--inner-box); color: var(--text-color);
-            border: 1.5px solid var(--border-color); padding: 6px 14px;
-            font-size: 12px; font-weight: 700; border-radius: 20px; cursor: pointer;
-            display: flex; align-items: center; gap: 6px;
+            border: 1.5px solid var(--border-color); padding: 5px 12px;
+            font-size: 11.5px; font-weight: 700; border-radius: 20px; cursor: pointer;
+            display: flex; align-items: center; gap: 5px;
         }
-        /* લૉગિન સ્ક્રીન */
+        /* લૉગિન */
         #loginScreen {
-            max-width: 440px; margin: 40px auto; text-align: center;
-            padding: 28px 24px; background: var(--card-bg);
-            border-radius: 16px; box-shadow: var(--shadow); border: 2px solid var(--border-color);
+            max-width: 420px; margin: 40px auto; text-align: center;
+            padding: 26px 20px; background: var(--card-bg);
+            border-radius: 14px; box-shadow: var(--shadow); border: 2px solid var(--border-color);
         }
-        .login-title {
-            font-size: 19px; font-weight: 800; color: var(--heading-color); margin-bottom: 4px;
-        }
-        .login-subtitle {
-            font-size: 12.5px; color: var(--text-muted); margin-bottom: 18px;
-        }
-        .login-label {
-            display: block; text-align: left; font-size: 12.5px; font-weight: 700; margin-bottom: 5px; color: var(--heading-color);
-        }
+        .login-title { font-size: 18px; font-weight: 800; color: var(--heading-color); margin-bottom: 4px; }
+        .login-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+        .login-label { display: block; text-align: left; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: var(--heading-color); }
         .login-input {
-            width: 100%; padding: 10px 14px; border: 1.5px solid var(--border-color);
-            border-radius: 10px; font-size: 13.5px; margin-bottom: 12px;
+            width: 100%; padding: 9px 12px; border: 1.5px solid var(--border-color);
+            border-radius: 8px; font-size: 13px; margin-bottom: 12px;
             background: var(--inner-box); color: var(--text-color); outline: none;
         }
-        .login-input:focus { border-color: #2563eb; }
         .btn-gradient {
             background: var(--primary-gradient); color: white; border: none;
-            padding: 10px 18px; font-size: 13.5px; font-weight: 700; border-radius: 10px;
+            padding: 9px 16px; font-size: 13px; font-weight: 700; border-radius: 8px;
             cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
-            transition: all 0.2s;
         }
-        .btn-gradient:hover { opacity: 0.95; transform: translateY(-1px); }
-        .login-divider {
-            display: flex; align-items: center; text-align: center; margin: 15px 0; color: var(--text-muted); font-size: 11px; font-weight: 700;
-        }
-        .login-divider::before, .login-divider::after {
-            content: ''; flex: 1; border-bottom: 1px solid var(--border-color);
-        }
-        .login-divider span { padding: 0 10px; text-transform: uppercase; }
-        /* મુખ્ય ડેશબોર્ડ */
+        .login-divider { display: flex; align-items: center; text-align: center; margin: 14px 0; color: var(--text-muted); font-size: 11px; font-weight: 700; }
+        .login-divider::before, .login-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); }
+        .login-divider span { padding: 0 8px; }
+
+        /* ડેશબોર્ડ */
         #dashboardScreen { display: none; }
         .filter-ribbon {
             background: var(--card-bg); border: 2px solid var(--border-color);
-            border-radius: 14px; padding: 12px 16px;
-            display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
+            border-radius: 12px; padding: 10px 14px;
+            display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
         }
         .select-styled {
-            padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--border-color);
-            background: var(--inner-box); color: var(--text-color); font-size: 13px; font-weight: 600;
-            min-width: 220px;
+            padding: 6px 10px; border-radius: 6px; border: 1.5px solid var(--border-color);
+            background: var(--inner-box); color: var(--text-color); font-size: 12.5px; font-weight: 600;
         }
         .student-profile-card {
             background: var(--card-bg); border: 2px solid var(--border-color);
-            border-radius: 16px; padding: 18px; position: relative;
+            border-radius: 14px; padding: 14px; position: relative;
         }
         .student-profile-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
             background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #f59e0b, #10b981);
         }
         .avatar-box {
-            width: 60px; height: 60px; border-radius: 50%;
+            width: 48px; height: 48px; border-radius: 50%;
             background: var(--gradient-violet); display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 26px; font-weight: 800; flex-shrink: 0;
+            color: white; font-size: 22px; font-weight: 800; flex-shrink: 0;
         }
-        .contact-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+        .contact-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
         .pill-contact {
-            background: var(--inner-box); padding: 5px 10px; border-radius: 6px;
-            font-size: 12px; font-weight: 600; color: var(--text-color); border: 1px solid var(--border-color);
-            display: inline-flex; align-items: center; gap: 5px; text-decoration: none;
+            background: var(--inner-box); padding: 3px 8px; border-radius: 6px;
+            font-size: 11px; font-weight: 600; color: var(--text-color); border: 1px solid var(--border-color);
+            display: inline-flex; align-items: center; gap: 4px; text-decoration: none;
         }
         .profile-stats-row {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
-            margin-top: 16px; padding-top: 14px; border-top: 2px dashed var(--border-color);
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            margin-top: 14px; padding-top: 12px; border-top: 2px dashed var(--border-color);
         }
-        @media (max-width: 900px) { .profile-stats-row { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 480px) { .profile-stats-row { grid-template-columns: 1fr; } }
-        .mini-stat { padding: 12px; border-radius: 12px; text-align: center; color: white; }
+        @media (max-width: 768px) { .profile-stats-row { grid-template-columns: repeat(2, 1fr); } }
+        .mini-stat { padding: 8px; border-radius: 8px; text-align: center; color: white; }
         .stat-blue { background: var(--gradient-cyan); }
         .stat-emerald { background: var(--gradient-emerald); }
         .stat-amber { background: var(--gradient-amber); }
         .stat-rose { background: var(--gradient-rose); }
-        .mini-stat-title { font-size: 11px; font-weight: 700; text-transform: uppercase; }
-        .mini-stat-val { font-size: 22px; font-weight: 900; margin-top: 2px; }
-        .analytics-two-col {
-            display: grid; grid-template-columns: 1fr 1.3fr; gap: 16px;
-        }
-        @media (max-width: 992px) { .analytics-two-col { grid-template-columns: 1fr; } }
+        .mini-stat-title { font-size: 10.5px; font-weight: 700; }
+        .mini-stat-val { font-size: 18px; font-weight: 900; margin-top: 2px; }
+
+        .analytics-two-col { display: grid; grid-template-columns: 1fr 1.3fr; gap: 14px; }
+        @media (max-width: 900px) { .analytics-two-col { grid-template-columns: 1fr; } }
         .speedometer-card, .chart-box-card {
             background: var(--card-bg); border: 2px solid var(--border-color);
-            border-radius: 16px; padding: 18px;
+            border-radius: 14px; padding: 14px;
         }
         .gauge-wrapper {
-            position: relative; width: 260px; height: 140px;
+            position: relative; width: 220px; height: 110px;
             display: flex; justify-content: center; align-items: flex-end; margin: 0 auto;
         }
-        .gauge-value-display { position: absolute; bottom: 5px; text-align: center; }
-        .gauge-percent { font-size: 32px; font-weight: 900; color: var(--heading-color); }
-        /* રિપોઝિટરી હબ */
+        .gauge-value-display { position: absolute; bottom: 4px; text-align: center; }
+        .gauge-percent { font-size: 26px; font-weight: 900; color: var(--heading-color); }
+
+        /* રિપોઝિટરી કેન્દ્ર */
         .repo-hub-card {
             background: var(--card-bg); border: 2px solid var(--border-color);
-            border-radius: 16px; padding: 20px;
+            border-radius: 14px; padding: 16px;
         }
-        .repo-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 14px; margin-top: 14px;
-        }
+        .repo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; }
         .repo-box {
-            background: var(--inner-box); border-radius: 14px; padding: 16px;
+            background: var(--inner-box); border-radius: 10px; padding: 12px;
             border: 2px solid var(--border-color); cursor: pointer;
-            transition: all 0.25s ease; position: relative;
-            display: flex; flex-direction: column; justify-content: space-between;
+            transition: all 0.25s ease;
         }
-        .repo-box:hover, .repo-box.active-repo {
-            border-color: #2563eb; transform: translateY(-3px);
-            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
-        }
-        .repo-name-tag {
-            font-size: 17px; font-weight: 900; color: var(--heading-color);
-            font-family: monospace;
-        }
+        .repo-box:hover, .repo-box.active-repo { border-color: #2563eb; transform: translateY(-2px); }
+        .repo-name-tag { font-size: 15px; font-weight: 900; color: var(--heading-color); font-family: monospace; }
         #repoFilesContainer {
-            margin-top: 18px;
-            background: var(--inner-box);
-            border: 2px solid #2563eb;
-            border-radius: 14px;
-            padding: 18px;
-            display: none;
+            margin-top: 14px; background: var(--inner-box); border: 2px solid #2563eb;
+            border-radius: 12px; padding: 14px; display: none;
         }
-        .files-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding-bottom: 12px; border-bottom: 2px solid var(--border-color);
-            margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
-        }
-        .files-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-            gap: 14px;
-        }
+        .files-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .files-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
         .file-card {
-            background: var(--card-bg); border-radius: 14px; padding: 16px;
-            border: 2px solid var(--border-color); display: flex;
-            flex-direction: column; justify-content: space-between; gap: 12px;
+            background: var(--card-bg); border-radius: 10px; padding: 12px;
+            border: 2px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
         }
-        .file-exact-name {
-            font-size: 15px; font-weight: 800; color: var(--heading-color); font-family: monospace;
-            display: flex; align-items: center; gap: 6px; word-break: break-all;
-        }
+        .file-exact-name { font-size: 13.5px; font-weight: 800; color: var(--heading-color); font-family: monospace; }
         .test-score-banner {
-            background: rgba(16, 185, 129, 0.12);
-            border: 1px solid #10b981;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 12.5px;
-            font-weight: 700;
-            color: #065f46;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: rgba(16, 185, 129, 0.12); border: 1px solid #10b981;
+            padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #065f46;
+            display: flex; justify-content: space-between;
         }
         body.dark-mode .test-score-banner { color: #6ee7b7; }
-        .file-action-buttons {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;
-        }
+        .file-action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
         .btn-take-test {
             background: var(--primary-gradient); color: white; text-decoration: none;
-            text-align: center; padding: 9px 10px; font-size: 12.5px; font-weight: 700;
-            border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 5px;
+            text-align: center; padding: 7px; font-size: 11.5px; font-weight: 700;
+            border-radius: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;
         }
         .btn-view-paper {
             background: #0284c7; color: white; border: none; cursor: pointer;
-            padding: 9px 10px; font-size: 12.5px; font-weight: 700;
-            border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 5px;
+            padding: 7px; font-size: 11.5px; font-weight: 700;
+            border-radius: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;
         }
         .btn-locked-paper {
             background: #94a3b8; color: #f1f5f9; border: none; cursor: not-allowed;
-            padding: 9px 10px; font-size: 12px; font-weight: 700;
-            border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 5px;
-            opacity: 0.75;
+            padding: 7px; font-size: 11px; font-weight: 700; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center; gap: 4px; opacity: 0.75;
         }
-        /* હિસ્ટ્રી ટેબલ */
+
+        /* ટેબલ સ્ટાઇલ: સાંકડી કોલમ્સ અને સ્વચ્છ લેઆઉટ */
         .history-card {
             background: var(--card-bg); border: 2px solid var(--border-color);
-            border-radius: 16px; padding: 20px;
+            border-radius: 14px; padding: 14px;
         }
-        .table-wrap {
-            overflow-x: auto; border-radius: 12px; border: 2px solid var(--table-border); margin-top: 14px;
-        }
-        table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 13.5px; }
-        th, td { padding: 10px 12px; border-right: 1.5px solid var(--border-color); border-bottom: 1.5px solid var(--border-color); }
+        .table-wrap { overflow-x: auto; border-radius: 10px; border: 1.5px solid var(--table-border); margin-top: 10px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 12.5px; }
+        th, td { padding: 8px 10px; border-right: 1.5px solid var(--border-color); border-bottom: 1.5px solid var(--border-color); vertical-align: middle; }
         th:last-child, td:last-child { border-right: none; }
         tr:last-child td { border-bottom: none; }
-        th { background: var(--table-header); color: #ffffff; font-weight: 700; }
+        th { background: var(--table-header); color: #ffffff; font-weight: 700; white-space: nowrap; text-align: center; }
         tbody tr:nth-child(even) { background-color: rgba(148, 163, 184, 0.08); }
+        
+        .student-stacked-name { font-weight: 800; line-height: 1.2; text-align: center; }
+        .student-stacked-name span { font-weight: 600; color: var(--text-muted); font-size: 11px; display: block; margin-top: 2px; }
+        .time-badge { font-family: monospace; font-size: 12px; font-weight: 700; color: var(--heading-color); text-align: center; display: block; }
+        .date-badge { font-family: monospace; font-size: 12px; font-weight: 700; text-align: center; display: block; }
+        
         .btn-action-sm {
-            padding: 7px 12px; font-size: 12px; font-weight: 600; border-radius: 6px;
-            border: none; cursor: pointer; color: white; display: inline-flex; align-items: center; gap: 5px;
+            padding: 5px 8px; font-size: 11px; font-weight: 600; border-radius: 6px;
+            border: none; cursor: pointer; color: white; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
         }
-        .portal-footer {
-            text-align: center; padding: 14px 0 6px 0; border-top: 1px solid var(--border-color);
-            font-size: 12.5px; color: var(--text-muted); font-weight: 700;
-        }
-        /* મોડલ પોપઅપ */
+        .portal-footer { text-align: center; padding: 12px 0 4px 0; font-size: 11.5px; color: var(--text-muted); font-weight: 700; }
+
+        /* મોડલ & પ્રિન્ટ એરિયા */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.75); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px;
+            background: rgba(0, 0, 0, 0.75); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 10px;
         }
         .modal-box {
-            background: var(--card-bg); border-radius: 16px; width: 100%; max-width: 900px; max-height: 92vh;
+            background: var(--card-bg); border-radius: 12px; width: 100%; max-width: 880px; max-height: 94vh;
             display: flex; flex-direction: column; overflow: hidden; border: 2px solid var(--border-color);
         }
-        .modal-header { padding: 14px 20px; border-bottom: 2px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header { padding: 10px 16px; border-bottom: 2px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .modal-filter-row {
-            padding: 10px 20px; background: var(--inner-box); border-bottom: 1px solid var(--border-color);
-            display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between;
+            padding: 8px 16px; background: var(--inner-box); border-bottom: 1px solid var(--border-color);
+            display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: space-between;
         }
-        .modal-body { padding: 20px; overflow-y: auto; }
-        .modal-footer { padding: 14px 20px; border-top: 2px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+        .modal-body { padding: 14px; overflow-y: auto; }
+        .modal-footer { padding: 10px 16px; border-top: 2px solid var(--border-color); display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
         
-        /* A4 સાઈઝ ઉત્તરવહી PDF સ્ટાઈલ */
+        /* A4 સાઈઝ ઉત્તરવહી PDF પ્રિન્ટ એરિયા */
         #pdfPrintArea {
-            background: #ffffff;
-            color: #0f172a;
-            padding: 15px;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            padding: 12px;
             font-family: 'Noto Sans Gujarati', sans-serif;
         }
         .pdf-page-container {
             border: 2px solid #1e3a8a;
-            border-radius: 8px;
-            padding: 20px;
+            border-radius: 6px;
+            padding: 14px;
             background: #ffffff;
         }
         .pdf-header-banner {
             border-bottom: 2px solid #1e3a8a;
-            padding-bottom: 10px;
-            margin-bottom: 14px;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
             text-align: center;
         }
-        .pdf-developer-badge {
-            font-size: 11px;
-            font-weight: 800;
-            color: #2563eb;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        .pdf-main-title {
-            font-size: 19px;
-            font-weight: 900;
-            color: #1e3a8a;
-            margin: 4px 0;
-        }
+        .pdf-developer-badge { font-size: 10.5px; font-weight: 800; color: #2563eb; letter-spacing: 1px; text-transform: uppercase; }
+        .pdf-main-title { font-size: 17px; font-weight: 900; color: #1e3a8a; margin: 2px 0; }
         .pdf-info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 12px;
-            margin-bottom: 16px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+            background: #f8fafc; border: 1px solid #cbd5e1; padding: 6px 10px;
+            border-radius: 6px; font-size: 11.5px; margin-bottom: 12px;
         }
         .pdf-q-item {
             border: 1.5px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 12px 14px;
-            margin-bottom: 14px;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
             background: #ffffff;
@@ -388,48 +320,19 @@
             border: 2px solid #ef4444 !important;
             background: #fff5f5 !important;
         }
-        .pdf-q-title {
-            font-size: 13.5px;
-            font-weight: 800;
-            color: #1e293b;
-            margin-bottom: 8px;
-            line-height: 1.4;
-        }
-        .pdf-options-list {
-            margin: 6px 0 8px 12px;
-            font-size: 12.5px;
-            color: #475569;
-            line-height: 1.6;
-        }
+        .pdf-q-title { font-size: 13px; font-weight: 800; color: #1e293b; margin-bottom: 5px; line-height: 1.4; }
+        .pdf-options-list { margin: 3px 0 5px 10px; font-size: 12px; color: #475569; line-height: 1.5; }
         .pdf-ans-box {
-            background: #ecfdf5;
-            border-left: 4.5px solid #10b981;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12.5px;
-            font-weight: 800;
-            color: #065f46;
-            margin: 6px 0;
+            background: #ecfdf5; border-left: 4px solid #10b981;
+            padding: 5px 8px; border-radius: 4px; font-size: 12px; font-weight: 800; color: #065f46; margin: 4px 0;
         }
         .pdf-wrong-user-ans {
-            background: #fee2e2;
-            border-left: 4.5px solid #ef4444;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12.5px;
-            font-weight: 800;
-            color: #991b1b;
-            margin: 6px 0;
+            background: #fee2e2; border-left: 4px solid #ef4444;
+            padding: 5px 8px; border-radius: 4px; font-size: 12px; font-weight: 800; color: #991b1b; margin: 4px 0;
         }
-        .pdf-unit-box {
-            background: #eff6ff;
-            border-left: 4.5px solid #3b82f6;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 11.5px;
-            color: #1e40af;
-            font-weight: 700;
-            margin-top: 6px;
+        .pdf-exp-box {
+            background: #eff6ff; border-left: 4px solid #3b82f6;
+            padding: 5px 8px; border-radius: 4px; font-size: 11.5px; color: #1e40af; font-weight: 600; margin-top: 5px;
         }
     </style>
 </head>
@@ -459,7 +362,7 @@
     <div id="loginScreen">
         <div style="font-size: 32px; color: #3b82f6; margin-bottom: 8px;"><i class="fa-solid fa-shield-halved"></i></div>
         <h2 class="login-title">સુરક્ષિત લૉગિન</h2>
-        <p class="login-subtitle">પાસવર્ડ અથવા OTP વડે ડેશબોર્ડ ખોલો</p>
+        <p class="login-subtitle">માન્ય યુઝર આઈડી વડે ડેશબોર્ડ ખોલો</p>
         <label class="login-label">📧 તમારું ઈમેઈલ આઈડી:</label>
         <input type="email" id="loginEmailInput" class="login-input" placeholder="તમારું ઈમેઈલ અહીં લખો...">
         <label class="login-label">🔑 પોર્ટલ પાસવર્ડ:</label>
@@ -471,9 +374,9 @@
         <button id="otpSendBtn" class="btn-gradient" onclick="requestOTP()" style="background: var(--inner-box); color: var(--text-color); border: 1.5px solid var(--border-color);">
             <i class="fa-solid fa-paper-plane"></i> Gmail પર OTP મેળવો
         </button>
-        <div id="otpInputGroup" style="display: none; margin-top: 16px; padding-top: 14px; border-top: 2px dashed var(--border-color);">
-            <label class="login-label">📩 ઈમેઈલ પર આવેલો ૪ અંકનો OTP:</label>
-            <input type="text" id="otpValueInput" class="login-input" maxlength="4" style="text-align: center; font-size: 20px; letter-spacing: 6px; font-weight: 800;">
+        <div id="otpInputGroup" style="display: none; margin-top: 14px; padding-top: 12px; border-top: 2px dashed var(--border-color);">
+            <label class="login-label">📩 ૪ અંકનો OTP:</label>
+            <input type="text" id="otpValueInput" class="login-input" maxlength="4" style="text-align: center; font-size: 18px; letter-spacing: 5px; font-weight: 800;">
             <button id="verifyLoginBtn" class="btn-gradient" onclick="verifyAndStart()">
                 <i class="fa-solid fa-circle-check"></i> OTP વેરિફાય કરો
             </button>
@@ -484,11 +387,11 @@
     <main id="dashboardScreen">
         <section class="filter-ribbon">
             <div class="filter-group" id="studentSelectWrapper" style="display: none;">
-                <span style="font-size: 12.5px; font-weight: 700; color: #a855f7;"><i class="fa-solid fa-users"></i> વિદ્યાર્થી પસંદ કરો:</span>
+                <span style="font-size: 12px; font-weight: 700; color: #a855f7;"><i class="fa-solid fa-users"></i> વિદ્યાર્થી:</span>
                 <select id="studentDropdown" class="select-styled" onchange="onStudentSelectChange()"></select>
             </div>
             <div class="filter-group">
-                <span style="font-size: 12.5px; font-weight: 700; color: #2563eb;"><i class="fa-solid fa-book-open"></i> વિષય ફિલ્ટર:</span>
+                <span style="font-size: 12px; font-weight: 700; color: #2563eb;"><i class="fa-solid fa-book-open"></i> વિષય ફિલ્ટર:</span>
                 <select id="subjectDropdown" class="select-styled" onchange="onSubjectFilterChange()">
                     <option value="ALL">📋 તમામ કસોટીઓ</option>
                 </select>
@@ -497,11 +400,11 @@
 
         <!-- પ્રોફાઇલ કાર્ડ -->
         <section class="student-profile-card">
-            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
                 <div class="avatar-box" id="avatarInitial">ન</div>
                 <div>
                     <div style="display:flex; align-items:center; gap:8px;">
-                        <h2 id="profName" style="font-size: 19px; font-weight: 800; color: var(--heading-color);">વિદ્યાર્થીનું નામ</h2>
+                        <h2 id="profName" style="font-size: 18px; font-weight: 800; color: var(--heading-color);">વિદ્યાર્થીનું નામ</h2>
                         <span id="rankBadge" class="badge-role" style="background:#fef3c7; color:#b45309;">🌟 A+ ગ્રેડ</span>
                     </div>
                     <div class="contact-pills">
@@ -513,19 +416,19 @@
             </div>
             <div class="profile-stats-row">
                 <div class="mini-stat stat-blue">
-                    <div class="mini-stat-title"><i class="fa-solid fa-list-check"></i> કુલ આપેલી ટેસ્ટ</div>
+                    <div class="mini-stat-title"><i class="fa-solid fa-list-check"></i> કુલ કસોટી</div>
                     <div class="mini-stat-val" id="statTests">0</div>
                 </div>
                 <div class="mini-stat stat-emerald">
-                    <div class="mini-stat-title"><i class="fa-solid fa-trophy"></i> સર્વોચ્ચ ટકાવારી</div>
+                    <div class="mini-stat-title"><i class="fa-solid fa-trophy"></i> સર્વોચ્ચ %</div>
                     <div class="mini-stat-val" id="statHighest">0%</div>
                 </div>
                 <div class="mini-stat stat-amber">
-                    <div class="mini-stat-title"><i class="fa-solid fa-chart-line"></i> સરેરાશ ટકાવારી</div>
+                    <div class="mini-stat-title"><i class="fa-solid fa-chart-line"></i> સરેરાશ %</div>
                     <div class="mini-stat-val" id="statAvg">0%</div>
                 </div>
                 <div class="mini-stat stat-rose">
-                    <div class="mini-stat-title"><i class="fa-solid fa-clock-rotate-left"></i> કુલ બાકી કસોટીઓ</div>
+                    <div class="mini-stat-title"><i class="fa-solid fa-clock-rotate-left"></i> બાકી કસોટી</div>
                     <div class="mini-stat-val" id="statPendingTests">0</div>
                 </div>
             </div>
@@ -534,45 +437,42 @@
         <!-- આલેખ -->
         <section class="analytics-two-col">
             <div class="speedometer-card">
-                <h4 style="font-size:15px; color:var(--heading-color); font-weight:700; margin-bottom:10px; text-align:center;">
+                <h4 style="font-size:14px; color:var(--heading-color); font-weight:700; margin-bottom:8px; text-align:center;">
                     <i class="fa-solid fa-gauge-high" style="color:#2563eb;"></i> ઓવરઓલ પર્ફોર્મન્સ સ્પીડોમીટર
                 </h4>
                 <div class="gauge-wrapper">
-                    <canvas id="gaugeCanvas" width="260" height="130"></canvas>
+                    <canvas id="gaugeCanvas" width="220" height="110"></canvas>
                     <div class="gauge-value-display">
                         <div class="gauge-percent" id="gaugeDisplayValue">0%</div>
-                        <div style="font-size:11.5px; font-weight:700; color:var(--text-muted);" id="gaugeStatusText">સરેરાશ સ્કોર</div>
+                        <div style="font-size:11px; font-weight:700; color:var(--text-muted);" id="gaugeStatusText">સરેરાશ સ્કોર</div>
                     </div>
                 </div>
             </div>
             <div class="chart-box-card">
-                <h3 style="font-size:15px; font-weight:700; color:var(--heading-color); margin-bottom:10px;">
+                <h3 style="font-size:14px; font-weight:700; color:var(--heading-color); margin-bottom:8px;">
                     <i class="fa-solid fa-chart-column" style="color:#2563eb;"></i> કસોટીવાર ટકાવારી પ્રગતિ
                 </h3>
-                <div style="height: 240px; width: 100%;">
+                <div style="height: 220px; width: 100%;">
                     <canvas id="verticalProgressChart"></canvas>
                 </div>
             </div>
         </section>
 
-        <!-- રિપોઝિટરી હબ -->
+        <!-- રિપોઝિટરી કેન્દ્ર -->
         <section class="repo-hub-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
                 <div>
-                    <h3 style="font-size:17px; font-weight:800; color:var(--heading-color);">
+                    <h3 style="font-size:16px; font-weight:800; color:var(--heading-color);">
                         <i class="fa-solid fa-folder-tree" style="color:#2563eb;"></i> કસોટી રિપોઝિટરી કેન્દ્ર
                     </h3>
-                    <p style="font-size:12px; color:var(--text-muted); margin-top:2px;">
-                        રિપોઝિટરી પસંદ કરીને કસોટીઓ આપો અથવા પ્રશ્નપત્ર તપાસો:
-                    </p>
                 </div>
             </div>
             <div class="repo-grid" id="repoCardsGrid"></div>
             <div id="repoFilesContainer">
                 <div class="files-header">
                     <div>
-                        <h4 id="activeRepoTitle" style="font-size: 18px; color: var(--heading-color); font-weight: 800; font-family: monospace;"></h4>
-                        <span id="activeRepoSubtitle" style="font-size: 12px; color: var(--text-muted);"></span>
+                        <h4 id="activeRepoTitle" style="font-size: 16px; color: var(--heading-color); font-weight: 800; font-family: monospace;"></h4>
+                        <span id="activeRepoSubtitle" style="font-size: 11.5px; color: var(--text-muted);"></span>
                     </div>
                     <button onclick="closeRepoFiles()" class="btn-action-sm" style="background:#64748b;">✕ બંધ કરો</button>
                 </div>
@@ -582,20 +482,20 @@
 
         <!-- આપેલી કસોટીઓનું પત્રક -->
         <section class="history-card">
-            <h3 style="font-size:16px; font-weight:700; color:var(--heading-color); margin-bottom:10px;">
+            <h3 style="font-size:15.5px; font-weight:700; color:var(--heading-color); margin-bottom:8px;">
                 <i class="fa-solid fa-table-list" style="color:#2563eb;"></i> આપેલી કસોટીઓનું વિગતવાર પત્રક
             </h3>
             <div class="table-wrap">
                 <table>
                     <thead>
                         <tr>
-                            <th>તારીખ & સમય</th>
-                            <th>વિદ્યાર્થીનું નામ</th>
+                            <th style="width: 80px;">તારીખ</th>
+                            <th style="width: 100px;">વિદ્યાર્થી</th>
                             <th>વિષય / કસોટી</th>
-                            <th>મેળવેલ ગુણ</th>
-                            <th>ટકાવારી</th>
-                            <th>લીધેલો સમય</th>
-                            <th>ઍક્શન</th>
+                            <th style="width: 75px;">ગુણ</th>
+                            <th style="width: 75px;">ટકા</th>
+                            <th style="width: 80px;">લીધેલ સમય</th>
+                            <th style="width: 90px;">ઍક્શન</th>
                         </tr>
                     </thead>
                     <tbody id="testTableBody"></tbody>
@@ -609,18 +509,18 @@
     </main>
 </div>
 
-<!-- પરિણામ & પ્રશ્નપત્ર મોડલ -->
+<!-- પ્રશ્નપત્ર & ઉત્તરવહી A4 પ્રિન્ટ મોડલ -->
 <div id="reviewModal" class="modal-overlay">
     <div class="modal-box">
         <div class="modal-header">
-            <h3 id="modalHeading" style="font-size: 16px; font-weight: 800; color: var(--heading-color);">વિગતવાર પ્રશ્નપત્ર & ઉત્તરવહી</h3>
-            <button onclick="closeModal()" style="background:none; border:none; font-size:22px; cursor:pointer; color:var(--text-color);">&times;</button>
+            <h3 id="modalHeading" style="font-size: 15px; font-weight: 800; color: var(--heading-color);">વિગતવાર પ્રશ્નપત્ર & ઉત્તરવહી</h3>
+            <button onclick="closeModal()" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-color);">&times;</button>
         </div>
         <div class="modal-filter-row">
-            <div style="font-size: 13px; font-weight: 700; color: var(--heading-color);">
+            <div style="font-size: 12.5px; font-weight: 700; color: var(--heading-color);">
                 <i class="fa-solid fa-filter"></i> રિપોર્ટ વ્યુ ફિલ્ટર:
             </div>
-            <div style="display:flex; gap:8px;">
+            <div style="display:flex; gap:6px;">
                 <button class="btn-action-sm" id="btnFilterAll" onclick="filterModalQuestions('all')" style="background:#2563eb;">
                     📋 તમામ પ્રશ્નો
                 </button>
@@ -642,23 +542,31 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn-action-sm" onclick="exportPDF('all')" style="background:var(--gradient-emerald); padding: 8px 16px;">
+            <button class="btn-action-sm" onclick="exportPDF('all')" style="background:var(--gradient-emerald); padding: 7px 14px;">
                 <i class="fa-solid fa-file-pdf"></i> 📥 સંપૂર્ણ પ્રશ્નપત્ર PDF
             </button>
-            <button class="btn-action-sm" onclick="exportPDF('wrong')" style="background:var(--gradient-rose); padding: 8px 16px;">
+            <button class="btn-action-sm" onclick="exportPDF('wrong')" style="background:var(--gradient-rose); padding: 7px 14px;">
                 <i class="fa-solid fa-triangle-exclamation"></i> ❌ માત્ર ખોટા પ્રશ્નો PDF
             </button>
-            <button class="btn-action-sm" onclick="closeModal()" style="background:#64748b; padding: 8px 16px;">બંધ કરો</button>
+            <button class="btn-action-sm" onclick="closeModal()" style="background:#64748b; padding: 7px 14px;">બંધ કરો</button>
         </div>
     </div>
 </div>
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
+
+/* 🌟 માન્ય યુઝર્સ લિસ્ટ 🌟 */
+const ALLOWED_USERS = [
+    "niteshbariya1@gmail.com",
+    "prachibariyaparmar@gmail.com"
+];
+
 const REPO_LIST = ["fy", "sy", "evs", "maths", "paryavanrantest", "etc", "revision", "baou", "guj"];
 let repoFilesCache = {
     "fy": ["1a.html", "1b.html", "1bnew.html", "2a.html", "2b.html", "3.html", "4aguj.html", "4beng.html", "5bevs.html", "module3.html"]
 };
+
 let userEmail = "";
 let allRawRecords = [];
 let filteredRecords = [];
@@ -669,35 +577,25 @@ let progressChart = null;
 let currentOpenRepo = "";
 let currentBaseFilename = "Test_Paper";
 
-// પાસવર્ડ વડે પ્રવેશ
 function loginWithPassword() {
     userEmail = document.getElementById("loginEmailInput").value.trim().toLowerCase();
     const enteredPassword = document.getElementById("loginPasswordInput").value.trim();
+    
     if (!userEmail.includes("@")) {
         alert("કૃપા કરીને સાચું ઈમેઈલ આઈડી દાખલ કરો.");
         return;
     }
-    // Apps Script સાથે વેરિફિકેશન
-    fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "loginCheck", email: userEmail, password: enteredPassword })
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.status === "success" || enteredPassword === "Maitvik22@") {
-            fetchDataAndInit();
-        } else {
-            alert("ખોટો પાસવર્ડ! કૃપા કરીને ફરી પ્રયાસ કરો.");
-        }
-    })
-    .catch(() => {
-        // ફોલબેક ચેક
-        if (enteredPassword === "Maitvik22@") {
-            fetchDataAndInit();
-        } else {
-            alert("લૉગિનમાં ક્ષતિ આવી. પાસવર્ડ તપાસો અથવા OTP થી લૉગિન કરો.");
-        }
-    });
+    
+    if (!ALLOWED_USERS.map(e => e.toLowerCase()).includes(userEmail)) {
+        alert("આ ઈમેઈલ આઈડી પોર્ટલ માટે માન્ય નથી.");
+        return;
+    }
+
+    if (enteredPassword === "Maitvik22@") {
+        fetchDataAndInit();
+    } else {
+        alert("ખોટો પાસવર્ડ!");
+    }
 }
 
 function switchTheme() {
@@ -707,25 +605,61 @@ function switchTheme() {
     renderAllVisuals();
 }
 
-// તારીખ અને સમયને D/M/YY HH:MM ફોર્મેટમાં ફેરવતું ફંક્શન
-function formatShortDateTime(dtStr) {
+/* ૧. માત્ર ટૂંકી તારીખ (D/M/YY) - સમય સંપૂર્ણ હટાવી દીધો */
+function formatShortDateOnly(dtStr) {
     if (!dtStr) return "-";
-    try {
-        const d = new Date(dtStr);
-        if (isNaN(d.getTime())) {
-            // જો સ્ટ્રિંગ ઓલરેડી કસ્ટમ ફોર્મેટમાં હોય
-            const parts = String(dtStr).split(' ');
-            return parts.slice(0, 2).join(' ');
-        }
-        const day = d.getDate();
-        const month = d.getMonth() + 1;
-        const year = String(d.getFullYear()).slice(-2);
-        const hours = String(d.getHours()).padStart(2, '0');
-        const minutes = String(d.getMinutes()).padStart(2, '0');
-        return `${day}/${month}/${year} ${hours}:${minutes}`;
-    } catch(e) {
-        return dtStr;
+    let s = String(dtStr).trim();
+    // જો સ્પેસ પછી સમય હોય તો તેને અલગ કરી માત્ર પહેલો ભાગ લેવો
+    if (s.includes(' ')) {
+        s = s.split(' ')[0];
     }
+    // "29/9/2026" અથવા "29-09-2026" માંથી વર્ષ ટૂંકું કરવું
+    const parts = s.split(/[-/]/);
+    if (parts.length === 3) {
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1], 10);
+        let year = parts[2];
+        if (year.length === 4) year = year.slice(-2);
+        return `${day}/${month}/${year}`;
+    }
+    return s;
+}
+
+/* ૨. સમય: MM:SS અથવા HH:MM:SS ફોર્મેટ */
+function formatDurationTime(timeStr) {
+    if (!timeStr) return "-";
+    let s = String(timeStr).trim();
+    if (s.includes(':')) return s;
+    
+    let hr = 0, min = 0, sec = 0;
+    // ગુજરાતી કે અંગ્રેજી અંકો મેચ કરવા
+    const hrMatch = s.match(/(\d+)\s*(કલાક|hr|hour)/i);
+    const minMatch = s.match(/(\d+)\s*(મિનિટ|min)/i);
+    const secMatch = s.match(/(\d+)\s*(સેકન્ડ|sec)/i);
+    
+    if (hrMatch) hr = parseInt(hrMatch[1], 10);
+    if (minMatch) min = parseInt(minMatch[1], 10);
+    if (secMatch) sec = parseInt(secMatch[1], 10);
+    
+    if (hrMatch || minMatch || secMatch) {
+        const pMin = String(min).padStart(2, '0');
+        const pSec = String(sec).padStart(2, '0');
+        if (hr > 0) {
+            return `${String(hr).padStart(2, '0')}:${pMin}:${pSec}`;
+        }
+        return `${pMin}:${pSec}`;
+    }
+    return s;
+}
+
+/* ૩. ઉપર નામ અને નીચે અટક */
+function formatStackedName(fullName) {
+    if (!fullName) return "-";
+    const parts = fullName.trim().split(/\s+/);
+    if (parts.length === 1) return `<div class="student-stacked-name">${parts[0]}</div>`;
+    const firstName = parts[0];
+    const lastName = parts.slice(1).join(' ');
+    return `<div class="student-stacked-name">${firstName}<span>${lastName}</span></div>`;
 }
 
 function parsePercentValue(val) {
@@ -745,6 +679,11 @@ function formatPercentDisplay(val) {
 function requestOTP() {
     userEmail = document.getElementById("loginEmailInput").value.trim().toLowerCase();
     if (!userEmail.includes("@")) { alert("સાચું ઈમેઈલ લખો."); return; }
+    if (!ALLOWED_USERS.map(e => e.toLowerCase()).includes(userEmail)) {
+        alert("આ ઈમેઈલ આઈડી માન્ય યુઝર લિસ્ટમાં નથી!");
+        return;
+    }
+
     const btn = document.getElementById("otpSendBtn");
     btn.disabled = true; btn.innerText = "OTP મોકલાઈ રહ્યો છે...";
     fetch(SCRIPT_URL, {
@@ -766,9 +705,7 @@ function verifyAndStart() {
     }).then(r => r.json()).then(data => {
         if (data.status === "success" && data.verified) { fetchDataAndInit(); }
         else { alert("ખોટો OTP!"); }
-    }).catch(() => {
-        alert("ઓથોરાઇઝેશન નિષ્ફળ ગયું.");
-    });
+    }).catch(() => alert("ઓથોરાઇઝેશન નિષ્ફળ ગયું."));
 }
 
 function fetchDataAndInit() {
@@ -818,9 +755,9 @@ function populateStudentDropdown() {
     const sMap = {};
     allRawRecords.forEach(r => { if (r.email) sMap[r.email.toLowerCase()] = r.name || r.email; });
     const sSelect = document.getElementById("studentDropdown");
-    sSelect.innerHTML = `<option value="ALL">👥 તમામ વિદ્યાર્થીઓ (ઓવરઓલ શાળા)</option>`;
+    sSelect.innerHTML = `<option value="ALL">👥 તમામ વિદ્યાર્થીઓ</option>`;
     Object.keys(sMap).forEach(m => {
-        sSelect.innerHTML += `<option value="${m}">👤 ${sMap[m]} (${m})</option>`;
+        sSelect.innerHTML += `<option value="${m}">👤 ${sMap[m]}</option>`;
     });
     selectedStudentEmail = "ALL";
 }
@@ -881,9 +818,7 @@ function renderRepoGrid() {
                 </div>
                 <div style="font-size:12px; color:var(--text-muted); font-weight:700;">કુલ ટેસ્ટ: ${files.length}</div>
             </div>
-            <div style="margin-top:10px; font-size:11.5px; color:#2563eb; font-weight:700;">
-                ટેસ્ટ ખોલો <i class="fa-solid fa-chevron-right"></i>
-            </div>
+            <div style="margin-top:8px; font-size:11.5px; color:#2563eb; font-weight:700;">ટેસ્ટ ખોલો <i class="fa-solid fa-chevron-right"></i></div>
         `;
         grid.appendChild(card);
     });
@@ -897,21 +832,8 @@ async function openRepoFiles(repoName) {
     const listGrid = document.getElementById("filesListGrid");
     container.style.display = "block";
     document.getElementById("activeRepoTitle").innerHTML = `<i class="fa-regular fa-folder-open"></i> ${repoName}`;
-    document.getElementById("activeRepoSubtitle").innerText = `રિપોઝિટરીની કસોટી ફાઈલો:`;
+    document.getElementById("activeRepoSubtitle").innerText = `કસોટી ફાઈલો:`;
     
-    if (!repoFilesCache[repoName] || repoFilesCache[repoName].length <= 1) {
-        try {
-            const res = await fetch(`https://api.github.com/repos/niteshbariya/${repoName}/contents/`);
-            if (res.ok) {
-                const items = await res.json();
-                const htmls = items.filter(f => f.name.endsWith('.html')).map(f => f.name);
-                if (htmls.length > 0) {
-                    repoFilesCache[repoName] = htmls;
-                    renderRepoGrid();
-                }
-            }
-        } catch (e) {}
-    }
     const fileList = repoFilesCache[repoName] || ["index.html"];
     listGrid.innerHTML = "";
     fileList.forEach(fileName => {
@@ -947,16 +869,15 @@ async function openRepoFiles(repoName) {
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                     <span class="file-exact-name"><i class="fa-regular fa-file-lines"></i> ${fileName}</span>
                     <span style="color:${isAttempted ? '#10b981' : '#ef4444'}; background:${isAttempted ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)'}; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:800;">
-                        ${isAttempted ? '✅ પૂર્ણ થયેલ' : '⏳ બાકી'}
+                        ${isAttempted ? '✅ પૂર્ણ' : '⏳ બાકી'}
                     </span>
                 </div>
-                <div style="font-size:11.5px; color:var(--text-muted); font-family:monospace; margin-bottom:8px;">${repoName}/${fileName}</div>
+                <div style="font-size:11.5px; color:var(--text-muted); font-family:monospace; margin-bottom:6px;">${repoName}/${fileName}</div>
                 ${scoreHtml}
             </div>
             <div class="file-action-buttons">
                 <a href="${testUrl}" target="_blank" class="btn-take-test">
-                    <i class="fa-solid ${isAttempted ? 'fa-rotate-right' : 'fa-play'}"></i> 
-                    ${isAttempted ? 'ફરીથી આપો' : 'કસોટી આપો'}
+                    <i class="fa-solid ${isAttempted ? 'fa-rotate-right' : 'fa-play'}"></i> ${isAttempted ? 'ફરી આપો' : 'કસોટી આપો'}
                 </a>
                 ${paperButtonHtml}
             </div>
@@ -971,7 +892,68 @@ function closeRepoFiles() {
     renderRepoGrid();
 }
 
-// સીધું પ્રશ્નપત્ર અને ઉત્તરો લોડ કરવાનું ફંક્શન
+/* 🌟 ટેસ્ટ ફાઈલ શોધી પ્રશ્નો લાવતું ફંક્શન 🌟 */
+async function fetchQuestionsFromLiveSource(targetSubject) {
+    const cleanSub = (targetSubject || "").toLowerCase().trim();
+    for (const repo of REPO_LIST) {
+        const files = repoFilesCache[repo] || [];
+        for (const file of files) {
+            const cleanFile = file.replace('.html', '').toLowerCase();
+            if (cleanSub.includes(cleanFile) || cleanSub.includes(repo.toLowerCase())) {
+                const testUrl = (file === "index.html")
+                    ? `https://niteshbariya.github.io/${repo}/`
+                    : `https://niteshbariya.github.io/${repo}/${file}`;
+                try {
+                    const res = await fetch(testUrl);
+                    if (res.ok) {
+                        const txt = await res.text();
+                        const qs = extractQuestionsArrayFromText(txt);
+                        if (qs && qs.length > 0) return { questions: qs, repo, file, url: testUrl };
+                    }
+                } catch(e) {}
+            }
+        }
+    }
+    return null;
+}
+
+/* 🌟 પરિણામ PDF બટન પર ક્લિક કરતાં મોડલમાં સંપૂર્ણ પ્રશ્નપત્ર લોડિંગ 🌟 */
+async function openTestModal(idx) {
+    const item = filteredRecords[idx];
+    currentBaseFilename = `${item.name || 'Student'}_${item.subject || 'Test'}`;
+    document.getElementById("modalHeading").innerText = `${item.subject || 'કસોટી'} - પરિણામ & પ્રશ્નપત્ર`;
+    document.getElementById("pdfDocSubject").innerText = `${item.subject || 'કસોટી મૂલ્યાંકન પત્રક'}`;
+    
+    document.getElementById("pdfDocMeta").innerHTML = `
+        <div><strong>વિદ્યાર્થી:</strong> ${item.name || '-'}</div>
+        <div><strong>તારીખ:</strong> ${formatShortDateOnly(item.dateTime)}</div>
+        <div><strong>મેળવેલ ગુણ:</strong> <span style="color:#10b981; font-weight:bold;">${item.score || '-'} (${formatPercentDisplay(item.percentage)})</span></div>
+        <div><strong>લીધેલ સમય:</strong> ${formatDurationTime(item.timeTaken)}</div>
+    `;
+    
+    const qContainer = document.getElementById("pdfDocQuestions");
+    qContainer.innerHTML = `<div style="text-align:center; padding:30px; color:#2563eb;">
+        <i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>
+        <strong>પ્રશ્નપત્ર અને જવાબો લોડ થઈ રહ્યા છે...</strong>
+    </div>`;
+    document.getElementById("reviewModal").style.display = "flex";
+
+    // ૧. લાઈવ સોર્સમાંથી સંપૂર્ણ પ્રશ્નપત્ર મેળવવું
+    const liveData = await fetchQuestionsFromLiveSource(item.subject);
+    if (liveData && liveData.questions) {
+        renderQuestionsToModal(liveData.questions, item);
+    } else if (item.reviewHtml && item.reviewHtml.length > 20 && !item.reviewHtml.includes("વિગતવાર મૂલ્યાંકન નોંધાયેલ છે")) {
+        parseAndRenderReviewHtml(item.reviewHtml);
+    } else {
+        qContainer.innerHTML = `
+            <div class="pdf-q-item" style="text-align:center; padding:20px;">
+                <div class="pdf-q-title">આ કસોટીનું પરિણામ: સ્કોર ${item.score || '-'} (${formatPercentDisplay(item.percentage)})</div>
+                <p style="color:var(--text-muted); font-size:12px; margin-top:6px;">આ ટેસ્ટના પ્રશ્નો રિપોઝિટરી કેન્દ્રમાં 'પ્રશ્નપત્ર & PDF' બટન પરથી પણ જોઈ શકો છો.</p>
+            </div>
+        `;
+    }
+}
+
 async function loadDirectQuestionPaper(repoName, fileName, isAttempted) {
     const testUrl = (fileName === "index.html")
         ? `https://niteshbariya.github.io/${repoName}/`
@@ -988,7 +970,7 @@ async function loadDirectQuestionPaper(repoName, fileName, isAttempted) {
     let metaHtml = `
         <div><strong>રિપોઝિટરી:</strong> ${repoName}</div>
         <div><strong>ફાઈલ:</strong> ${fileName}</div>
-        <div><strong>તારીખ:</strong> ${sheetRecord ? formatShortDateTime(sheetRecord.dateTime) : formatShortDateTime(new Date())}</div>
+        <div><strong>તારીખ:</strong> ${sheetRecord ? formatShortDateOnly(sheetRecord.dateTime) : formatShortDateOnly(new Date())}</div>
     `;
     if (sheetRecord) {
         metaHtml += `
@@ -1001,7 +983,7 @@ async function loadDirectQuestionPaper(repoName, fileName, isAttempted) {
     const qContainer = document.getElementById("pdfDocQuestions");
     qContainer.innerHTML = `<div style="text-align:center; padding:35px; color:#2563eb;">
         <i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>
-        <strong>પ્રશ્નપત્ર, વિકલ્પો અને જવાબો લોડ થઈ રહ્યા છે...</strong>
+        <strong>સંપૂર્ણ પ્રશ્નપત્ર લોડ થઈ રહ્યું છે...</strong>
     </div>`;
     document.getElementById("reviewModal").style.display = "flex";
     currentBaseFilename = `${repoName}_${fileName.replace('.html','')}`;
@@ -1017,80 +999,11 @@ async function loadDirectQuestionPaper(repoName, fileName, isAttempted) {
         
         if (foundQuestions && foundQuestions.length > 0) {
             renderQuestionsToModal(foundQuestions, sheetRecord);
-        } else if (sheetRecord && sheetRecord.reviewHtml && sheetRecord.reviewHtml.length > 20) {
-            parseAndRenderReviewHtml(sheetRecord.reviewHtml);
         } else {
-            qContainer.innerHTML = `
-                <div class="pdf-q-item" style="text-align:center; padding:20px;">
-                    <div class="pdf-q-title">પ્રશ્નપત્ર સીધું જોવા માટે નીચે ક્લિક કરો:</div>
-                    <a href="${testUrl}" target="_blank" class="btn-take-test" style="display:inline-flex; margin-top:10px;">
-                        કસોટી પેજ ખોલો ↗
-                    </a>
-                </div>
-            `;
+            qContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444;">પ્રશ્નો મળી શક્યા નહીં.</div>`;
         }
-    } catch (err) {
-        if (sheetRecord && sheetRecord.reviewHtml && sheetRecord.reviewHtml.length > 20) {
-            parseAndRenderReviewHtml(sheetRecord.reviewHtml);
-        } else {
-            qContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444;">પ્રશ્નપત્ર લોડ કરવામાં ક્ષતિ આવી.</div>`;
-        }
-    }
-}
-
-// પરિણામ ટેબલમાંથી એક્શન મોડલ ખોલવું
-function openTestModal(idx) {
-    const item = filteredRecords[idx];
-    currentBaseFilename = `${item.name || 'Student'}_${item.subject || 'Test'}`;
-    document.getElementById("modalHeading").innerText = `${item.subject || 'કસોટી'} - પરિણામ & પ્રશ્નપત્ર`;
-    document.getElementById("pdfDocSubject").innerText = `${item.subject || 'કસોટી મૂલ્યાંકન પત્રક'}`;
-    document.getElementById("pdfDocMeta").innerHTML = `
-        <div><strong>વિદ્યાર્થીનું નામ:</strong> ${item.name || '-'}</div>
-        <div><strong>તારીખ & સમય:</strong> ${formatShortDateTime(item.dateTime)}</div>
-        <div><strong>મેળવેલ ગુણ:</strong> <span style="color:#10b981; font-weight:bold;">${item.score || '-'} (${formatPercentDisplay(item.percentage)})</span></div>
-        <div><strong>લીધેલો સમય:</strong> ${item.timeTaken || '-'}</div>
-    `;
-    
-    const qContainer = document.getElementById("pdfDocQuestions");
-    if (item.reviewHtml && item.reviewHtml.length > 20) {
-        parseAndRenderReviewHtml(item.reviewHtml);
-    } else {
-        qContainer.innerHTML = `
-            <div class="pdf-q-item">
-                <div class="pdf-q-title">આ કસોટીનું વિગતવાર મૂલ્યાંકન નોંધાયેલ છે:</div>
-                <div class="pdf-ans-box">કુલ સ્કોર: ${item.score || '-'} | ટકાવારી: ${formatPercentDisplay(item.percentage)}</div>
-            </div>
-        `;
-    }
-    document.getElementById("reviewModal").style.display = "flex";
-}
-
-// શીટમાંથી આવતા રિવ્યૂ HTML ને પાર્સ કરીને સુસંગત લાલ/લીલા બોક્સમાં ગોઠવવું
-function parseAndRenderReviewHtml(rawHtml) {
-    const qContainer = document.getElementById("pdfDocQuestions");
-    qContainer.innerHTML = rawHtml;
-    
-    const items = qContainer.querySelectorAll("div, p, tr");
-    let processed = false;
-    
-    // ક્વેરી બોક્સ સુધારવા
-    const potentialBoxes = qContainer.querySelectorAll("div[style*='border'], .review-item, .question-card");
-    if (potentialBoxes.length > 0) {
-        potentialBoxes.forEach(box => {
-            const isWrong = box.innerHTML.includes("❌") || box.innerHTML.includes("ખોટો") || box.classList.contains("wrong");
-            box.className = `pdf-q-item ${isWrong ? 'is-wrong-answer' : ''}`;
-            box.setAttribute("data-wrong", isWrong ? "true" : "false");
-            processed = true;
-        });
-    }
-    
-    if (!processed) {
-        // સાદા ફોર્મેટિંગ માટે રેપર
-        const wrap = document.createElement("div");
-        wrap.className = "pdf-q-item";
-        wrap.innerHTML = rawHtml;
-        qContainer.innerHTML = "";
-        qContainer.appendChild(wrap);
+    } catch(err) {
+        qContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444;">પ્રશ્નપત્ર લોડ કરવામાં ક્ષતિ આવી.</div>`;
     }
 }
 
@@ -1108,33 +1021,70 @@ function renderQuestionsToModal(questions, sheetRecord) {
             if (typeof ans === 'number' && opts[ans] !== undefined) {
                 correctOptText = `(${String.fromCharCode(65 + ans)}) ${opts[ans]}`;
             } else if (typeof ans === 'string' && /^[0-3]$/.test(ans)) {
-                correctOptText = `(${String.fromCharCode(65 + parseInt(ans))}) ${opts[parseInt(ans)]}`;
+                correctOptText = `(${String.fromCharCode(65 + parseInt(ans, 10))}) ${opts[parseInt(ans, 10)]}`;
             }
         }
         
-        const isWrong = sheetRecord && sheetRecord.reviewHtml && (
-            sheetRecord.reviewHtml.includes(qText) && (sheetRecord.reviewHtml.includes("❌") || sheetRecord.reviewHtml.includes("ખોટો"))
-        );
+        let isWrong = false;
+        let userWrongAns = "";
+        if (sheetRecord && sheetRecord.reviewHtml) {
+            const rHtml = sheetRecord.reviewHtml;
+            if (rHtml.includes(qText) && (rHtml.includes("❌") || rHtml.includes("ખોટો"))) {
+                isWrong = true;
+            }
+            const matchWrong = rHtml.match(new RegExp(`${escapeRegex(qText)}.*?તમારો જવાબ:?\\s*([^<\\n]+)`, 'i'));
+            if (matchWrong) userWrongAns = matchWrong[1];
+        }
+        
+        const explanation = q.explanation || q.exp || q.detail || q.reason || "";
         
         questionsHtml += `
             <div class="pdf-q-item ${isWrong ? 'is-wrong-answer' : ''}" data-wrong="${isWrong ? 'true' : 'false'}">
-                <div class="pdf-q-title">પ્રશ્ન ${idx + 1}: ${qText} ${isWrong ? '<span style="color:#ef4444; font-size:12px;">(ખોટો પડેલ ❌)</span>' : ''}</div>
+                <div class="pdf-q-title">
+                    પ્રશ્ન ${idx + 1}: ${qText} 
+                    ${isWrong ? '<span style="color:#ef4444; font-size:12px; font-weight:800;">(ખોટો પડેલ ❌)</span>' : ''}
+                </div>
                 ${opts.length > 0 ? `
                     <div class="pdf-options-list">
                         ${opts.map((opt, oIdx) => `<div><strong>(${String.fromCharCode(65 + oIdx)})</strong> ${opt}</div>`).join('')}
                     </div>
                 ` : ''}
+                ${isWrong && userWrongAns ? `
+                    <div class="pdf-wrong-user-ans">
+                        ❌ પરીક્ષાર્થીએ આપેલો જવાબ: <strong>${userWrongAns}</strong>
+                    </div>` : ''}
                 <div class="pdf-ans-box">
                     ✅ સાચો જવાબ: <strong>${correctOptText}</strong>
                 </div>
-                ${(q.explanation || q.exp) ? `<div class="pdf-unit-box">💡 <strong>સમજૂતી:</strong> ${q.explanation || q.exp}</div>` : ''}
+                ${explanation ? `
+                    <div class="pdf-exp-box">
+                        💡 <strong>વિગતવાર સમજૂતી:</strong> ${explanation}
+                    </div>` : ''}
             </div>
         `;
     });
     qContainer.innerHTML = questionsHtml;
 }
 
-// મોડલમાં તમામ પ્રશ્નો vs ખોટા પ્રશ્નો ફિલ્ટર
+function parseAndRenderReviewHtml(rawHtml) {
+    const qContainer = document.getElementById("pdfDocQuestions");
+    qContainer.innerHTML = rawHtml;
+    const potentialBoxes = qContainer.querySelectorAll("div[style*='border'], .review-item, .question-card");
+    if (potentialBoxes.length > 0) {
+        potentialBoxes.forEach(box => {
+            const isWrong = box.innerHTML.includes("❌") || box.innerHTML.includes("ખોટો");
+            box.className = `pdf-q-item ${isWrong ? 'is-wrong-answer' : ''}`;
+            box.setAttribute("data-wrong", isWrong ? "true" : "false");
+        });
+        return true;
+    }
+    return false;
+}
+
+function escapeRegex(string) {
+    return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+
 function filterModalQuestions(type) {
     const items = document.querySelectorAll("#pdfDocQuestions .pdf-q-item");
     const btnAll = document.getElementById("btnFilterAll");
@@ -1159,7 +1109,7 @@ function filterModalQuestions(type) {
         btnWrong.style.opacity = "1";
         btnAll.style.opacity = "0.7";
         if (wrongCount === 0) {
-            alert("આ કસોટીમાં કોઈ પ્રશ્ન ખોટો પડ્યો નથી અથવા વિગતવાર પરિણામ નોંધાયું નથી.");
+            alert("આ કસોટીમાં કોઈ પ્રશ્ન ખોટો પડ્યો નથી અથવા વિગતવાર ડેટા ઉપલબ્ધ નથી.");
         }
     } else {
         btnAll.style.opacity = "1";
@@ -1173,7 +1123,7 @@ function extractQuestionsArrayFromText(text) {
         let idx = text.indexOf(vName);
         while (idx !== -1) {
             const start = text.indexOf('[', idx);
-            if (start !== -1 && start - idx < 50) {
+            if (start !== -1 && start - idx < 60) {
                 let bracketCount = 0;
                 let inString = false;
                 let quoteChar = '';
@@ -1324,9 +1274,7 @@ function updateSpeedometer(score) {
     });
 }
 
-// આપેલા સુધારા અનુસાર ટેબલ રેન્ડરિંગ:
-// ૧. તારીખ & સમય ટૂંકમાં
-// ૨. ઈમેલ સંપૂર્ણપણે દૂર
+/* 🌟 ટેબલ રેન્ડરિંગ (તારીખ, સાંકડું નામ, MM:SS સમય) 🌟 */
 function renderHistoryTable() {
     const tbody = document.getElementById("testTableBody");
     tbody.innerHTML = "";
@@ -1338,13 +1286,13 @@ function renderHistoryTable() {
     filteredRecords.forEach((item, idx) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-            <td><strong>${formatShortDateTime(item.dateTime)}</strong></td>
-            <td><strong>${item.name || "-"}</strong></td>
+            <td><span class="date-badge">${formatShortDateOnly(item.dateTime)}</span></td>
+            <td>${formatStackedName(item.name)}</td>
             <td><strong style="color:#2563eb;">${item.subject || "-"}</strong></td>
-            <td><span style="background:rgba(37, 99, 235, 0.1); color:#2563eb; padding:3px 8px; border-radius:10px; font-weight:700;">${item.score || "-"}</span></td>
-            <td><strong style="color:#10b981; font-size:14px;">${formatPercentDisplay(item.percentage)}</strong></td>
-            <td>${item.timeTaken || "-"}</td>
-            <td><button class="btn-action-sm" onclick="openTestModal(${idx})" style="background:var(--primary-gradient);"><i class="fa-solid fa-file-lines"></i> પરિણામ PDF</button></td>
+            <td style="text-align:center;"><span style="background:rgba(37, 99, 235, 0.1); color:#2563eb; padding:2px 6px; border-radius:6px; font-weight:700;">${item.score || "-"}</span></td>
+            <td style="text-align:center;"><strong style="color:#10b981; font-size:13px;">${formatPercentDisplay(item.percentage)}</strong></td>
+            <td><span class="time-badge">${formatDurationTime(item.timeTaken)}</span></td>
+            <td style="text-align:center;"><button class="btn-action-sm" onclick="openTestModal(${idx})" style="background:var(--primary-gradient);"><i class="fa-solid fa-file-lines"></i> પરિણામ PDF</button></td>
         `;
         tbody.appendChild(tr);
     });
@@ -1352,12 +1300,10 @@ function renderHistoryTable() {
 
 function closeModal() { document.getElementById("reviewModal").style.display = "none"; }
 
-// ક્લીન અને પરફેક્ટ PDF ડાઉનલોડ
 function exportPDF(mode) {
     const element = document.getElementById("pdfPrintArea");
     filterModalQuestions(mode);
     
-    // મોડલ સ્ક્રોલ ટોપ પર સેટ કરવું જેથી ઉપરથી કપાય નહીં
     const scrollBody = document.getElementById("modalScrollBody");
     if (scrollBody) scrollBody.scrollTop = 0;
     
@@ -1365,7 +1311,7 @@ function exportPDF(mode) {
     const filename = `${currentBaseFilename}${suffix}.pdf`;
     
     const opt = {
-        margin: [10, 10, 10, 10],
+        margin: [8, 8, 8, 8],
         filename: filename,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollY: 0 },
