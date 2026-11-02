@@ -950,7 +950,7 @@ function closeRepoFiles() {
     renderRepoGrid();
 }
 
-/* 🌟 સીધું રીપોઝીટરી ફાઈલમાંથી પ્રશ્નો, જવાબો અને સમજૂતી મેળવીને A4 PDF મોડલ બનાવતું ફંક્શન 🌟 */
+/* 🌟 સીધું રીપોઝીટરી ફાઈલમાંથી પ્રશ્નો, જવાબો અને સમજૂતી મેળવીને A4 PDF મોડલ બનાવતું મજબૂત ફંક્શન 🌟 */
 async function loadDirectQuestionPaper(repoName, fileName) {
     const testUrl = (fileName === "index.html")
         ? `https://niteshbariya.github.io/${repoName}/`
@@ -967,28 +967,28 @@ async function loadDirectQuestionPaper(repoName, fileName) {
     `;
 
     const qContainer = document.getElementById("pdfDocQuestions");
-    qContainer.innerHTML = `<div style="text-align:center; padding:30px; color:#2563eb;">
+    qContainer.innerHTML = `<div style="text-align:center; padding:35px; color:#2563eb;">
         <i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>
-        રિપોઝિટરીમાંથી પ્રશ્નપત્ર, વિકલ્પો અને જવાબો લોડ થઈ રહ્યા છે...
+        <strong>રિપોઝિટરીમાંથી પ્રશ્નપત્ર, વિકલ્પો, સાચા જવાબો અને સમજૂતી લોડ થઈ રહી છે...</strong>
     </div>`;
 
     document.getElementById("reviewModal").style.display = "flex";
     currentPdfFilename = `${repoName}_${fileName.replace('.html','')}_Question_Paper.pdf`;
 
     try {
+        // ૧. રીપોઝીટરીની ફાઈલ મેળવવી
         const response = await fetch(testUrl);
+        if (!response.ok) throw new Error("ફાઈલ લોડ થઈ શકી નથી");
         const htmlText = await response.text();
 
-        // સ્ક્રિપ્ટમાંથી પ્રશ્નો શોધવા (questions array)
         let foundQuestions = null;
-        const scriptMatches = htmlText.match(/const\s+questions\s*=\s*(\[[^;]+\]);/s) ||
-                              htmlText.match(/var\s+questions\s*=\s*(\[[^;]+\]);/s) ||
-                              htmlText.match(/let\s+questions\s*=\s*(\[[^;]+\]);/s);
 
-        if (scriptMatches) {
-            try {
-                foundQuestions = eval(scriptMatches[1]);
-            } catch (e) {}
+        // ૨. સંતુલિત બ્રેકેટ (Balanced Bracket) થી questions એરે ખેંચવો
+        foundQuestions = extractQuestionsArrayFromText(htmlText);
+
+        // ૩. જો હજી ન મળ્યા હોય તો હિડન iframe વડે લોડ કરીને window.questions મેળવવું
+        if (!foundQuestions || foundQuestions.length === 0) {
+            foundQuestions = await loadQuestionsViaIframe(testUrl);
         }
 
         let questionsHtml = "";
@@ -996,18 +996,27 @@ async function loadDirectQuestionPaper(repoName, fileName) {
         if (foundQuestions && foundQuestions.length > 0) {
             foundQuestions.forEach((q, idx) => {
                 const qText = q.question || q.q || `પ્રશ્ન ${idx + 1}`;
-                const opts = q.options || q.opts || [];
+                const opts = q.options || q.opts || q.choices || [];
                 const ans = q.answer !== undefined ? q.answer : q.ans;
-                const correctOptText = (opts.length > 0 && typeof ans === 'number') ? opts[ans] : ans;
-                const unit = q.unit || q.chapter || "";
-                const exp = q.explanation || q.exp || "";
+                
+                let correctOptText = ans;
+                if (opts.length > 0) {
+                    if (typeof ans === 'number' && opts[ans] !== undefined) {
+                        correctOptText = `(${String.fromCharCode(65 + ans)}) ${opts[ans]}`;
+                    } else if (typeof ans === 'string' && /^[0-3]$/.test(ans)) {
+                        correctOptText = `(${String.fromCharCode(65 + parseInt(ans))}) ${opts[parseInt(ans)]}`;
+                    }
+                }
+
+                const unit = q.unit || q.chapter || q.topic || "";
+                const exp = q.explanation || q.exp || q.detail || "";
 
                 questionsHtml += `
                     <div class="pdf-q-item">
                         <div class="pdf-q-title">પ્રશ્ન ${idx + 1}: ${qText}</div>
                         ${opts.length > 0 ? `
                             <div class="pdf-options-list">
-                                ${opts.map((opt, oIdx) => `<div>(${String.fromCharCode(65 + oIdx)}) ${opt}</div>`).join('')}
+                                ${opts.map((opt, oIdx) => `<div><strong>(${String.fromCharCode(65 + oIdx)})</strong> ${opt}</div>`).join('')}
                             </div>
                         ` : ''}
                         <div class="pdf-ans-box">
@@ -1024,10 +1033,10 @@ async function loadDirectQuestionPaper(repoName, fileName) {
             });
             qContainer.innerHTML = questionsHtml;
         } else {
-            // જો HTML એલિમેન્ટ્સ તરીકે પ્રશ્નો હોય
+            // ૪. જો સ્ક્રિપ્ટમાં ન હોય પણ HTML ટેગ્સમાં હોય
             const parser = new DOMParser();
             const doc = parser.parseFromString(htmlText, "text/html");
-            const qDivs = doc.querySelectorAll(".question, .quiz-card, .question-box, .q-item");
+            const qDivs = doc.querySelectorAll(".question, .quiz-card, .question-box, .q-item, .card");
 
             if (qDivs.length > 0) {
                 qDivs.forEach((div, idx) => {
@@ -1036,8 +1045,8 @@ async function loadDirectQuestionPaper(repoName, fileName) {
                 qContainer.innerHTML = questionsHtml;
             } else {
                 qContainer.innerHTML = `
-                    <div class="pdf-q-item" style="text-align:center;">
-                        <div class="pdf-q-title">આ ફાઈલમાંથી પ્રશ્નો સફળતાપૂર્વક મેળવાયા છે. કસોટી લાઈવ જોવા નીચે ક્લિક કરો:</div>
+                    <div class="pdf-q-item" style="text-align:center; padding:20px;">
+                        <div class="pdf-q-title">આ ફાઈલમાંથી પ્રશ્નો મેળવાયા છે. કસોટી લાઈવ ખોલીને જોવા નીચે ક્લિક કરો:</div>
                         <a href="${testUrl}" target="_blank" class="btn-take-test" style="display:inline-flex; margin-top:10px;">
                             કસોટી પેજ ખોલીને જુઓ ↗
                         </a>
@@ -1046,10 +1055,96 @@ async function loadDirectQuestionPaper(repoName, fileName) {
             }
         }
     } catch (err) {
-        qContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444;">
-            પ્રશ્નપત્ર લોડ કરવામાં ક્ષતિ આવી. કૃપા કરીને ફાઈલ લિંક ચકાસો.
-        </div>`;
+        console.error("Direct paper load error:", err);
+        qContainer.innerHTML = `
+            <div style="text-align:center; padding:25px; color:#ef4444;">
+                <p><strong>પ્રશ્નપત્ર લોડ કરવામાં ક્ષતિ આવી.</strong></p>
+                <p style="font-size:13px; color:var(--text-muted); margin-top:8px;">ખાતરી કરો કે રિપોઝિટરી પબ્લિક છે અને GitHub Pages સક્રિય છે.</p>
+                <a href="${testUrl}" target="_blank" class="btn-take-test" style="display:inline-flex; margin-top:12px;">
+                    સીધું કસોટી પેજ ખોલો ↗
+                </a>
+            </div>
+        `;
     }
+}
+
+// સુરક્ષિત બ્રેકેટ પારસિંગ ફંક્શન
+function extractQuestionsArrayFromText(text) {
+    const varNames = ["questions", "quizData", "myQuestions", "quizQuestions", "testData"];
+    for (const vName of varNames) {
+        let idx = text.indexOf(vName);
+        while (idx !== -1) {
+            const start = text.indexOf('[', idx);
+            if (start !== -1 && start - idx < 50) {
+                let bracketCount = 0;
+                let inString = false;
+                let quoteChar = '';
+                for (let i = start; i < text.length; i++) {
+                    const c = text[i];
+                    if (inString) {
+                        if (c === '\\') {
+                            i++;
+                        } else if (c === quoteChar) {
+                            inString = false;
+                        }
+                    } else {
+                        if (c === "'" || c === '"' || c === '`') {
+                            inString = true;
+                            quoteChar = c;
+                        } else if (c === '[') {
+                            bracketCount++;
+                        } else if (c === ']') {
+                            bracketCount--;
+                            if (bracketCount === 0) {
+                                const arrayStr = text.substring(start, i + 1);
+                                try {
+                                    const parsed = new Function(`return ${arrayStr}`)();
+                                    if (Array.isArray(parsed) && parsed.length > 0) {
+                                        return parsed;
+                                    }
+                                } catch (e) {}
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            idx = text.indexOf(vName, idx + vName.length);
+        }
+    }
+    return null;
+}
+
+// આઈફ્રેમ દ્વારા પ્રશ્નો મેળવવું
+function loadQuestionsViaIframe(url) {
+    return new Promise((resolve) => {
+        const ifr = document.createElement("iframe");
+        ifr.style.display = "none";
+        ifr.src = url;
+        document.body.appendChild(ifr);
+
+        const timeout = setTimeout(() => {
+            try { document.body.removeChild(ifr); } catch(e){}
+            resolve(null);
+        }, 5000);
+
+        ifr.onload = () => {
+            clearTimeout(timeout);
+            try {
+                const win = ifr.contentWindow;
+                const qs = win.questions || win.quizData || win.myQuestions || win.quizQuestions;
+                document.body.removeChild(ifr);
+                if (Array.isArray(qs) && qs.length > 0) {
+                    resolve(qs);
+                } else {
+                    resolve(null);
+                }
+            } catch (e) {
+                try { document.body.removeChild(ifr); } catch(err){}
+                resolve(null);
+            }
+        };
+    });
 }
 
 // આપેલી કસોટીનું પત્રકમાંથી પ્રશ્નપત્ર ખોલવું
