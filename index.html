@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>વિદ્યાર્થી પર્ફોર્મન્સ ડેશબોર્ડ</title>
+    <title>પર્ફોર્મન્સ પોર્ટલ (વિદ્યાર્થી & એડમિન)</title>
     <!-- Chart.js અને html2pdf.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -172,7 +172,7 @@
 
         .table-responsive {
             overflow-x: auto;
-            margin-top: 20px;
+            margin-top: 15px;
             border-radius: 10px;
             border: 1px solid var(--border-color);
         }
@@ -250,26 +250,39 @@
             gap: 10px;
             background: var(--card-gradient);
         }
+
+        .admin-filter-bar {
+            background: var(--card-gradient);
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header-top">
-        <span class="tag-pill">📊 STUDENT ANALYTICS PORTAL</span>
+        <span id="portalRoleBadge" class="tag-pill">📊 STUDENT ANALYTICS PORTAL</span>
         <button id="themeToggleBtn" class="theme-toggle-btn" onclick="toggleDarkMode()">🌙 ડાર્ક મોડ</button>
     </div>
 
     <!-- ૧. ઈમેઈલ અને OTP લોગિન સ્ક્રીન -->
     <div id="loginScreen">
         <div style="text-align: center; margin-bottom: 25px;">
-            <h1 class="banner-title">વિદ્યાર્થી પર્ફોર્મન્સ પોર્ટલ</h1>
-            <p style="color: var(--heading-color); font-weight: 600; margin: 4px 0;">તમારો વ્યક્તિગત પ્રોગ્રેસ રિપોર્ટ, વિષયવાર ગ્રાફ અને રિવ્યૂ</p>
-            <p style="font-size: 13px; color: #64748b; margin: 0;">તમારા નોંધાયેલા ઈમેઈલ આઈડી પર OTP મેળવીને લૉગિન કરો</p>
+            <h1 class="banner-title">પર્ફોર્મન્સ પોર્ટલ</h1>
+            <p style="color: var(--heading-color); font-weight: 600; margin: 4px 0;">વ્યક્તિગત પ્રોગ્રેસ રિપોર્ટ, વિષયવાર ગ્રાફ અને રિવ્યૂ</p>
+            <p style="font-size: 13px; color: #64748b; margin: 0;">નોંધાયેલા ઈમેઈલ આઈડી પર OTP મેળવીને લૉગિન કરો</p>
         </div>
 
         <div class="form-group" style="max-width: 500px; margin: 0 auto 15px auto;">
-            <label for="studentEmail">📧 તમારું ઈમેઈલ આઈડી દાખલ કરો:</label>
+            <label for="studentEmail">📧 ઈમેઈલ આઈડી દાખલ કરો:</label>
             <input type="email" id="studentEmail" placeholder="તમારું ઈમેઈલ અહીં લખો...">
             <button id="sendOtpBtn" class="btn-gradient" onclick="sendLoginOTP()" style="margin-top: 10px;">OTP મેળવો</button>
         </div>
@@ -285,7 +298,7 @@
     <div id="dashboardScreen" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 12px;">
             <div>
-                <h3 id="welcomeUser" style="margin: 0; color: var(--heading-color);">વિદ્યાર્થી ડેશબોર્ડ</h3>
+                <h3 id="welcomeUser" style="margin: 0; color: var(--heading-color);">પર્ફોર્મન્સ ડેશબોર્ડ</h3>
                 <span id="userEmailBadge" style="font-size: 13px; color: #64748b;"></span>
             </div>
             <button onclick="location.reload()" class="btn-sm" style="background: #ef4444;">લૉગ આઉટ 🚪</button>
@@ -294,9 +307,9 @@
         <!-- સ્કોર સારાંશ કાર્ડ્સ -->
         <div class="metrics-grid">
             <div class="metric-card">
-                <div style="font-size: 14px; font-weight: 600;">કુલ આપેલી ટેસ્ટ</div>
+                <div style="font-size: 14px; font-weight: 600;" id="metricLabel1">કુલ આપેલી ટેસ્ટ</div>
                 <div class="metric-val" id="totalTestsCount">0</div>
-                <div style="font-size: 12px; color: #64748b;">સંપૂર્ણ સબમિટ થયેલ</div>
+                <div style="font-size: 12px; color: #64748b;" id="metricSub1">સંપૂર્ણ સબમિટ થયેલ</div>
             </div>
             <div class="metric-card">
                 <div style="font-size: 14px; font-weight: 600;">સરેરાશ ટકાવારી</div>
@@ -304,40 +317,46 @@
                 <div style="font-size: 12px; color: #16a34a;">ઓવરઓલ પ્રદર્શન</div>
             </div>
             <div class="metric-card">
-                <div style="font-size: 14px; font-weight: 600;">સર્વોચ્ચ સ્કોર</div>
+                <div style="font-size: 14px; font-weight: 600;" id="metricLabel3">સર્વોચ્ચ સ્કોર</div>
                 <div class="metric-val" id="highestScore">0%</div>
-                <div style="font-size: 12px; color: #2563eb;">બેસ્ટ પર્ફોર્મન્સ</div>
+                <div style="font-size: 12px; color: #2563eb;" id="metricSub3">બેસ્ટ પર્ફોર્મન્સ</div>
             </div>
         </div>
 
         <!-- ગ્રાફિકલ એનાલિટિક્સ -->
         <div class="charts-grid">
-            <!-- ચાર્ટ ૧: પ્રશ્નપત્રવાર પ્રોગ્રેસ લાઈન ગ્રાફ -->
             <div class="chart-box">
-                <h4>📈 ટેસ્ટ મુજબ ટકાવારીની પ્રગતિ (Trend)</h4>
+                <h4 id="chartTitle1">📈 ટેસ્ટ મુજબ ટકાવારીની પ્રગતિ (Trend)</h4>
                 <canvas id="trendChart" style="max-height: 250px;"></canvas>
             </div>
-            <!-- ચાર્ટ ૨: વિષયવાર સરેરાશ બાર ગ્રાફ -->
             <div class="chart-box">
                 <h4>📊 વિષયવાર સરેરાશ સ્કોર (Subject-wise)</h4>
                 <canvas id="subjectChart" style="max-height: 250px;"></canvas>
             </div>
-            <!-- ચાર્ટ ૩: એકમવાર માસ્ટરી ગ્રાફ -->
             <div class="chart-box" style="grid-column: 1 / -1;">
                 <h4>🎯 એકમવાર / પ્રકરણવાર પ્રદર્શન (Unit Mastery)</h4>
                 <canvas id="unitChart" style="max-height: 280px;"></canvas>
             </div>
         </div>
 
+        <!-- એડમિન માટે શોધ અને ફિલ્ટર બાર -->
+        <div id="adminControls" class="admin-filter-bar" style="display: none;">
+            <div style="font-weight: 700; color: #1e3a8a;">🔍 વિદ્યાર્થી શોધો:</div>
+            <input type="text" id="adminSearchInput" onkeyup="filterAdminTable()" placeholder="નામ, ઈમેઈલ કે વિષય લખીને શોધો..." style="max-width: 320px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px;">
+            <div id="adminCountBadge" style="font-size: 13px; font-weight: 600; color: #2563eb;"></div>
+        </div>
+
         <!-- ટેસ્ટ ઇતિહાસ ટેબલ -->
-        <h4 style="color: var(--heading-color); margin: 25px 0 10px 0;">📋 આપેલી તમામ મોક ટેસ્ટનો ઇતિહાસ:</h4>
+        <h4 id="tableHeaderTitle" style="color: var(--heading-color); margin: 25px 0 10px 0;">📋 આપેલી તમામ મોક ટેસ્ટનો ઇતિહાસ:</h4>
         <div class="table-responsive">
             <table>
                 <thead>
-                    <tr>
+                    <tr id="tableHeadRow">
                         <th>તારીખ & સમય</th>
+                        <th>વિદ્યાર્થીનું નામ</th>
+                        <th>ઈમેઈલ આઈડી</th>
                         <th>વિષય / પ્રશ્નપત્ર</th>
-                        <th>મેળવેલ ગુણ</th>
+                        <th>ગુણ</th>
                         <th>ટકાવારી</th>
                         <th>સમય</th>
                         <th>ઍક્શન</th>
@@ -357,7 +376,7 @@
             <button onclick="closeModal()" style="border: none; background: none; font-size: 20px; cursor: pointer;">✕</button>
         </div>
 
-        <!-- ફિલ્ટર બટનો (માત્ર ખોટા પ્રશ્નો માટે) -->
+        <!-- ફિલ્ટર બટનો -->
         <div style="display: flex; gap: 8px; padding: 10px 20px; background: var(--card-gradient); border-bottom: 1px solid var(--border-color);">
             <button class="btn-sm" onclick="filterQuestions('wrong')" style="background: #ef4444;">❌ માત્ર ખોટા પ્રશ્નો</button>
             <button class="btn-sm" onclick="filterQuestions('all')" style="background: #2563eb;">📋 બધા પ્રશ્નો</button>
@@ -382,6 +401,7 @@ let userEmail = "";
 let studentRecords = [];
 let chartInstances = {};
 let currentFilter = 'all';
+let isUserAdmin = false;
 
 function toggleDarkMode() {
     document.body.classList.toggle("dark-mode");
@@ -407,7 +427,7 @@ function sendLoginOTP() {
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify({
             action: "sendOTP",
-            name: "વિદ્યાર્થી",
+            name: "યુઝર",
             email: userEmail
         })
     }).then(() => {
@@ -466,25 +486,44 @@ function loadStudentDashboard() {
     })
     .then(res => res.json())
     .then(data => {
+        isUserAdmin = data.isAdmin || (userEmail === "niteshbariya1@gmail.com");
         studentRecords = data.history || [];
         displayDashboardUI();
     })
     .catch(() => {
-        alert("વિદ્યાર્થીનો રેકોર્ડ લોડ કરવામાં ક્ષતિ આવી.");
+        alert("રેકોર્ડ લોડ કરવામાં ક્ષતિ આવી.");
     });
 }
 
 function displayDashboardUI() {
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("dashboardScreen").style.display = "block";
-    document.getElementById("welcomeUser").innerText = "વિદ્યાર્થી પર્ફોર્મન્સ ડેશબોર્ડ";
-    document.getElementById("userEmailBadge").innerText = `ઈમેઈલ: ${userEmail}`;
+
+    if (isUserAdmin) {
+        document.getElementById("portalRoleBadge").innerText = "👑 ADMIN CONTROL PANEL";
+        document.getElementById("welcomeUser").innerText = "એડમિન કંટ્રોલ ડેશબોર્ડ (તમામ વિદ્યાર્થીઓ)";
+        document.getElementById("userEmailBadge").innerText = `સુપર એડમિન: ${userEmail}`;
+        document.getElementById("adminControls").style.display = "flex";
+        document.getElementById("tableHeaderTitle").innerText = "📋 તમામ વિદ્યાર્થીઓની સબમિટ થયેલ કસોટીઓ:";
+        document.getElementById("chartTitle1").innerText = "📈 તાજેતરની કસોટીઓનો ટ્રેન્ડ";
+        
+        // એડમિન મેટ્રિક્સ
+        document.getElementById("metricLabel1").innerText = "કુલ સબમિશન";
+        const uniqueStudents = new Set(studentRecords.map(r => String(r.email).toLowerCase())).size;
+        document.getElementById("metricLabel3").innerText = "કુલ વિદ્યાર્થીઓ";
+        document.getElementById("highestScore").innerText = uniqueStudents;
+        document.getElementById("metricSub3").innerText = "નોંધાયેલા પરીક્ષાર્થીઓ";
+    } else {
+        document.getElementById("portalRoleBadge").innerText = "📊 STUDENT ANALYTICS PORTAL";
+        document.getElementById("welcomeUser").innerText = "વિદ્યાર્થી પર્ફોર્મન્સ ડેશબોર્ડ";
+        document.getElementById("userEmailBadge").innerText = `ઈમેઈલ: ${userEmail}`;
+    }
 
     const totalTests = studentRecords.length;
     document.getElementById("totalTestsCount").innerText = totalTests;
 
     if (totalTests === 0) {
-        document.getElementById("testHistoryTable").innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b;">કોઈ ટેસ્ટ રેકોર્ડ મળ્યો નથી.</td></tr>`;
+        document.getElementById("testHistoryTable").innerHTML = `<tr><td colspan="8" style="text-align:center; color:#64748b;">કોઈ ટેસ્ટ રેકોર્ડ મળ્યો નથી.</td></tr>`;
         return;
     }
 
@@ -496,11 +535,14 @@ function displayDashboardUI() {
     studentRecords.forEach((item, index) => {
         let pVal = parseFloat(String(item.percentage).replace('%','')) || 0;
         totalPct += pVal;
-        if (pVal > maxPct) maxPct = pVal;
+        if (!isUserAdmin && pVal > maxPct) maxPct = pVal;
 
         const tr = document.createElement("tr");
+        tr.className = "data-row";
         tr.innerHTML = `
             <td>${item.dateTime || "-"}</td>
+            <td><strong>${item.name || "-"}</strong></td>
+            <td><small>${item.email || "-"}</small></td>
             <td><strong>${item.subject || "-"}</strong></td>
             <td><span style="background:#e0f2fe; color:#0369a1; padding:3px 8px; border-radius:12px; font-weight:700;">${item.score || "-"}</span></td>
             <td><strong>${item.percentage || "-"}</strong></td>
@@ -513,9 +555,29 @@ function displayDashboardUI() {
     });
 
     document.getElementById("avgPercentage").innerText = `${(totalPct / totalTests).toFixed(1)}%`;
-    document.getElementById("highestScore").innerText = `${maxPct}%`;
+    if (!isUserAdmin) {
+        document.getElementById("highestScore").innerText = `${maxPct}%`;
+    }
 
     renderCharts();
+}
+
+function filterAdminTable() {
+    const query = document.getElementById("adminSearchInput").value.toLowerCase().trim();
+    const rows = document.querySelectorAll("#testHistoryTable tr.data-row");
+    let matchCount = 0;
+
+    rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        if (text.includes(query)) {
+            row.style.display = "";
+            matchCount++;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    document.getElementById("adminCountBadge").innerText = `મળેલા પરિણામ: ${matchCount}`;
 }
 
 function renderCharts() {
@@ -526,8 +588,9 @@ function renderCharts() {
     const gridColor = isDark ? "#334155" : "#e2e8f0";
 
     // ૧. ટ્રેન્ડ લાઈન ગ્રાફ
-    const trendLabels = studentRecords.map((item, i) => `ટેસ્ટ ${i + 1}`);
-    const trendData = studentRecords.map(item => parseFloat(String(item.percentage).replace('%','')) || 0);
+    const trendRecords = studentRecords.slice(-15);
+    const trendLabels = trendRecords.map((item, i) => isUserAdmin ? (item.name || `વિદ્યાર્થી ${i+1}`) : `ટેસ્ટ ${i + 1}`);
+    const trendData = trendRecords.map(item => parseFloat(String(item.percentage).replace('%','')) || 0);
 
     if (chartInstances.trend) chartInstances.trend.destroy();
     chartInstances.trend = new Chart(document.getElementById("trendChart"), {
@@ -548,7 +611,7 @@ function renderCharts() {
             responsive: true,
             scales: {
                 y: { min: 0, max: 100, ticks: { color: textColor }, grid: { color: gridColor } },
-                x: { ticks: { color: textColor }, grid: { color: gridColor } }
+                x: { ticks: { color: textColor, maxRotation: 45 }, grid: { color: gridColor } }
             },
             plugins: { legend: { labels: { color: textColor } } }
         }
@@ -575,7 +638,7 @@ function renderCharts() {
             datasets: [{
                 label: 'સરેરાશ ટકા (%)',
                 data: subAverages,
-                backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'],
+                backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'],
                 borderRadius: 6
             }]
         },
@@ -583,7 +646,7 @@ function renderCharts() {
             responsive: true,
             scales: {
                 y: { min: 0, max: 100, ticks: { color: textColor }, grid: { color: gridColor } },
-                x: { ticks: { color: textColor }, grid: { color: gridColor } }
+                x: { ticks: { color: textColor, maxRotation: 30 }, grid: { color: gridColor } }
             },
             plugins: { legend: { display: false } }
         }
@@ -617,7 +680,7 @@ function renderCharts() {
         data: {
             labels: unitLabels,
             datasets: [{
-                label: 'સંકલ્પના સ્પષ્ટતા ગુણાંક',
+                label: 'સ્પષ્ટતા ગુણાંક',
                 data: unitData,
                 backgroundColor: '#06b6d4',
                 borderRadius: 4
@@ -640,11 +703,11 @@ let currentSelectedRecord = null;
 function openReviewModal(index) {
     currentSelectedRecord = studentRecords[index];
     currentFilter = 'all';
-    document.getElementById("modalTitle").innerText = `${currentSelectedRecord.subject || 'ટેસ્ટ'} - પરિણામ અને સમજૂતી`;
+    document.getElementById("modalTitle").innerText = `${currentSelectedRecord.subject || 'ટેસ્ટ'} - ${currentSelectedRecord.name || 'વિદ્યાર્થી'}`;
     
     document.getElementById("modalSummaryHeader").innerHTML = `
         <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
-            <div><strong>પરીક્ષાર્થી:</strong> ${userEmail}</div>
+            <div><strong>પરીક્ષાર્થી:</strong> ${currentSelectedRecord.name || '-'} (${currentSelectedRecord.email || '-'})</div>
             <div><strong>તારીખ:</strong> ${currentSelectedRecord.dateTime || '-'}</div>
             <div><strong>ગુણ:</strong> ${currentSelectedRecord.score || '-'} (${currentSelectedRecord.percentage || '-'})</div>
             <div><strong>સમય:</strong> ${currentSelectedRecord.timeTaken || '-'}</div>
@@ -655,7 +718,7 @@ function openReviewModal(index) {
     if (currentSelectedRecord.reviewHtml && currentSelectedRecord.reviewHtml.length > 20) {
         qContainer.innerHTML = currentSelectedRecord.reviewHtml;
     } else {
-        qContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#64748b;">આ ટેસ્ટ માટે કોઈ વિગતવાર પ્રશ્ન રિવ્યૂ ઉપલબ્ધ નથી.</div>`;
+        qContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#64748b;">આ કસોટી માટે કોઈ વિગતવાર પ્રશ્ન રિવ્યૂ ઉપલબ્ધ નથી.</div>`;
     }
 
     document.getElementById("reviewModal").style.display = "flex";
@@ -680,7 +743,7 @@ function filterQuestions(type) {
     });
 
     if (count === 0 && type === 'wrong') {
-        alert("અભિનંદન! આ કસોટીમાં તમારો એકપણ પ્રશ્ન ખોટો પડ્યો નથી!");
+        alert("આ કસોટીમાં એકપણ પ્રશ્ન ખોટો પડેલો નથી!");
     }
 }
 
@@ -693,7 +756,7 @@ function downloadModalPDF() {
     const filterTag = currentFilter === 'wrong' ? '_માત્ર_ખોટા_પ્રશ્નો' : '_સંપૂર્ણ_રિવ્યૂ';
     const opt = {
         margin: [10, 10, 10, 10],
-        filename: `${currentSelectedRecord.subject || 'ટેસ્ટ'}${filterTag}.pdf`,
+        filename: `${currentSelectedRecord.name || 'વિદ્યાર્થી'}_${currentSelectedRecord.subject || 'ટેસ્ટ'}${filterTag}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
