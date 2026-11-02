@@ -185,7 +185,7 @@
         .gauge-value-display { position: absolute; bottom: 5px; text-align: center; }
         .gauge-percent { font-size: 36px; font-weight: 900; color: var(--heading-color); }
 
-        /* ૧. મુખ્ય રિપોઝિટરી હબ (બરાબર નામ સાથે) */
+        /* ૧. મુખ્ય રિપોઝિટરી હબ */
         .repo-hub-card {
             background: var(--card-bg); border: 2px solid var(--border-color);
             border-radius: 18px; padding: 24px;
@@ -396,7 +396,7 @@
             </div>
         </section>
 
-        <!-- ૩. મુખ્ય રિપોઝિટરી હબ (તમારા સાચા નામ જેમ છે તેમ) -->
+        <!-- ૩. મુખ્ય રિપોઝિટરી હબ (બધી રિપોઝિટરીઝ અસલ આંકડા સાથે) -->
         <section class="repo-hub-card">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
@@ -412,10 +412,10 @@
                 </span>
             </div>
 
-            <!-- રિપોઝિટરી કાર્ડ્સ ગ્રીડ (જેમ નામ છે તેમ જ) -->
+            <!-- રિપોઝિટરી કાર્ડ્સ ગ્રીડ -->
             <div class="repo-grid" id="repoCardsGrid"></div>
 
-            <!-- રિપોઝિટરીની અંદરની ટેસ્ટ ફાઈલ્સ (જેમ નામ છે તેમ જ) -->
+            <!-- રિપોઝિટરીની અંદરની ટેસ્ટ ફાઈલ્સ -->
             <div id="repoFilesContainer">
                 <div class="files-header">
                     <div>
@@ -475,20 +475,17 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 
-/* 🌟 તમારી રિપોઝિટરીઝ અને અંદરની સાચી ફાઈલોનાં અસલ નામ (No Fake Titles) 🌟 */
-const REPO_REGISTRY = {
+/* 🌟 તમારી રિપોઝિટરીઝની યાદી 🌟 */
+const REPO_LIST = [
+    "fy", "sy", "evs", "maths", "paryavanrantest", "etc", "revision", "baou", "guj"
+];
+
+// પ્રત્યેક રિપોઝિટરીની ફાઈલોનો ડાયનેમિક સંગ્રહ
+let repoFilesCache = {
     "fy": [
         "1a.html", "1b.html", "1bnew.html", "2a.html", "2b.html",
         "3.html", "4aguj.html", "4beng.html", "5bevs.html", "module3.html"
-    ],
-    "sy": ["index.html"],
-    "evs": ["index.html"],
-    "maths": ["index.html"],
-    "paryavanrantest": ["index.html"],
-    "etc": ["index.html"],
-    "revision": ["index.html"],
-    "baou": ["index.html"],
-    "guj": ["index.html"]
+    ]
 };
 
 let userEmail = "";
@@ -504,7 +501,6 @@ let currentOpenRepo = "";
 // ૧. વાઈટ / ડાર્ક મોડ સ્વિચર
 function switchTheme() {
     const isDark = document.body.classList.toggle("dark-mode");
-    const themeBtn = document.getElementById("themeToggleBtn");
     const themeIcon = document.getElementById("themeIcon");
     const themeText = document.getElementById("themeText");
 
@@ -570,7 +566,7 @@ function fetchDataAndInit() {
     });
 }
 
-function setupDashboardEnvironment() {
+async function setupDashboardEnvironment() {
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("dashboardScreen").style.display = "block";
     document.getElementById("logoutBtn").style.display = "inline-flex";
@@ -585,6 +581,30 @@ function setupDashboardEnvironment() {
 
     populateSubjectDropdown();
     filterAndRefreshData();
+
+    // પૃષ્ઠભૂમિમાં તમામ રિપોઝિટરીઝની અંદરની સાચી ફાઈલો સ્કેન કરીને સાચો આંકડો લાવવો
+    await scanAllRepoFiles();
+}
+
+// GitHub API થી દરેક રિપોઝિટરીની ફાઈલો ગણીને સાચો આંકડો સેટ કરવો
+async function scanAllRepoFiles() {
+    const promises = REPO_LIST.map(async (repo) => {
+        try {
+            const res = await fetch(`https://api.github.com/repos/niteshbariya/${repo}/contents/`);
+            if (res.ok) {
+                const items = await res.json();
+                const htmlFiles = items.filter(f => f.name.endsWith('.html')).map(f => f.name);
+                if (htmlFiles.length > 0) {
+                    repoFilesCache[repo] = htmlFiles;
+                }
+            }
+        } catch (e) {
+            // જો કનેક્શન ન હોય તો ડિફૉલ્ટ રહેશે
+        }
+    });
+
+    await Promise.all(promises);
+    renderRepoGrid(); // સાચા આંકડા સાથે ફરી રેન્ડર
 }
 
 function populateStudentDropdown() {
@@ -628,7 +648,7 @@ function filterAndRefreshData() {
     renderHistoryTable();
 }
 
-/* ૧. રીપોઝીટરી કાર્ડ્સ (મૂળ નામો જેમ છે તેમ જ) */
+/* ૧. રીપોઝીટરી કાર્ડ્સ (સાચા આંકડા સાથે) */
 function renderRepoGrid() {
     const grid = document.getElementById("repoCardsGrid");
     grid.innerHTML = "";
@@ -636,8 +656,9 @@ function renderRepoGrid() {
     const userSubjects = filteredRecords.map(r => (r.subject || "").toLowerCase().trim());
     let totalPendingAll = 0;
 
-    Object.keys(REPO_REGISTRY).forEach(repoName => {
-        const files = REPO_REGISTRY[repoName];
+    REPO_LIST.forEach(repoName => {
+        // આ રિપોઝિટરીની અંદરની સાચી ફાઈલો
+        const files = repoFilesCache[repoName] || ["index.html"];
         let repoPending = 0;
 
         files.forEach(fileName => {
@@ -662,7 +683,8 @@ function renderRepoGrid() {
                         ${repoPending > 0 ? `⏳ ${repoPending} બાકી` : '✅ પૂર્ણ'}
                     </span>
                 </div>
-                <div style="font-size:13px; color:var(--text-muted); font-weight:600;">કુલ ટેસ્ટ: ${files.length}</div>
+                <!-- અહીં અંદરની ફાઈલોનો સાચો અસલ આંકડો દેખાશે -->
+                <div style="font-size:13px; color:var(--text-muted); font-weight:700;">કુલ ટેસ્ટ: ${files.length}</div>
             </div>
             <div style="margin-top:12px; font-size:12px; color:#2563eb; font-weight:700;">
                 ટેસ્ટ ખોલો <i class="fa-solid fa-chevron-right"></i>
@@ -684,33 +706,31 @@ async function openRepoFiles(repoName) {
     container.style.display = "block";
 
     document.getElementById("activeRepoTitle").innerHTML = `<i class="fa-regular fa-folder-open"></i> ${repoName}`;
-    document.getElementById("activeRepoSubtitle").innerText = `રિપોઝિટરીની અંદર ઉપલબ્ધ ટેસ્ટ ફાઈલ્સ:`;
+    document.getElementById("activeRepoSubtitle").innerText = `રિપોઝિટરીની અંદર ઉપલબ્ધ તમામ કસોટી ફાઈલો:`;
 
-    listGrid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:15px; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> ફાઈલો ચકાસી રહ્યા છીએ...</div>`;
-
-    let fileList = REPO_REGISTRY[repoName] || ["index.html"];
-
-    // GitHub API થી તાજેતરની ફાઈલો તપાસવી
-    try {
-        const res = await fetch(`https://api.github.com/repos/niteshbariya/${repoName}/contents/`);
-        if (res.ok) {
-            const ghFiles = await res.json();
-            const htmlFiles = ghFiles.filter(f => f.name.endsWith('.html')).map(f => f.name);
-            if (htmlFiles.length > 0) {
-                fileList = htmlFiles;
+    // જો કેશમાં ફાઈલો ન હોય તો તાત્કાલિક લાવવી
+    if (!repoFilesCache[repoName] || repoFilesCache[repoName].length <= 1) {
+        try {
+            const res = await fetch(`https://api.github.com/repos/niteshbariya/${repoName}/contents/`);
+            if (res.ok) {
+                const items = await res.json();
+                const htmls = items.filter(f => f.name.endsWith('.html')).map(f => f.name);
+                if (htmls.length > 0) {
+                    repoFilesCache[repoName] = htmls;
+                    renderRepoGrid(); // કાર્ડ પર આંકડો અપડેટ કરવો
+                }
             }
-        }
-    } catch (e) {
-        // API મર્યાદા હોય તો રજીસ્ટ્રીની ફાઈલો રહેશે
+        } catch (e) {}
     }
 
+    const fileList = repoFilesCache[repoName] || ["index.html"];
     listGrid.innerHTML = "";
     const userSubjects = filteredRecords.map(r => (r.subject || "").toLowerCase().trim());
 
     fileList.forEach(fileName => {
         const cleanName = fileName.replace('.html', '').toLowerCase();
         
-        // આપેલ છે કે બાકી તેની સરખામણી
+        // આપેલ છે કે બાકી?
         const isAttempted = userSubjects.some(sub => 
             sub.includes(cleanName) || sub.includes(repoName.toLowerCase())
         );
