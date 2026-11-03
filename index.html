@@ -115,7 +115,7 @@
             display: flex; align-items: center; gap: 5px;
         }
 
-        /* લૉગિન કાર્ડ */
+        /* લૉગિન */
         #loginScreen {
             max-width: 420px; margin: 40px auto; text-align: center;
             padding: 26px 20px; background: var(--card-bg);
@@ -194,10 +194,10 @@
         .gauge-value-display { position: absolute; bottom: 4px; text-align: center; }
         .gauge-percent { font-size: 26px; font-weight: 900; color: var(--heading-color); }
 
-        /* 🌟 સ્ટડી હબ & એડમિન નોટ્સ સ્ટાઇલ 🌟 */
+        /* 🌟 mission 27 હબ & Google Sheet Admin નોટ્સ 🌟 */
         .study-hub-two-col {
             display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
+            grid-template-columns: 1fr 1fr;
             gap: 14px;
         }
         @media (max-width: 900px) {
@@ -210,6 +210,7 @@
             padding: 14px;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
         }
         .hub-header {
             display: flex;
@@ -223,51 +224,68 @@
             font-weight: 800;
             color: var(--heading-color);
         }
-        .drive-pdf-item {
+        .folder-banner-box {
             background: var(--inner-box);
-            border: 1.5px solid var(--border-color);
-            border-radius: 8px;
-            padding: 8px 10px;
-            margin-bottom: 8px;
+            border: 1.5px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .folder-sub-tags {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 8px;
         }
-        .drive-pdf-item:hover {
-            border-color: #2563eb;
-            transform: translateY(-2px);
-        }
-        .pdf-item-title {
-            font-size: 12.5px;
-            font-weight: 700;
-            color: var(--heading-color);
-        }
-        .pdf-item-desc {
+        .folder-sub-badge {
+            background: rgba(37, 99, 235, 0.08);
+            border: 1px solid #93c5fd;
+            color: #2563eb;
             font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 2px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+        body.dark-mode .folder-sub-badge {
+            background: #1e293b;
+            color: #93c5fd;
+            border-color: #3b82f6;
         }
         .admin-note-item {
             background: var(--inner-box);
             border-left: 4px solid #f59e0b;
             border-radius: 8px;
-            padding: 8px 10px;
+            padding: 10px;
             margin-bottom: 8px;
         }
         .note-header-row {
             display: flex;
             justify-content: space-between;
-            font-size: 10.5px;
+            font-size: 11px;
             color: var(--text-muted);
             font-weight: 700;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
         }
         .note-body-text {
-            font-size: 12px;
+            font-size: 12.5px;
             color: var(--text-color);
             line-height: 1.45;
+        }
+        .note-image-box {
+            margin-top: 8px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            max-height: 200px;
+            cursor: pointer;
+        }
+        .note-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         /* રિપોઝિટરી કેન્દ્ર */
@@ -535,34 +553,58 @@
             </div>
         </section>
 
-        <!-- 🌟 ૩. ગૂગલ ડ્રાઇવ PDF & એડમિન નોટ્સ સેક્શન (નવું ઉમેરેલું) 🌟 -->
+        <!-- 🌟 ૩. mission 27 ફોલ્ડર & Google Sheet Admin નોટ્સ સેક્શન 🌟 -->
         <section class="study-hub-two-col">
-            <!-- ડાબી બાજુ: Google Drive PDF રીડર -->
+            <!-- ડાબી બાજુ: Google Drive mission 27 ડિજિટલ લાઈબ્રેરી -->
             <div class="hub-card">
-                <div class="hub-header">
-                    <h3><i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> અગત્યનું વાંચન મટીરીયલ (PDF)</h3>
-                    <span class="badge-role" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: #f87171;">
-                        Drive PDFs
-                    </span>
+                <div>
+                    <div class="hub-header">
+                        <h3><i class="fa-solid fa-folder-closed" style="color: #ef4444;"></i> mission 27 - ડિજિટલ લાઈબ્રેરી</h3>
+                        <span class="badge-role" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: #f87171;">
+                            Google Drive
+                        </span>
+                    </div>
+                    <p style="font-size: 11.5px; color: var(--text-muted); margin: 6px 0;">
+                        મુખ્ય ફોલ્ડરની અંદર તમામ સબ-ફોલ્ડર્સ અને ઉપયોગી PDF મટીરીયલ ઉપલબ્ધ છે:
+                    </p>
+                    <div class="folder-banner-box">
+                        <i class="fa-solid fa-folder-open fa-2x" style="color: #2563eb; margin-bottom: 6px;"></i>
+                        <h4 style="font-size: 14px; font-weight: 800; color: var(--heading-color);">મુખ્ય ફોલ્ડર: mission 27</h4>
+                        <div class="folder-sub-tags">
+                            <span class="folder-sub-badge"><i class="fa-regular fa-folder"></i> ૫ સબ-ફોલ્ડર્સ</span>
+                            <span class="folder-sub-badge"><i class="fa-regular fa-file-pdf"></i> તમામ PDF સાહિત્ય</span>
+                            <span class="folder-sub-badge"><i class="fa-solid fa-cloud-arrow-down"></i> લાઈવ અપડેટ</span>
+                        </div>
+                    </div>
                 </div>
-                <p style="font-size: 11.5px; color: var(--text-muted); margin: 6px 0 10px 0;">
-                    મટીરીયલ સીધું વાંચવા માટે 'વાંચો' બટન દબાવો:
-                </p>
-                <div id="drivePdfList"></div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-gradient" onclick="openDriveFolderModal()" style="padding: 8px; font-size: 12px;">
+                        <i class="fa-solid fa-folder-tree"></i> 📁 mission 27 ફોલ્ડર ખોલો
+                    </button>
+                    <a id="btnExternalDrive" href="https://drive.google.com/drive/folders/1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY?usp=sharing" target="_blank" class="btn-action-sm" style="background: #059669; text-decoration: none; padding: 8px 12px;" title="નવી વિન્ડોમાં ખોલો">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </div>
             </div>
 
-            <!-- જમણી બાજુ: Admin નોટ્સ -->
+            <!-- જમણી બાજુ: Google Sheet Admin નોટ્સ -->
             <div class="hub-card">
-                <div class="hub-header">
-                    <h3><i class="fa-solid fa-bullhorn" style="color: #f59e0b;"></i> એડમિન નોટ્સ & અગત્યની સૂચનાઓ</h3>
-                    <span class="badge-role" style="background: rgba(245, 158, 11, 0.1); color: #d97706; border-color: #fbbf24;">
-                        Notice
-                    </span>
+                <div>
+                    <div class="hub-header">
+                        <h3><i class="fa-solid fa-bullhorn" style="color: #f59e0b;"></i> એડમિન નોટ્સ & અગત્યની સૂચનાઓ</h3>
+                        <span class="badge-role" style="background: rgba(245, 158, 11, 0.1); color: #d97706; border-color: #fbbf24;">
+                            Live Notes
+                        </span>
+                    </div>
+                    <p style="font-size: 11.5px; color: var(--text-muted); margin: 6px 0 10px 0;">
+                        શિક્ષક / એડમિન તરફથી અગત્યનું માર્ગદર્શન (Google Sheet આધારિત):
+                    </p>
+                    <div id="adminNotesList" style="max-height: 250px; overflow-y: auto;">
+                        <div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 12px;">
+                            <i class="fa-solid fa-spinner fa-spin"></i> નોટ્સ લોડ થઈ રહી છે...
+                        </div>
+                    </div>
                 </div>
-                <p style="font-size: 11.5px; color: var(--text-muted); margin: 6px 0 10px 0;">
-                    શિક્ષક / એડમિન તરફથી અગત્યનું માર્ગદર્શન:
-                </p>
-                <div id="adminNotesList"></div>
             </div>
         </section>
 
@@ -617,16 +659,25 @@
     </main>
 </div>
 
-<!-- 🌟 ડ્રાઇવ PDF ઇન-બિલ્ટ વ્યૂઅર મોડલ 🌟 -->
+<!-- 🌟 mission 27 ફોલ્ડર ઇન-બિલ્ટ વ્યૂઅર મોડલ 🌟 -->
 <div id="driveViewerModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 950px; height: 90vh;">
+    <div class="modal-box" style="max-width: 980px; height: 90vh;">
         <div class="modal-header">
-            <h3 id="driveViewerTitle" style="font-size: 15px; font-weight: 800; color: var(--heading-color);">PDF વાંચન</h3>
-            <button onclick="closeDriveViewer()" style="background:none; border:none; font-size:22px; cursor:pointer; color:var(--text-color);">&times;</button>
+            <h3 id="driveViewerTitle" style="font-size: 15px; font-weight: 800; color: var(--heading-color);">
+                📁 mission 27 - ગૂગલ ડ્રાઇવ ફોલ્ડર વ્યૂઅર
+            </h3>
+            <button onclick="closeDriveFolderModal()" style="background:none; border:none; font-size:22px; cursor:pointer; color:var(--text-color);">&times;</button>
         </div>
         <div style="flex: 1; height: 100%; padding: 0;">
             <iframe id="driveViewerFrame" src="" style="width: 100%; height: 100%; border: none;"></iframe>
         </div>
+    </div>
+</div>
+
+<!-- 🌟 ઈમેજ મોટી કરીને જોવા માટેનું મોડલ 🌟 -->
+<div id="imagePreviewModal" class="modal-overlay" onclick="closeImagePreview()">
+    <div style="max-width: 90%; max-height: 90%; position: relative;">
+        <img id="previewModalImg" src="" style="width: auto; height: auto; max-width: 100%; max-height: 85vh; border-radius: 8px; border: 2px solid white;">
     </div>
 </div>
 
@@ -677,34 +728,8 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 
-/* 🌟 ૧. અહીં તમારી ગૂગલ ડ્રાઇવ PDF લિસ્ટ મૂકો 🌟 
-   ફક્ત driveId ની જગ્યાએ તમારી ડ્રાઇવ ફાઇલની ID લખવી */
-const DRIVE_PDF_FILES = [
-    {
-        title: "TET / TAT પર્યાવરણ અગત્યનું મટીરીયલ",
-        desc: "ધોરણ ૩ થી ૮ પર્યાવરણ સંપૂર્ણ પુનરાવર્તન",
-        driveId: "1-B_W5sH9VqT6ZfX2Y3A_EXAMPLE_ID" // તમારી ID અહીં મૂકવી
-    },
-    {
-        title: "રાષ્ટ્રીય શિક્ષણ નીતિ ૨૦૨૦ (NEP 2020) સારાંશ",
-        desc: "પરીક્ષાલક્ષી મુખ્ય મુદ્દાઓ અને સિદ્ધાંતો",
-        driveId: "1-B_W5sH9VqT6ZfX2Y3A_EXAMPLE_ID2" // તમારી ID અહીં મૂકવી
-    }
-];
-
-/* 🌟 ૨. અહીં એડમિન નોટ્સ મૂકો 🌟 */
-const ADMIN_NOTES = [
-    {
-        tag: "અગત્યની સૂચના",
-        date: "03/11/26",
-        text: "તમામ વિદ્યાર્થીઓએ મોક ટેસ્ટ આપતા પહેલા ઉપર આપેલ PDF મટીરીયલ ધ્યાનપૂર્વક વાંચી લેવું."
-    },
-    {
-        tag: "પરીક્ષા ટિપ",
-        date: "01/11/26",
-        text: "જે પ્રશ્નો ખોટા પડે તેનું લિસ્ટ 'માત્ર ખોટા પ્રશ્નો PDF' બટન વડે ડાઉનલોડ કરીને રિવિઝન કરવું."
-    }
-];
+/* 🌟 તમારા 'mission 27' Google Drive ફોલ્ડરની ID 🌟 */
+const GOOGLE_DRIVE_FOLDER_ID = "1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY";
 
 const REPO_LIST = ["fy", "sy", "evs", "maths", "paryavanrantest", "etc", "revision", "baou", "guj"];
 let repoFilesCache = {
@@ -714,6 +739,7 @@ let repoFilesCache = {
 let userEmail = "";
 let allRawRecords = [];
 let filteredRecords = [];
+let adminNotesData = [];
 let isAdminUser = false;
 let selectedStudentEmail = "";
 let gaugeChart = null;
@@ -845,6 +871,7 @@ function fetchDataAndInit() {
     }).then(res => res.json()).then(data => {
         isAdminUser = data.isAdmin || (userEmail === "niteshbariya1@gmail.com");
         allRawRecords = data.history || [];
+        adminNotesData = data.notes || []; // ગૂગલ શીટમાંથી આવતી નોટ્સ
         setupDashboardEnvironment();
     });
 }
@@ -862,53 +889,64 @@ async function setupDashboardEnvironment() {
     }
     populateSubjectDropdown();
     filterAndRefreshData();
-    renderStudyHub();
+    renderAdminNotes();
     await scanAllRepoFiles();
 }
 
-/* 🌟 Drive PDF & Admin Notes રેન્ડરિંગ 🌟 */
-function renderStudyHub() {
-    const pdfContainer = document.getElementById("drivePdfList");
-    if (pdfContainer) {
-        pdfContainer.innerHTML = DRIVE_PDF_FILES.map(pdf => `
-            <div class="drive-pdf-item">
-                <div>
-                    <div class="pdf-item-title"><i class="fa-regular fa-file-pdf" style="color:#ef4444;"></i> ${pdf.title}</div>
-                    <div class="pdf-item-desc">${pdf.desc}</div>
-                </div>
-                <div style="display:flex; gap:6px;">
-                    <button class="btn-action-sm" onclick="openDriveViewer('${pdf.driveId}', '${pdf.title}')" style="background:#2563eb;">
-                        <i class="fa-solid fa-book-open"></i> વાંચો
-                    </button>
-                    <a href="https://drive.google.com/uc?export=download&id=${pdf.driveId}" class="btn-action-sm" style="background:#059669; text-decoration:none;">
-                        <i class="fa-solid fa-download"></i>
-                    </a>
-                </div>
-            </div>
-        `).join('');
-    }
-
+/* 🌟 Google Sheet માંથી આવતી નોટ્સ & ઈમેજ રેન્ડરિંગ 🌟 */
+function renderAdminNotes() {
     const notesContainer = document.getElementById("adminNotesList");
-    if (notesContainer) {
-        notesContainer.innerHTML = ADMIN_NOTES.map(note => `
+    if (!notesContainer) return;
+    
+    if (adminNotesData && adminNotesData.length > 0) {
+        notesContainer.innerHTML = adminNotesData.map(note => {
+            let imageHtml = "";
+            if (note.imageUrl && note.imageUrl.trim().length > 5) {
+                imageHtml = `
+                    <div class="note-image-box" onclick="showImagePreview('${note.imageUrl}')">
+                        <img src="${note.imageUrl}" alt="Note Image" loading="lazy">
+                    </div>
+                `;
+            }
+            return `
+                <div class="admin-note-item">
+                    <div class="note-header-row">
+                        <span style="color:#d97706;"><i class="fa-solid fa-tag"></i> ${note.tag || 'સૂચના'}</span>
+                        <span><i class="fa-regular fa-clock"></i> ${formatShortDateOnly(note.date)}</span>
+                    </div>
+                    <div class="note-body-text">${note.message || ''}</div>
+                    ${imageHtml}
+                </div>
+            `;
+        }).join('');
+    } else {
+        notesContainer.innerHTML = `
             <div class="admin-note-item">
                 <div class="note-header-row">
-                    <span style="color:#d97706;"><i class="fa-solid fa-tag"></i> ${note.tag}</span>
-                    <span><i class="fa-regular fa-clock"></i> ${note.date}</span>
+                    <span style="color:#d97706;"><i class="fa-solid fa-tag"></i> સૂચના</span>
+                    <span>${formatShortDateOnly(new Date())}</span>
                 </div>
-                <div class="note-body-text">${note.text}</div>
+                <div class="note-body-text">mission 27 ફોલ્ડરમાં મુકાયેલ તમામ વિષયવાર PDF મટીરીયલ વાંચીને કસોટી આપો.</div>
             </div>
-        `).join('');
+        `;
     }
 }
 
-function openDriveViewer(driveId, title) {
-    document.getElementById("driveViewerTitle").innerText = title;
-    document.getElementById("driveViewerFrame").src = `https://drive.google.com/file/d/${driveId}/preview`;
+function showImagePreview(url) {
+    document.getElementById("previewModalImg").src = url;
+    document.getElementById("imagePreviewModal").style.display = "flex";
+}
+
+function closeImagePreview() {
+    document.getElementById("imagePreviewModal").style.display = "none";
+}
+
+function openDriveFolderModal() {
+    document.getElementById("driveViewerFrame").src = `https://drive.google.com/embeddedfolderview?id=${GOOGLE_DRIVE_FOLDER_ID}#list`;
     document.getElementById("driveViewerModal").style.display = "flex";
 }
 
-function closeDriveViewer() {
+function closeDriveFolderModal() {
     document.getElementById("driveViewerFrame").src = "";
     document.getElementById("driveViewerModal").style.display = "none";
 }
