@@ -194,7 +194,7 @@
         .gauge-value-display { position: absolute; bottom: 4px; text-align: center; }
         .gauge-percent { font-size: 26px; font-weight: 900; color: var(--heading-color); }
 
-        /* 🌟 mission 27 હબ & Google Sheet Admin નોટ્સ 🌟 */
+        /* 🌟 mission 27 લાઈબ્રેરી & Google Sheet Admin નોટ્સ 🌟 */
         .study-hub-two-col {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -426,7 +426,7 @@
         }
     </style>
 </head>
-<!-- 🌟 ૧. ડિફૉલ્ટ સફેદ થીમ: સીધું બોડી ઓપન થશે 🌟 -->
+<!-- 🌟 ૧. ડિફૉલ્ટ સફેદ થીમ 🌟 -->
 <body>
 <div class="portal-wrapper">
     <header class="top-navbar">
@@ -549,33 +549,33 @@
             </div>
         </section>
 
-        <!-- 🌟 ૩. mission 27 ફોલ્ડર & Google Sheet Admin નોટ્સ સેક્શન 🌟 -->
+        <!-- 🌟 ૩. mission 27 ડિજિટલ લાઈબ્રેરી & Google Sheet Admin નોટ્સ 🌟 -->
         <section class="study-hub-two-col">
-            <!-- ડાબી બાજુ: Google Drive mission 27 ડિજિટલ લાઈબ્રેરી -->
+            <!-- ડાબી બાજુ: mission 27 ડિજિટલ લાઈબ્રેરી (Google Drive નામ કાઢી નાખ્યું છે) -->
             <div class="hub-card">
                 <div>
                     <div class="hub-header">
-                        <h3><i class="fa-solid fa-folder-closed" style="color: #ef4444;"></i> mission 27 - ડિજિટલ લાઈબ્રેરી</h3>
-                        <span class="badge-role" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: #f87171;">
-                            Drive Docs
+                        <h3><i class="fa-solid fa-book-bookmark" style="color: #2563eb;"></i> ડિજિટલ લાઈબ્રેરી - મિશન 27</h3>
+                        <span class="badge-role" style="background: rgba(37, 99, 235, 0.1); color: #2563eb; border-color: #60a5fa;">
+                            સાહિત્ય કેન્દ્ર
                         </span>
                     </div>
                     <p style="font-size: 11.5px; color: var(--text-muted); margin: 6px 0;">
-                        મુખ્ય ફોલ્ડરના તમામ ૫ સબ-ફોલ્ડર્સ અને અગત્યની PDF માત્ર વાંચી શકાય તે રીતે સીધી વેબસાઇટમાં ખૂલશે (કોઈ લૉગિન વગર):
+                        તમામ સબ-કેટેગરીના પુસ્તકો અને ઉપયોગી PDF માત્ર વાંચી શકાય તે રીતે સીધા વેબસાઇટમાં ખૂલશે:
                     </p>
                     <div class="folder-banner-box">
                         <i class="fa-solid fa-folder-open fa-2x" style="color: #2563eb; margin-bottom: 6px;"></i>
-                        <h4 style="font-size: 14px; font-weight: 800; color: var(--heading-color);">મુખ્ય ફોલ્ડર: mission 27</h4>
+                        <h4 style="font-size: 14.5px; font-weight: 800; color: var(--heading-color);">મિશન 27 સાહિત્ય ભંડાર</h4>
                         <div class="folder-sub-tags">
-                            <span class="folder-sub-badge"><i class="fa-regular fa-folder"></i> ૫ સબ-ફોલ્ડર્સ</span>
-                            <span class="folder-sub-badge"><i class="fa-regular fa-file-pdf"></i> Read-Only PDFs</span>
-                            <span class="folder-sub-badge"><i class="fa-solid fa-shield-halved"></i> No Login Required</span>
+                            <span class="folder-sub-badge"><i class="fa-regular fa-folder"></i> વર્ગીકૃત ફોલ્ડર્સ</span>
+                            <span class="folder-sub-badge"><i class="fa-regular fa-file-pdf"></i> વાંચન PDF</span>
+                            <span class="folder-sub-badge"><i class="fa-solid fa-bolt"></i> ડાયરેક્ટ ઓપન</span>
                         </div>
                     </div>
                 </div>
                 <div style="display: flex; gap: 8px;">
                     <button class="btn-gradient" onclick="openDriveFolderModal()" style="padding: 9px; font-size: 12.5px;">
-                        <i class="fa-solid fa-book-open"></i> 📁 mission 27 લાઈબ્રેરી ખોલો (Read Only)
+                        <i class="fa-solid fa-book-open"></i> 📚 લાઈબ્રેરી ખોલો અને વાંચો
                     </button>
                 </div>
             </div>
@@ -652,12 +652,12 @@
     </main>
 </div>
 
-<!-- 🌟 mission 27 ફાઇલ અને ફોલ્ડર્સ મોડલ (કોઈ લોગિન વગર સીધું વેબસાઇટની જેમ ખૂલશે) 🌟 -->
+<!-- 🌟 mission 27 ઇન-બિલ્ટ PDF રીડર પૉપ-અપ મોડલ (કોઈ બહાર રીડાયરેક્ટ નહીં થાય) 🌟 -->
 <div id="driveViewerModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 950px; height: 92vh; display: flex; flex-direction: column;">
+    <div class="modal-box" style="max-width: 960px; height: 92vh; display: flex; flex-direction: column;">
         <div class="modal-header">
             <h3 id="driveViewerTitle" style="font-size: 15px; font-weight: 800; color: var(--heading-color);">
-                📁 mission 27 - ડિજિટલ પુસ્તકાલય (માત્ર વાંચન હેતુ)
+                📚 મિશન 27 - સાહિત્ય ભંડાર
             </h3>
             <button onclick="closeDriveFolderModal()" style="background:none; border:none; font-size:22px; cursor:pointer; color:var(--text-color);">&times;</button>
         </div>
@@ -666,7 +666,7 @@
         <div id="driveFolderContentArea" style="flex: 1; overflow-y: auto; padding: 15px; background: var(--inner-box);">
             <div style="text-align:center; padding:35px; color:#2563eb;">
                 <i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>
-                <strong>ફોલ્ડર અને PDF મટીરીયલ લોડ થઈ રહ્યું છે...</strong>
+                <strong>ફોલ્ડર્સ અને મટીરીયલ લોડ થઈ રહ્યું છે...</strong>
             </div>
         </div>
 
@@ -674,9 +674,9 @@
         <div id="singlePdfViewerArea" style="display:none; flex: 1; height: 100%; position: relative;">
             <div style="padding: 8px 14px; background: var(--card-bg); border-bottom: 1.5px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
                 <button onclick="backToFolderList()" class="btn-action-sm" style="background:#2563eb;">
-                    <i class="fa-solid fa-arrow-left"></i> પાછા જાઓ (ફોલ્ડર લિસ્ટ)
+                    <i class="fa-solid fa-arrow-left"></i> પાછા જાઓ
                 </button>
-                <span id="currentPdfName" style="font-size: 13px; font-weight: 700; color: var(--heading-color); max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
+                <span id="currentPdfName" style="font-size: 13px; font-weight: 700; color: var(--heading-color); max-width: 65%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
             </div>
             <iframe id="pdfReaderIframe" src="" style="width: 100%; height: calc(100% - 45px); border: none;"></iframe>
         </div>
@@ -737,7 +737,7 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 
-/* 🌟 તમારા 'mission 27' Google Drive ફોલ્ડરની ID 🌟 */
+/* 🌟 તમારા 'mission 27' ફોલ્ડરની ID 🌟 */
 const GOOGLE_DRIVE_FOLDER_ID = "1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY";
 
 const REPO_LIST = ["fy", "sy", "evs", "maths", "paryavanrantest", "etc", "revision", "baou", "guj"];
@@ -898,7 +898,7 @@ function fetchNotesDirectly() {
             adminNotesData = res.notes;
             renderAdminNotes();
         }
-    }).catch(e => console.log("Notes fetch finished."));
+    }).catch(e => console.log("Notes fetch completed."));
 }
 
 async function setupDashboardEnvironment() {
@@ -918,7 +918,6 @@ async function setupDashboardEnvironment() {
     await scanAllRepoFiles();
 }
 
-/* 🌟 Google Sheet માંથી આવતી નોટ્સ & ઈમેજ રેન્ડરિંગ 🌟 */
 function renderAdminNotes() {
     const notesContainer = document.getElementById("adminNotesList");
     if (!notesContainer) return;
@@ -958,7 +957,7 @@ function renderAdminNotes() {
                     <span style="color:#d97706;"><i class="fa-solid fa-tag"></i> સુવિચાર / સૂચના</span>
                     <span>${formatShortDateOnly(new Date())}</span>
                 </div>
-                <div class="note-body-text">સતત પરિશ્રમ એ જ સફળતાની ચાવી છે. mission 27 લાઈબ્રેરીમાંથી દરરોજ પુનરાવર્તન કરતા રહો.</div>
+                <div class="note-body-text">સતત પરિશ્રમ એ જ સફળતાની ચાવી છે. લાઈબ્રેરીમાંથી નિયમિત પુનરાવર્તન કરતા રહો.</div>
             </div>
         `;
     }
@@ -973,7 +972,7 @@ function closeImagePreview() {
     document.getElementById("imagePreviewModal").style.display = "none";
 }
 
-/* 🌟 Google Drive માં ગયા વગર વેબસાઇટની અંદર જ લિસ્ટ બતાવવું 🌟 */
+/* 🌟 વેબસાઇટની અંદર જ ફાઇલ લિસ્ટ અને PDF બતાવવું 🌟 */
 function openDriveFolderModal() {
     document.getElementById("driveViewerModal").style.display = "flex";
     document.getElementById("driveFolderContentArea").style.display = "block";
@@ -983,7 +982,7 @@ function openDriveFolderModal() {
     contentArea.innerHTML = `
         <div style="text-align:center; padding:35px; color:#2563eb;">
             <i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>
-            <strong>mission 27 ના તમામ ફોલ્ડર્સ અને PDF લિસ્ટ તૈયાર થઈ રહ્યું છે...</strong>
+            <strong>સાહિત્ય ભંડારના તમામ ફોલ્ડર્સ અને PDF લિસ્ટ તૈયાર થઈ રહ્યું છે...</strong>
         </div>`;
 
     fetch(SCRIPT_URL, {
@@ -1039,7 +1038,7 @@ function renderDriveFolderUI(folderData) {
     contentArea.innerHTML = html;
 }
 
-// પોર્ટલની અંદર જ PDF ઓપન કરવી (Google Drive પર નહિ જાય)
+// પોર્ટલની અંદર જ PDF ઓપન કરવી (Google Drive ખોલ્યા વગર માત્ર પ્રીવ્યૂમાં)
 function readPdfInsidePortal(fileId, fileName) {
     document.getElementById("driveFolderContentArea").style.display = "none";
     document.getElementById("singlePdfViewerArea").style.display = "flex";
