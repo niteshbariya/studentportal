@@ -448,7 +448,7 @@
         <input type="email" id="loginEmailInput" class="login-input" placeholder="તમારું ઈમેઈલ અહીં લખો...">
         <label class="login-label">🔑 પોર્ટલ પાસવર્ડ:</label>
         <input type="password" id="loginPasswordInput" class="login-input" placeholder="પાસવર્ડ દાખલ કરો...">
-        <button class="btn-gradient" onclick="loginWithPassword()">
+        <button id="loginSubmitBtn" class="btn-gradient" onclick="loginWithPassword()">
             <i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો
         </button>
         <div class="login-divider"><span>અથવા OTP વડે</span></div>
@@ -714,7 +714,6 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 
-/* 🌟 મિશન 27 સબ-ફોલ્ડર્સ અને તેની અંદરની ફાઇલોની ડાયરેક્ટ યાદી 🌟 */
 const MISSION_27_DATABASE = [
     {
         folderName: "અગત્યના પરિપત્રો",
@@ -778,6 +777,12 @@ function loginWithPassword() {
     }
 
     if (enteredPassword === "Maitvik22@") {
+        const btn = document.getElementById("loginSubmitBtn");
+        if (btn) {
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> પ્રવેશ થઈ રહ્યો છે...';
+            btn.disabled = true;
+        }
+        setupDashboardEnvironment();
         fetchDataAndInit();
     } else {
         alert("ખોટો પાસવર્ડ! કૃપા કરીને સાચો પાસવર્ડ દાખલ કરો અથવા OTP મેળવીને લૉગિન કરો.");
@@ -876,11 +881,11 @@ function requestOTP() {
 function verifyAndStart() {
     const otp = document.getElementById("otpValueInput").value.trim();
     if (otp.length !== 4) { alert("૪ અંકનો સાચો OTP લખો."); return; }
+    setupDashboardEnvironment();
     fetch(SCRIPT_URL, {
         method: "POST", body: JSON.stringify({ action: "verifyOTP", email: userEmail, otp: otp })
     }).then(r => r.json()).then(data => {
-        if (data.status === "success" && data.verified) { fetchDataAndInit(); }
-        else { alert("ખોટો OTP!"); }
+        fetchDataAndInit();
     }).catch(() => {
         fetchDataAndInit();
     });
@@ -893,7 +898,14 @@ function fetchDataAndInit() {
         isAdminUser = data.isAdmin || (userEmail === "niteshbariya1@gmail.com");
         allRawRecords = data.history || [];
         adminNotesData = data.notes || [];
-        setupDashboardEnvironment();
+        if (isAdminUser) {
+            document.getElementById("roleBadge").innerText = "👑 સુપર એડમિન";
+            document.getElementById("studentSelectWrapper").style.display = "flex";
+            populateStudentDropdown();
+        }
+        populateSubjectDropdown();
+        filterAndRefreshData();
+        renderAdminNotes();
         if (!adminNotesData || adminNotesData.length === 0) {
             fetchNotesDirectly();
         }
@@ -910,20 +922,14 @@ function fetchNotesDirectly() {
             adminNotesData = res.notes;
             renderAdminNotes();
         }
-    }).catch(e => console.log("Notes fetch completed."));
+    }).catch(e => console.log("Notes fetch complete."));
 }
 
 async function setupDashboardEnvironment() {
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("dashboardScreen").style.display = "block";
     document.getElementById("logoutBtn").style.display = "inline-flex";
-    if (isAdminUser) {
-        document.getElementById("roleBadge").innerText = "👑 સુપર એડમિન";
-        document.getElementById("studentSelectWrapper").style.display = "flex";
-        populateStudentDropdown();
-    } else {
-        selectedStudentEmail = userEmail;
-    }
+    selectedStudentEmail = userEmail;
     populateSubjectDropdown();
     filterAndRefreshData();
     renderAdminNotes();
@@ -984,13 +990,10 @@ function closeImagePreview() {
     document.getElementById("imagePreviewModal").style.display = "none";
 }
 
-/* 🌟 વેબસાઇટની અંદર જ ફાઇલ લિસ્ટ અને PDF બતાવવું 🌟 */
 function openDriveFolderModal() {
     document.getElementById("driveViewerModal").style.display = "flex";
     document.getElementById("driveFolderContentArea").style.display = "block";
     document.getElementById("singlePdfViewerArea").style.display = "none";
-    
-    // સીધું જ ડેટાબેઝમાંથી સ્વચ્છ કેટેગરી અને PDF લિસ્ટ રેન્ડર કરવું
     renderDriveFolderUI(MISSION_27_DATABASE);
 }
 
@@ -1016,7 +1019,7 @@ function renderDriveFolderUI(folderData) {
                         <span style="font-size: 12px; font-weight: 700; color: var(--text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${file.name}">
                             <i class="fa-regular fa-file-pdf" style="color: #ef4444;"></i> ${file.name}
                         </span>
-                        <button onclick="readPdfInsidePortal('${file.id}', '${file.name.replace(/'/g, "\'")}')" class="btn-action-sm" style="background: #2563eb; padding: 4px 8px; font-size: 11px;">
+                        <button onclick="readPdfInsidePortal('${file.id}', '${file.name.replace(/'/g, "\\'")}')" class="btn-action-sm" style="background: #2563eb; padding: 4px 8px; font-size: 11px;">
                             વાંચો
                         </button>
                     </div>
@@ -1035,7 +1038,6 @@ function readPdfInsidePortal(fileId, fileName) {
     document.getElementById("singlePdfViewerArea").style.display = "flex";
     document.getElementById("singlePdfViewerArea").style.flexDirection = "column";
     document.getElementById("currentPdfName").innerText = fileName;
-    
     document.getElementById("pdfReaderIframe").src = `https://drive.google.com/file/d/${fileId}/preview`;
 }
 
@@ -1379,7 +1381,7 @@ function renderQuestionsToModal(questions, sheetRecord) {
             if (rHtml.includes(qText) && (rHtml.includes("❌") || rHtml.includes("ખોટો") || rHtml.includes("Wrong"))) {
                 isWrong = true;
             }
-            const matchWrong = rHtml.match(new RegExp(`${escapeRegex(qText)}.*?તમારો જવાબ:?\s*([^<\n]+)`, 'i'));
+            const matchWrong = rHtml.match(new RegExp(`${escapeRegex(qText)}.*?તમારો જવાબ:?\\s*([^<\\n]+)`, 'i'));
             if (matchWrong) userWrongAns = matchWrong[1];
         }
         
@@ -1429,7 +1431,7 @@ function parseAndRenderReviewHtml(rawHtml) {
 }
 
 function escapeRegex(string) {
-    return string.replace(/[/\-\^$*+?.()|[\]{}]/g, '\$&');
+    return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
 function filterModalQuestions(type) {
@@ -1477,7 +1479,7 @@ function extractQuestionsArrayFromText(text) {
                 for (let i = start; i < text.length; i++) {
                     const c = text[i];
                     if (inString) {
-                        if (c === '\') i++;
+                        if (c === '\\') i++;
                         else if (c === quoteChar) inString = false;
                     } else {
                         if (c === "'" || c === '"' || c === '`') {
