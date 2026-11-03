@@ -15,10 +15,10 @@
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #06b6d4 100%);
-            --bg-color: #f1f5f9;
+            --bg-color: #f8fafc;
             --container-bg: #ffffff;
             --card-bg: #ffffff;
-            --inner-box: #f8fafc;
+            --inner-box: #f1f5f9;
             --text-color: #0f172a;
             --text-muted: #64748b;
             --heading-color: #1e3a8a;
@@ -115,7 +115,7 @@
             display: flex; align-items: center; gap: 5px;
         }
 
-        /* લૉગિન */
+        /* લૉગિન કાર્ડ */
         #loginScreen {
             max-width: 420px; margin: 40px auto; text-align: center;
             padding: 26px 20px; background: var(--card-bg);
@@ -248,17 +248,13 @@
             padding: 3px 8px;
             border-radius: 6px;
         }
-        body.dark-mode .folder-sub-badge {
-            background: #1e293b;
-            color: #93c5fd;
-            border-color: #3b82f6;
-        }
         .admin-note-item {
             background: var(--inner-box);
-            border-left: 4px solid #f59e0b;
+            border-left: 4.5px solid #f59e0b;
             border-radius: 8px;
-            padding: 10px;
+            padding: 10px 12px;
             margin-bottom: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
         }
         .note-header-row {
             display: flex;
@@ -269,15 +265,16 @@
             margin-bottom: 4px;
         }
         .note-body-text {
-            font-size: 12.5px;
+            font-size: 13px;
             color: var(--text-color);
-            line-height: 1.45;
+            line-height: 1.5;
+            white-space: pre-line;
         }
         .note-image-box {
             margin-top: 8px;
             border-radius: 6px;
             overflow: hidden;
-            border: 1px solid var(--border-color);
+            border: 1.5px solid var(--border-color);
             max-height: 200px;
             cursor: pointer;
         }
@@ -317,7 +314,6 @@
             padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #065f46;
             display: flex; justify-content: space-between;
         }
-        body.dark-mode .test-score-banner { color: #6ee7b7; }
         .file-action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
         .btn-take-test {
             background: var(--primary-gradient); color: white; text-decoration: none;
@@ -362,10 +358,10 @@
         /* મોડલ પોપઅપ */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.75); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 10px;
+            background: rgba(0, 0, 0, 0.75); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 8px;
         }
         .modal-box {
-            background: var(--card-bg); border-radius: 12px; width: 100%; max-width: 880px; max-height: 94vh;
+            background: var(--card-bg); border-radius: 14px; width: 100%; max-width: 950px; max-height: 95vh;
             display: flex; flex-direction: column; overflow: hidden; border: 2px solid var(--border-color);
         }
         .modal-header { padding: 10px 16px; border-bottom: 2px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
@@ -376,7 +372,6 @@
         .modal-body { padding: 14px; overflow-y: auto; }
         .modal-footer { padding: 10px 16px; border-top: 2px solid var(--border-color); display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
         
-        /* A4 સાઈઝ ઉત્તરવહી PDF પ્રિન્ટ એરિયા */
         #pdfPrintArea {
             background: #ffffff !important;
             color: #0f172a !important;
@@ -431,7 +426,8 @@
         }
     </style>
 </head>
-<body class="dark-mode">
+<!-- 🌟 ડિફૉલ્ટ સફેદ થીમ: dark-mode કાઢી નાખ્યું છે 🌟 -->
+<body>
 <div class="portal-wrapper">
     <header class="top-navbar">
         <div class="portal-brand">
@@ -444,7 +440,7 @@
         <div class="nav-controls">
             <span class="creator-tag"><i class="fa-solid fa-code"></i> Nitesh Baria Web Developer</span>
             <button id="themeToggleBtn" class="theme-toggle-btn" onclick="switchTheme()">
-                <i class="fa-solid fa-sun" id="themeIcon"></i> <span id="themeText">લાઈટ મોડ</span>
+                <i class="fa-solid fa-moon" id="themeIcon"></i> <span id="themeText">ડાર્ક મોડ</span>
             </button>
             <span id="roleBadge" class="badge-role"><i class="fa-solid fa-user-graduate"></i> વિદ્યાર્થી પેનલ</span>
             <button id="logoutBtn" style="display:none; background:var(--gradient-rose);" onclick="location.reload()" class="btn-action-sm">
@@ -457,7 +453,7 @@
     <div id="loginScreen">
         <div style="font-size: 32px; color: #3b82f6; margin-bottom: 8px;"><i class="fa-solid fa-shield-halved"></i></div>
         <h2 class="login-title">સુરક્ષિત લૉગિન</h2>
-        <p class="login-subtitle">પાસવર્ડ અથવા OTP વડે ડેશબોર્ડ ખોલો</p>
+        <p class="login-subtitle">ડિફૉલ્ટ પાસવર્ડ અથવા OTP વડે ડેશબોર્ડ ખોલો</p>
         <label class="login-label">📧 તમારું ઈમેઈલ આઈડી:</label>
         <input type="email" id="loginEmailInput" class="login-input" placeholder="તમારું ઈમેઈલ અહીં લખો...">
         <label class="login-label">🔑 પોર્ટલ પાસવર્ડ:</label>
@@ -561,29 +557,26 @@
                     <div class="hub-header">
                         <h3><i class="fa-solid fa-folder-closed" style="color: #ef4444;"></i> mission 27 - ડિજિટલ લાઈબ્રેરી</h3>
                         <span class="badge-role" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: #f87171;">
-                            Google Drive
+                            Drive Docs
                         </span>
                     </div>
                     <p style="font-size: 11.5px; color: var(--text-muted); margin: 6px 0;">
-                        મુખ્ય ફોલ્ડરની અંદર તમામ સબ-ફોલ્ડર્સ અને ઉપયોગી PDF મટીરીયલ ઉપલબ્ધ છે:
+                        મુખ્ય ફોલ્ડરના તમામ ૫ સબ-ફોલ્ડર્સ અને અગત્યની PDF માત્ર વાંચી શકાય તે રીતે સીધી વેબસાઇટમાં ખૂલશે (કોઈ લૉગિન વગર):
                     </p>
                     <div class="folder-banner-box">
                         <i class="fa-solid fa-folder-open fa-2x" style="color: #2563eb; margin-bottom: 6px;"></i>
                         <h4 style="font-size: 14px; font-weight: 800; color: var(--heading-color);">મુખ્ય ફોલ્ડર: mission 27</h4>
                         <div class="folder-sub-tags">
                             <span class="folder-sub-badge"><i class="fa-regular fa-folder"></i> ૫ સબ-ફોલ્ડર્સ</span>
-                            <span class="folder-sub-badge"><i class="fa-regular fa-file-pdf"></i> તમામ PDF સાહિત્ય</span>
-                            <span class="folder-sub-badge"><i class="fa-solid fa-cloud-arrow-down"></i> લાઈવ અપડેટ</span>
+                            <span class="folder-sub-badge"><i class="fa-regular fa-file-pdf"></i> Read-Only PDFs</span>
+                            <span class="folder-sub-badge"><i class="fa-solid fa-shield-halved"></i> No Login Required</span>
                         </div>
                     </div>
                 </div>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn-gradient" onclick="openDriveFolderModal()" style="padding: 8px; font-size: 12px;">
-                        <i class="fa-solid fa-folder-tree"></i> 📁 mission 27 ફોલ્ડર ખોલો
+                    <button class="btn-gradient" onclick="openDriveFolderModal()" style="padding: 9px; font-size: 12.5px;">
+                        <i class="fa-solid fa-book-open"></i> 📁 mission 27 લાઈબ્રેરી ખોલો (Read Only)
                     </button>
-                    <a id="btnExternalDrive" href="https://drive.google.com/drive/folders/1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY?usp=sharing" target="_blank" class="btn-action-sm" style="background: #059669; text-decoration: none; padding: 8px 12px;" title="નવી વિન્ડોમાં ખોલો">
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    </a>
                 </div>
             </div>
 
@@ -593,14 +586,14 @@
                     <div class="hub-header">
                         <h3><i class="fa-solid fa-bullhorn" style="color: #f59e0b;"></i> એડમિન નોટ્સ & અગત્યની સૂચનાઓ</h3>
                         <span class="badge-role" style="background: rgba(245, 158, 11, 0.1); color: #d97706; border-color: #fbbf24;">
-                            Live Notes
+                            Live Updates
                         </span>
                     </div>
-                    <p style="font-size: 11.5px; color: var(--text-muted); margin: 6px 0 10px 0;">
+                    <p style="font-size: 11.5px; color: var(--text-muted); margin: 6px 0 8px 0;">
                         શિક્ષક / એડમિન તરફથી અગત્યનું માર્ગદર્શન (Google Sheet આધારિત):
                     </p>
                     <div id="adminNotesList" style="max-height: 250px; overflow-y: auto;">
-                        <div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 12px;">
+                        <div style="text-align: center; color: var(--text-muted); padding: 25px; font-size: 12px;">
                             <i class="fa-solid fa-spinner fa-spin"></i> નોટ્સ લોડ થઈ રહી છે...
                         </div>
                     </div>
@@ -659,17 +652,17 @@
     </main>
 </div>
 
-<!-- 🌟 mission 27 ફોલ્ડર ઇન-બિલ્ટ વ્યૂઅર મોડલ 🌟 -->
+<!-- 🌟 mission 27 ફોલ્ડર ઇન-બિલ્ટ વ્યૂઅર મોડલ (કોઈ લોગિન વગર સીધું વેબસાઇટની જેમ ખૂલશે) 🌟 -->
 <div id="driveViewerModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 980px; height: 90vh;">
+    <div class="modal-box" style="max-width: 1000px; height: 92vh;">
         <div class="modal-header">
             <h3 id="driveViewerTitle" style="font-size: 15px; font-weight: 800; color: var(--heading-color);">
-                📁 mission 27 - ગૂગલ ડ્રાઇવ ફોલ્ડર વ્યૂઅર
+                📁 mission 27 - ડિજિટલ પુસ્તકાલય (માત્ર વાંચન હેતુ)
             </h3>
             <button onclick="closeDriveFolderModal()" style="background:none; border:none; font-size:22px; cursor:pointer; color:var(--text-color);">&times;</button>
         </div>
-        <div style="flex: 1; height: 100%; padding: 0;">
-            <iframe id="driveViewerFrame" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+        <div style="flex: 1; height: 100%; padding: 0; background: #fff;">
+            <iframe id="driveViewerFrame" src="" style="width: 100%; height: 100%; border: none;" allow="autoplay"></iframe>
         </div>
     </div>
 </div>
@@ -871,9 +864,27 @@ function fetchDataAndInit() {
     }).then(res => res.json()).then(data => {
         isAdminUser = data.isAdmin || (userEmail === "niteshbariya1@gmail.com");
         allRawRecords = data.history || [];
-        adminNotesData = data.notes || []; // ગૂગલ શીટમાંથી આવતી નોટ્સ
+        adminNotesData = data.notes || [];
         setupDashboardEnvironment();
+        // વધારાની સાવચેતી: અલગથી નોટ્સ લાવવી જો હિસ્ટ્રીમાં ન આવી હોય
+        if (!adminNotesData || adminNotesData.length === 0) {
+            fetchNotesDirectly();
+        }
+    }).catch(() => {
+        fetchNotesDirectly();
     });
+}
+
+// ગૂગલ શીટમાંથી સીધી નોટ્સ ફેચ કરવી
+function fetchNotesDirectly() {
+    fetch(SCRIPT_URL, {
+        method: "POST", body: JSON.stringify({ action: "getNotes" })
+    }).then(r => r.json()).then(res => {
+        if (res.notes && res.notes.length > 0) {
+            adminNotesData = res.notes;
+            renderAdminNotes();
+        }
+    }).catch(e => console.log("Notes fetch done."));
 }
 
 async function setupDashboardEnvironment() {
@@ -901,10 +912,18 @@ function renderAdminNotes() {
     if (adminNotesData && adminNotesData.length > 0) {
         notesContainer.innerHTML = adminNotesData.map(note => {
             let imageHtml = "";
-            if (note.imageUrl && note.imageUrl.trim().length > 5) {
+            let imgUrl = note.imageUrl || note.image || "";
+            // ગૂગલ ડ્રાઇવ ઈમેજ લિંક ઓટો-કન્વર્ટર
+            if (imgUrl.includes("drive.google.com")) {
+                const matchId = imgUrl.match(/[-\w]{25,}/);
+                if (matchId) {
+                    imgUrl = `https://drive.google.com/uc?export=view&id=${matchId[0]}`;
+                }
+            }
+            if (imgUrl && imgUrl.trim().length > 5) {
                 imageHtml = `
-                    <div class="note-image-box" onclick="showImagePreview('${note.imageUrl}')">
-                        <img src="${note.imageUrl}" alt="Note Image" loading="lazy">
+                    <div class="note-image-box" onclick="showImagePreview('${imgUrl}')" title="મોટો ફોટો જોવા ક્લિક કરો">
+                        <img src="${imgUrl}" alt="Note Image" loading="lazy" onerror="this.style.display='none'">
                     </div>
                 `;
             }
@@ -914,7 +933,7 @@ function renderAdminNotes() {
                         <span style="color:#d97706;"><i class="fa-solid fa-tag"></i> ${note.tag || 'સૂચના'}</span>
                         <span><i class="fa-regular fa-clock"></i> ${formatShortDateOnly(note.date)}</span>
                     </div>
-                    <div class="note-body-text">${note.message || ''}</div>
+                    <div class="note-body-text">${note.message || note.text || ''}</div>
                     ${imageHtml}
                 </div>
             `;
@@ -923,10 +942,10 @@ function renderAdminNotes() {
         notesContainer.innerHTML = `
             <div class="admin-note-item">
                 <div class="note-header-row">
-                    <span style="color:#d97706;"><i class="fa-solid fa-tag"></i> સૂચના</span>
+                    <span style="color:#d97706;"><i class="fa-solid fa-tag"></i> સુવિચાર / સૂચના</span>
                     <span>${formatShortDateOnly(new Date())}</span>
                 </div>
-                <div class="note-body-text">mission 27 ફોલ્ડરમાં મુકાયેલ તમામ વિષયવાર PDF મટીરીયલ વાંચીને કસોટી આપો.</div>
+                <div class="note-body-text">સતત પરિશ્રમ એ જ સફળતાની ચાવી છે. mission 27 લાઈબ્રેરીમાંથી દરરોજ પુનરાવર્તન કરતા રહો.</div>
             </div>
         `;
     }
@@ -941,8 +960,10 @@ function closeImagePreview() {
     document.getElementById("imagePreviewModal").style.display = "none";
 }
 
+// 🌟 ગૂગલ ડ્રાઇવ ફોલ્ડર કોઈપણ લૉગિન વગર સીધું વેબસાઇટની જેમ ખોલવું (Read Only)
 function openDriveFolderModal() {
-    document.getElementById("driveViewerFrame").src = `https://drive.google.com/embeddedfolderview?id=${GOOGLE_DRIVE_FOLDER_ID}#list`;
+    // આ લિંકથી ગૂગલ ડ્રાઇવ સાઈન-ઈન વગર સીધું લિસ્ટ સ્વરૂપે ફોલ્ડર્સ બતાવે છે
+    document.getElementById("driveViewerFrame").src = `https://drive.google.com/embeddedfolderview?id=${GOOGLE_DRIVE_FOLDER_ID}#grid`;
     document.getElementById("driveViewerModal").style.display = "flex";
 }
 
