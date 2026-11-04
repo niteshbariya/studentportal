@@ -353,7 +353,7 @@
             background: rgba(0, 0, 0, 0.75); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 8px;
         }
         .modal-box {
-            background: var(--card-bg); border-radius: 14px; width: 100%; max-width: 950px; max-height: 95vh;
+            background: var(--card-bg); border-radius: 14px; width: 100%; max-width: 980px; max-height: 94vh;
             display: flex; flex-direction: column; overflow: hidden; border: 2px solid var(--border-color);
         }
         .modal-header { padding: 10px 16px; border-bottom: 2px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
@@ -634,30 +634,17 @@
     </main>
 </div>
 
+<!-- 🌟 mission 27 પોપ-અપ મોડલ (Embedded Folder View) 🌟 -->
 <div id="driveViewerModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 960px; height: 92vh; display: flex; flex-direction: column;">
+    <div class="modal-box" style="max-width: 980px; height: 92vh; display: flex; flex-direction: column;">
         <div class="modal-header">
-            <h3 id="driveViewerTitle" style="font-size: 15px; font-weight: 800; color: var(--heading-color);">
+            <h3 style="font-size: 15px; font-weight: 800; color: var(--heading-color);">
                 📚 મિશન 27 - સાહિત્ય ભંડાર
             </h3>
             <button onclick="closeDriveFolderModal()" style="background:none; border:none; font-size:22px; cursor:pointer; color:var(--text-color);">&times;</button>
         </div>
-        
-        <div id="driveFolderContentArea" style="flex: 1; overflow-y: auto; padding: 15px; background: var(--inner-box);">
-            <div style="text-align:center; padding:35px; color:#2563eb;">
-                <i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>
-                <strong>ફોલ્ડર્સ અને મટીરીયલ લોડ થઈ રહ્યું છે...</strong>
-            </div>
-        </div>
-
-        <div id="singlePdfViewerArea" style="display:none; flex: 1; height: 100%; position: relative;">
-            <div style="padding: 8px 14px; background: var(--card-bg); border-bottom: 1.5px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                <button onclick="backToFolderList()" class="btn-action-sm" style="background:#2563eb;">
-                    <i class="fa-solid fa-arrow-left"></i> પાછા જાઓ
-                </button>
-                <span id="currentPdfName" style="font-size: 13px; font-weight: 700; color: var(--heading-color); max-width: 65%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
-            </div>
-            <iframe id="pdfReaderIframe" src="" style="width: 100%; height: calc(100% - 45px); border: none;"></iframe>
+        <div style="flex: 1; height: 100%; padding: 0; background: #ffffff;">
+            <iframe id="driveViewerFrame" src="" style="width: 100%; height: 100%; border: none;"></iframe>
         </div>
     </div>
 </div>
@@ -713,43 +700,6 @@
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
-
-const MISSION_27_DATABASE = [
-    {
-        folderName: "અગત્યના પરિપત્રો",
-        files: [
-            { name: "SMC-GR-22-06-2026.pdf", id: "1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY" },
-            { name: "જ્ઞાન સહાયક પ્રાથમિક વિભાગ.pdf", id: "1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY" },
-            { name: "શાળા આપત્તિ જોખમ વ્યવસ્થાપન.pdf", id: "1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY" }
-        ]
-    },
-    {
-        folderName: "D.El.Ed. સાહિત્ય",
-        files: [
-            { name: "D.El.Ed. પ્રથમ વર્ષ અધ્યયન મોડ્યુલ.pdf", id: "1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY" },
-            { name: "D.El.Ed. દ્વિતીય વર્ષ અધ્યયન મોડ્યુલ.pdf", id: "1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY" }
-        ]
-    },
-    {
-        folderName: "અન્ય પુસ્તકો & સાહિત્ય",
-        files: [
-            { name: "શિક્ષણ નીતિ NEP 2020 માર્ગદર્શિકા.pdf", id: "1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY" },
-            { name: "સામાન્ય જ્ઞાન & વર્તમાન પ્રવાહો 2026.pdf", id: "1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY" }
-        ]
-    },
-    {
-        folderName: "પર્યાવરણ & સામાજિક વિજ્ઞાન",
-        files: [
-            { name: "પર્યાવરણ શિક્ષણ ધોરણ 3 થી 8.pdf", id: "1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY" }
-        ]
-    },
-    {
-        folderName: "ગણિત & તાર્કિક કસોટી સાહિત્ય",
-        files: [
-            { name: "ગણિત પાયાની સંકલ્પનાઓ & શોર્ટકટ.pdf", id: "1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY" }
-        ]
-    }
-];
 
 const REPO_LIST = ["fy", "sy", "evs", "maths", "paryavanrantest", "etc", "revision", "baou", "guj"];
 let repoFilesCache = {
@@ -990,65 +940,15 @@ function closeImagePreview() {
     document.getElementById("imagePreviewModal").style.display = "none";
 }
 
+/* 🌟 મિશન 27 - ડિજિટલ પુસ્તકાલય મોડલ 🌟 */
 function openDriveFolderModal() {
+    const frame = document.getElementById("driveViewerFrame");
+    frame.src = "https://drive.google.com/embeddedfolderview?id=1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY#list";
     document.getElementById("driveViewerModal").style.display = "flex";
-    document.getElementById("driveFolderContentArea").style.display = "block";
-    document.getElementById("singlePdfViewerArea").style.display = "none";
-    renderDriveFolderUI(MISSION_27_DATABASE);
-}
-
-function renderDriveFolderUI(folderData) {
-    const contentArea = document.getElementById("driveFolderContentArea");
-    let html = "";
-    
-    folderData.forEach(f => {
-        html += `
-            <div style="margin-bottom: 16px; background: var(--card-bg); border: 1.5px solid var(--border-color); border-radius: 10px; padding: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
-                <h4 style="font-size: 14.5px; font-weight: 800; color: #2563eb; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-                    <i class="fa-solid fa-folder-open"></i> ${f.folderName} (${f.files.length} ફાઇલો)
-                </h4>
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px;">
-        `;
-        
-        if (f.files.length === 0) {
-            html += `<span style="font-size:12px; color:var(--text-muted); padding:4px;">આ ફોલ્ડરમાં હજી PDF નથી.</span>`;
-        } else {
-            f.files.forEach(file => {
-                html += `
-                    <div style="background: var(--inner-box); border: 1px solid var(--border-color); padding: 8px 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; gap: 6px;">
-                        <span style="font-size: 12px; font-weight: 700; color: var(--text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${file.name}">
-                            <i class="fa-regular fa-file-pdf" style="color: #ef4444;"></i> ${file.name}
-                        </span>
-                        <button onclick="readPdfInsidePortal('${file.id}', '${file.name.replace(/'/g, "\\'")}')" class="btn-action-sm" style="background: #2563eb; padding: 4px 8px; font-size: 11px;">
-                            વાંચો
-                        </button>
-                    </div>
-                `;
-            });
-        }
-        
-        html += `</div></div>`;
-    });
-    
-    contentArea.innerHTML = html;
-}
-
-function readPdfInsidePortal(fileId, fileName) {
-    document.getElementById("driveFolderContentArea").style.display = "none";
-    document.getElementById("singlePdfViewerArea").style.display = "flex";
-    document.getElementById("singlePdfViewerArea").style.flexDirection = "column";
-    document.getElementById("currentPdfName").innerText = fileName;
-    document.getElementById("pdfReaderIframe").src = `https://drive.google.com/file/d/${fileId}/preview`;
-}
-
-function backToFolderList() {
-    document.getElementById("pdfReaderIframe").src = "";
-    document.getElementById("singlePdfViewerArea").style.display = "none";
-    document.getElementById("driveFolderContentArea").style.display = "block";
 }
 
 function closeDriveFolderModal() {
-    document.getElementById("pdfReaderIframe").src = "";
+    document.getElementById("driveViewerFrame").src = "";
     document.getElementById("driveViewerModal").style.display = "none";
 }
 
@@ -1381,7 +1281,7 @@ function renderQuestionsToModal(questions, sheetRecord) {
             if (rHtml.includes(qText) && (rHtml.includes("❌") || rHtml.includes("ખોટો") || rHtml.includes("Wrong"))) {
                 isWrong = true;
             }
-            const matchWrong = rHtml.match(new RegExp(`${escapeRegex(qText)}.*?તમારો જવાબ:?\\s*([^<\\n]+)`, 'i'));
+            const matchWrong = rHtml.match(new RegExp(`${escapeRegex(qText)}.*?તમારો જવાબ:?\s*([^<\n]+)`, 'i'));
             if (matchWrong) userWrongAns = matchWrong[1];
         }
         
@@ -1431,7 +1331,7 @@ function parseAndRenderReviewHtml(rawHtml) {
 }
 
 function escapeRegex(string) {
-    return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+    return string.replace(/[/\-\^$*+?.()|[\]{}]/g, '\$&');
 }
 
 function filterModalQuestions(type) {
@@ -1479,7 +1379,7 @@ function extractQuestionsArrayFromText(text) {
                 for (let i = start; i < text.length; i++) {
                     const c = text[i];
                     if (inString) {
-                        if (c === '\\') i++;
+                        if (c === '\') i++;
                         else if (c === quoteChar) inString = false;
                     } else {
                         if (c === "'" || c === '"' || c === '`') {
@@ -1674,3 +1574,4 @@ function exportPDF(mode) {
 </script>
 </body>
 </html>
+
