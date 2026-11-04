@@ -1281,7 +1281,7 @@ function renderQuestionsToModal(questions, sheetRecord) {
             if (rHtml.includes(qText) && (rHtml.includes("❌") || rHtml.includes("ખોટો") || rHtml.includes("Wrong"))) {
                 isWrong = true;
             }
-            const matchWrong = rHtml.match(new RegExp(`${escapeRegex(qText)}.*?તમારો જવાબ:?\s*([^<\n]+)`, 'i'));
+            const matchWrong = rHtml.match(new RegExp(`${escapeRegex(qText)}.*?તમારો જવાબ:?\\s*([^<\\n]+)`, 'i'));
             if (matchWrong) userWrongAns = matchWrong[1];
         }
         
@@ -1331,7 +1331,7 @@ function parseAndRenderReviewHtml(rawHtml) {
 }
 
 function escapeRegex(string) {
-    return string.replace(/[/\-\^$*+?.()|[\]{}]/g, '\$&');
+    return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
 function filterModalQuestions(type) {
@@ -1379,7 +1379,7 @@ function extractQuestionsArrayFromText(text) {
                 for (let i = start; i < text.length; i++) {
                     const c = text[i];
                     if (inString) {
-                        if (c === '\') i++;
+                        if (c === '\\') i++;
                         else if (c === quoteChar) inString = false;
                     } else {
                         if (c === "'" || c === '"' || c === '`') {
@@ -1574,4 +1574,3 @@ function exportPDF(mode) {
 </script>
 </body>
 </html>
-
