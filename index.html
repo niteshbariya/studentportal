@@ -417,6 +417,23 @@
             padding: 6px 10px; border-radius: 4px; font-size: 12px; color: #1e40af; font-weight: 600; margin-top: 6px;
         }
 
+        /* Notification Section */
+        .notification-card {
+            background: var(--card-bg); border: 2px solid #f59e0b;
+            border-radius: 14px; padding: 14px; margin-top: 10px;
+            max-height: 250px; overflow-y: auto;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);
+        }
+        .notif-item {
+            background: var(--inner-box); border-left: 4px solid #f59e0b;
+            padding: 10px; margin-bottom: 8px; border-radius: 6px;
+            display: flex; justify-content: space-between; align-items: center;
+            animation: slideIn 0.3s ease-out;
+        }
+        .notif-item a { color: #2563eb; font-weight: 800; text-decoration: none; font-size: 12px; }
+        .notif-date { font-size: 10px; color: var(--text-muted); font-weight: 700; }
+        .new-badge { background: #ef4444; color: white; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; animation: pulseNew 1.5s infinite; }
+
         /* Drive PDF Viewer Specific */
         .drive-file-item:hover { background: rgba(37, 99, 235, 0.08); }
         .drive-file-item.active-file {
@@ -424,7 +441,7 @@
             border-left: 3px solid #2563eb;
         }
         
-        /* New Folder Accordion CSS */
+        /* Folder Accordion CSS */
         .folder-accordion {
             border-bottom: 1px solid var(--border-color);
         }
@@ -447,13 +464,55 @@
         .folder-accordion-header:hover { background: rgba(37, 99, 235, 0.05); }
         .folder-accordion-content {
             display: none;
-            background: var(--inner-box);
+            background: linear-gradient(180deg, rgba(37,99,235,0.05) 0%, rgba(37,99,235,0.12) 100%);
+            padding: 6px;
+            border-radius: 0 0 10px 10px;
         }
         .folder-accordion.open .folder-accordion-content { display: block; }
         .folder-accordion.open .folder-accordion-header { border-bottom: 2px solid #2563eb; }
         .folder-accordion.open .folder-icon-toggle { transform: rotate(90deg); }
         .folder-icon-toggle { transition: transform 0.2s; font-size: 10px; margin-right: 6px; }
-        
+
+        /* PDF Card Colors */
+        .drive-file-item {
+            padding: 12px 14px !important;
+            margin: 6px 8px !important;
+            border-radius: 10px !important;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.25s ease;
+            background: #ffffff;
+            border: 1.5px solid transparent;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+        body.dark-mode .drive-file-item {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        .drive-file-item:hover {
+            transform: translateX(4px);
+            border-color: #3b82f6 !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+        .drive-file-item.active-file {
+            background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(6,182,212,0.15)) !important;
+            border: 1.5px solid #2563eb !important;
+            border-left: 4px solid #2563eb !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulseNew {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
         /* Mobile PDF Viewer Fix */
         @media (max-width: 768px) {
             #driveViewerModal .modal-box {
@@ -499,7 +558,7 @@
     <div id="loginScreen">
         <div style="font-size: 32px; color: #3b82f6; margin-bottom: 8px;"><i class="fa-solid fa-shield-halved"></i></div>
         <h2 class="login-title">સુરક્ષિત લૉગિન</h2>
-        <p class="login-subtitle">ડિફૉલ્ટ પાસવર્ડ અથવા OTP વડે ડેશબોર્ડ ખોલો</p>
+        <p class="login-subtitle">Google Sheet માં નોંધાયેલા ઈમેઈલ વડે લોગિન કરો</p>
         <label class="login-label">📧 તમારું ઈમેઈલ આઈડી:</label>
         <input type="email" id="loginEmailInput" class="login-input" placeholder="તમારું ઈમેઈલ અહીં લખો...">
         <label class="login-label">🔑 પોર્ટલ પાસવર્ડ:</label>
@@ -507,20 +566,14 @@
         <button id="loginSubmitBtn" class="btn-gradient" onclick="loginWithPassword()">
             <i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો
         </button>
-        <div class="login-divider"><span>અથવા OTP વડે</span></div>
-        <button id="otpSendBtn" class="btn-gradient" onclick="requestOTP()" style="background: var(--inner-box); color: var(--text-color); border: 1.5px solid var(--border-color);">
-            <i class="fa-solid fa-paper-plane"></i> Gmail પર OTP મેળવો
-        </button>
-        <div id="otpInputGroup" style="display: none; margin-top: 14px; padding-top: 12px; border-top: 2px dashed var(--border-color);">
-            <label class="login-label">📩 ૪ અંકનો OTP:</label>
-            <input type="text" id="otpValueInput" class="login-input" maxlength="4" style="text-align: center; font-size: 18px; letter-spacing: 5px; font-weight: 800;">
-            <button id="verifyLoginBtn" class="btn-gradient" onclick="verifyAndStart()">
-                <i class="fa-solid fa-circle-check"></i> OTP વેરિફાય કરો
-            </button>
-        </div>
     </div>
 
     <main id="dashboardScreen">
+        <!-- 📢 નવા ટેસ્ટ / નોટિફિકેશન સેક્શન -->
+        <section id="notificationSection" style="display: none;">
+            <div class="notification-card" id="notificationCard"></div>
+        </section>
+
         <section class="filter-ribbon">
             <div class="filter-group" id="studentSelectWrapper" style="display: none;">
                 <span style="font-size: 12px; font-weight: 700; color: #a855f7;"><i class="fa-solid fa-users"></i> વિદ્યાર્થી:</span>
@@ -712,16 +765,16 @@
             <!-- File List Sidebar -->
             <div id="driveFileList" style="width: 320px; border-right: 2px solid var(--border-color); overflow-y: auto; background: var(--inner-box); flex-shrink: 0;"></div>
             
-            <!-- Viewer -->
-            <div style="flex: 1; position: relative; background: #e5e7eb; min-width: 0;">
+            <!-- Viewer (Dark Premium Background) -->
+            <div style="flex: 1; position: relative; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); min-width: 0; padding: 10px;">
                 <div id="driveViewerPlaceholder" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #94a3b8; text-align: center; flex-direction: column; gap: 12px; padding: 20px;">
                     <i class="fa-solid fa-file-pdf fa-4x" style="color: #ef4444; opacity: 0.5;"></i>
                     <div>
-                        <h4 style="font-size: 16px; color: #475569; margin-bottom: 6px;">📖 PDF પસંદ કરો</h4>
-                        <p style="font-size: 12px;">ઉપરની યાદીમાંથી કોઈ PDF પર ક્લિક કરો</p>
+                        <h4 style="font-size: 16px; color: #cbd5e1; margin-bottom: 6px;">📖 PDF પસંદ કરો</h4>
+                        <p style="font-size: 12px; color: #94a3b8;">ડાબી બાજુની યાદીમાંથી કોઈ PDF પર ક્લિક કરો</p>
                     </div>
                 </div>
-                <iframe id="driveViewerFrame" src="" style="width: 100%; height: 100%; border: none; display: none; background: #fff;" allow="autoplay"></iframe>
+                <iframe id="driveViewerFrame" src="" style="width: 100%; height: 100%; border: none; display: none; background: #fff; border-radius: 8px;" allow="autoplay"></iframe>
             </div>
         </div>
     </div>
@@ -799,29 +852,65 @@ let currentBaseFilename = "Test_Paper";
    🌟 Google Drive PDF Reader Variables
    ============================================================ */
 const DRIVE_FOLDER_ID = "1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY";
-let rawDriveFiles = []; // All files from API
-let groupedDriveFiles = {}; // Grouped by folder
+let rawDriveFiles = [];
+let groupedDriveFiles = {};
 
+/* ============================================================
+   🚀 લોગિન સિસ્ટમ (Google Sheet માંથી)
+   ============================================================ */
 function loginWithPassword() {
     userEmail = document.getElementById("loginEmailInput").value.trim().toLowerCase();
     const enteredPassword = document.getElementById("loginPasswordInput").value.trim();
     
-    if (!userEmail.includes("@")) {
-        alert("કૃપા કરીને સાચું ઈમેઈલ આઈડી દાખલ કરો.");
+    if (!userEmail.includes("@") || !enteredPassword) {
+        alert("કૃપા કરીને ઈમેઈલ અને પાસવર્ડ બંને દાખલ કરો.");
         return;
     }
 
-    if (enteredPassword === "Maitvik22@") {
-        const btn = document.getElementById("loginSubmitBtn");
-        if (btn) {
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> પ્રવેશ થઈ રહ્યો છે...';
-            btn.disabled = true;
+    const btn = document.getElementById("loginSubmitBtn");
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ચેક થઈ રહ્યું છે...';
+    btn.disabled = true;
+
+    fetch(SCRIPT_URL, {
+        method: "POST", body: JSON.stringify({ action: "login", email: userEmail, password: enteredPassword })
+    }).then(res => res.json()).then(data => {
+        if (data.success) {
+            localStorage.setItem("portal_user_email", userEmail);
+            localStorage.setItem("portal_user_role", data.role); 
+            localStorage.setItem("portal_user_name", data.name);
+            
+            setupDashboardEnvironment(data.role, data.name);
+            fetchDataAndInit();
+        } else {
+            alert(data.message || "લોગિન નિષ્ફળ!");
+            btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
+            btn.disabled = false;
         }
-        setupDashboardEnvironment();
-        fetchDataAndInit();
+    }).catch(() => {
+        alert("સર્વર સાથે કનેક્ટ ન થઈ શક્યું. કૃપા કરીને Apps Script તપાસો.");
+        btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
+        btn.disabled = false;
+    });
+}
+
+async function setupDashboardEnvironment(role, name) {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("dashboardScreen").style.display = "block";
+    document.getElementById("logoutBtn").style.display = "inline-flex";
+    
+    isAdminUser = (role === "Admin");
+    if (isAdminUser) {
+        document.getElementById("roleBadge").innerHTML = `👑 ${name} (Admin)`;
+        document.getElementById("studentSelectWrapper").style.display = "flex";
     } else {
-        alert("ખોટો પાસવર્ડ! કૃપા કરીને સાચો પાસવર્ડ દાખલ કરો અથવા OTP મેળવીને લૉગિન કરો.");
+        document.getElementById("roleBadge").innerHTML = `🎓 ${name} (Student)`;
+        selectedStudentEmail = userEmail;
     }
+    
+    populateSubjectDropdown();
+    filterAndRefreshData();
+    renderAdminNotes();
+    await scanAllRepoFiles();
 }
 
 function switchTheme() {
@@ -831,12 +920,13 @@ function switchTheme() {
     renderAllVisuals();
 }
 
+/* ============================================================
+   🔧 સહાયક ફંક્શન્સ
+   ============================================================ */
 function formatShortDateOnly(dtStr) {
     if (!dtStr) return "-";
     let s = String(dtStr).trim();
-    if (s.includes(' ')) {
-        s = s.split(' ')[0];
-    }
+    if (s.includes(' ')) s = s.split(' ')[0];
     const parts = s.split(/[-/]/);
     if (parts.length === 3) {
         let day = parseInt(parts[0], 10);
@@ -852,22 +942,17 @@ function formatDurationTime(timeStr) {
     if (!timeStr) return "-";
     let s = String(timeStr).trim();
     if (s.includes(':')) return s;
-    
     let hr = 0, min = 0, sec = 0;
     const hrMatch = s.match(/(\d+)\s*(કલાક|hr|hour)/i);
     const minMatch = s.match(/(\d+)\s*(મિનિટ|min)/i);
     const secMatch = s.match(/(\d+)\s*(સેકન્ડ|sec)/i);
-    
     if (hrMatch) hr = parseInt(hrMatch[1], 10);
     if (minMatch) min = parseInt(minMatch[1], 10);
     if (secMatch) sec = parseInt(secMatch[1], 10);
-    
     if (hrMatch || minMatch || secMatch) {
         const pMin = String(min).padStart(2, '0');
         const pSec = String(sec).padStart(2, '0');
-        if (hr > 0) {
-            return `${String(hr).padStart(2, '0')}:${pMin}:${pSec}`;
-        }
+        if (hr > 0) return `${String(hr).padStart(2, '0')}:${pMin}:${pSec}`;
         return `${pMin}:${pSec}`;
     }
     return s;
@@ -896,79 +981,68 @@ function formatPercentDisplay(val) {
     return `${parsePercentValue(val)}%`;
 }
 
-function requestOTP() {
-    userEmail = document.getElementById("loginEmailInput").value.trim().toLowerCase();
-    if (!userEmail.includes("@")) { alert("સાચું ઈમેઈલ લખો."); return; }
-
-    const btn = document.getElementById("otpSendBtn");
-    btn.disabled = true; btn.innerText = "OTP મોકલાઈ રહ્યો છે...";
-    fetch(SCRIPT_URL, {
-        method: "POST", mode: "no-cors",
-        headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify({ action: "sendOTP", name: "પરીક્ષાર્થી", email: userEmail })
-    }).then(() => {
-        alert("તમારા Gmail પર OTP મોકલવામાં આવ્યો છે.");
-        document.getElementById("otpInputGroup").style.display = "block";
-        btn.innerText = "OTP ફરી મોકલો"; btn.disabled = false;
-    }).catch(() => { alert("OTP મોકલવામાં ક્ષતિ આવી."); btn.disabled = false; });
+function escapeRegex(string) {
+    return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
-function verifyAndStart() {
-    const otp = document.getElementById("otpValueInput").value.trim();
-    if (otp.length !== 4) { alert("૪ અંકનો સાચો OTP લખો."); return; }
-    setupDashboardEnvironment();
-    fetch(SCRIPT_URL, {
-        method: "POST", body: JSON.stringify({ action: "verifyOTP", email: userEmail, otp: otp })
-    }).then(r => r.json()).then(data => {
-        fetchDataAndInit();
-    }).catch(() => {
-        fetchDataAndInit();
-    });
-}
-
+/* ============================================================
+   📊 ડેટા ફેચ & રેન્ડર
+   ============================================================ */
 function fetchDataAndInit() {
     fetch(SCRIPT_URL, {
         method: "POST", body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
     }).then(res => res.json()).then(data => {
-        isAdminUser = data.isAdmin || (userEmail === "niteshbariya1@gmail.com");
+        if (data.error) { alert(data.error); return; }
+        
         allRawRecords = data.history || [];
         adminNotesData = data.notes || [];
-        if (isAdminUser) {
-            document.getElementById("roleBadge").innerText = "👑 સુપર એડમિન";
-            document.getElementById("studentSelectWrapper").style.display = "flex";
-            populateStudentDropdown();
-        }
+        const testNotifications = data.notifications || [];
+        
+        if (isAdminUser) populateStudentDropdown();
+        
         populateSubjectDropdown();
         filterAndRefreshData();
         renderAdminNotes();
-        if (!adminNotesData || adminNotesData.length === 0) {
-            fetchNotesDirectly();
-        }
+        renderTestNotifications(testNotifications);
     }).catch(() => {
-        fetchNotesDirectly();
+        console.error("Data fetch failed");
     });
 }
 
-function fetchNotesDirectly() {
-    fetch(SCRIPT_URL, {
-        method: "POST", body: JSON.stringify({ action: "getNotes" })
-    }).then(r => r.json()).then(res => {
-        if (res.notes && res.notes.length > 0) {
-            adminNotesData = res.notes;
-            renderAdminNotes();
-        }
-    }).catch(e => console.log("Notes fetch complete."));
-}
+function renderTestNotifications(notifications) {
+    const section = document.getElementById("notificationSection");
+    const card = document.getElementById("notificationCard");
+    
+    if (!notifications || notifications.length === 0) {
+        section.style.display = "none";
+        return;
+    }
 
-async function setupDashboardEnvironment() {
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("dashboardScreen").style.display = "block";
-    document.getElementById("logoutBtn").style.display = "inline-flex";
-    selectedStudentEmail = userEmail;
-    populateSubjectDropdown();
-    filterAndRefreshData();
-    renderAdminNotes();
-    await scanAllRepoFiles();
+    section.style.display = "block";
+    card.innerHTML = "";
+
+    notifications.forEach((notif, index) => {
+        const dateStr = formatShortDateOnly(notif.date);
+        const isNew = index === 0;
+        
+        const div = document.createElement("div");
+        div.className = "notif-item";
+        div.innerHTML = `
+            <div style="flex: 1;">
+                <div style="font-size: 12.5px; font-weight: 800; color: var(--heading-color);">
+                    📢 ${notif.title} 
+                    ${isNew ? '<span class="new-badge">નવું (NEW)</span>' : ''}
+                </div>
+                <div class="notif-date"><i class="fa-regular fa-clock"></i> ${dateStr} એ ઉમેરાયું</div>
+            </div>
+            ${notif.link ? `<a href="${notif.link}" target="_blank" class="btn-action-sm" style="background: var(--primary-gradient);">ટેસ્ટ આપો <i class="fa-solid fa-arrow-right"></i></a>` : ''}
+        `;
+        card.appendChild(div);
+    });
+
+    setTimeout(() => {
+        if (section) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 1000);
 }
 
 function renderAdminNotes() {
@@ -981,16 +1055,10 @@ function renderAdminNotes() {
             let imgUrl = note.imageUrl || note.image || "";
             if (imgUrl.includes("drive.google.com")) {
                 const matchId = imgUrl.match(/[-\w]{25,}/);
-                if (matchId) {
-                    imgUrl = `https://drive.google.com/uc?export=view&id=${matchId[0]}`;
-                }
+                if (matchId) imgUrl = `https://drive.google.com/uc?export=view&id=${matchId[0]}`;
             }
             if (imgUrl && imgUrl.trim().length > 5) {
-                imageHtml = `
-                    <div class="note-image-box" onclick="showImagePreview('${imgUrl}')" title="મોટો ફોટો જોવા ક્લિક કરો">
-                        <img src="${imgUrl}" alt="Note Image" loading="lazy" onerror="this.style.display='none'">
-                    </div>
-                `;
+                imageHtml = `<div class="note-image-box" onclick="showImagePreview('${imgUrl}')"><img src="${imgUrl}" loading="lazy" onerror="this.style.display='none'"></div>`;
             }
             return `
                 <div class="admin-note-item">
@@ -1007,10 +1075,10 @@ function renderAdminNotes() {
         notesContainer.innerHTML = `
             <div class="admin-note-item">
                 <div class="note-header-row">
-                    <span style="color:#d97706;"><i class="fa-solid fa-tag"></i> સુવિચાર / સૂચના</span>
+                    <span style="color:#d97706;"><i class="fa-solid fa-tag"></i> સૂચના</span>
                     <span>${formatShortDateOnly(new Date())}</span>
                 </div>
-                <div class="note-body-text">સતત પરિશ્રમ એ જ સફળતાની ચાવી છે. લાઈબ્રેરીમાંથી નિયમિત પુનરાવર્તન કરતા રહો.</div>
+                <div class="note-body-text">સતત પરિશ્રમ એ જ સફળતાની ચાવી છે.</div>
             </div>
         `;
     }
@@ -1026,11 +1094,12 @@ function closeImagePreview() {
 }
 
 /* ============================================================
-   🌟 મિશન 27 - Google Drive PDF Reader (Grouped & Mobile)
+   🌟 Google Drive PDF Reader (Grouped & Colorful)
    ============================================================ */
+const DEFAULT_DRIVE_API_KEY = ""; // તમારી API Key અહીં મૂકો (જો ડિફોલ્ટ જોઈએ તો)
 
 function getDriveApiKey() {
-    return localStorage.getItem('nb_drive_api_key') || '';
+    return localStorage.getItem('nb_drive_api_key') || DEFAULT_DRIVE_API_KEY;
 }
 
 function saveDriveApiKey() {
@@ -1042,7 +1111,7 @@ function saveDriveApiKey() {
 }
 
 function resetDriveApiKey() {
-    if (!confirm('શું તમે API Key બદલવા માંગો છો?')) return;
+    if (!confirm('શું તમે API Key કાઢી નાખવા માંગો છો?')) return;
     localStorage.removeItem('nb_drive_api_key');
     rawDriveFiles = [];
     groupedDriveFiles = {};
@@ -1055,7 +1124,7 @@ async function loadDriveFiles() {
 
     const apiKey = getDriveApiKey();
 
-    if (!apiKey) {
+    if (!apiKey || apiKey.trim() === "") {
         listEl.innerHTML = `
             <div style="padding: 20px; text-align: center;">
                 <i class="fa-solid fa-key fa-3x" style="color: #f59e0b; margin-bottom: 12px;"></i>
@@ -1121,11 +1190,9 @@ async function fetchAllPdfs(folderId, apiKey, currentFolderName = "Main Folder",
     let pdfs = [];
     for (const f of items) {
         if (f.mimeType === 'application/vnd.google-apps.folder') {
-            // Recursively fetch from sub-folders, passing sub-folder's name
             const subPdfs = await fetchAllPdfs(f.id, apiKey, f.name, depth + 1);
             pdfs.push(...subPdfs);
         } else if (f.mimeType === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf')) {
-            // Tag the file with its parent folder name
             f.parentFolder = currentFolderName;
             pdfs.push(f);
         }
@@ -1136,7 +1203,6 @@ async function fetchAllPdfs(folderId, apiKey, currentFolderName = "Main Folder",
 function groupAndRenderDriveFiles() {
     groupedDriveFiles = {};
     
-    // Group files by their parent folder name
     rawDriveFiles.forEach(f => {
         const folder = f.parentFolder || "Main Folder";
         if (!groupedDriveFiles[folder]) groupedDriveFiles[folder] = [];
@@ -1166,14 +1232,13 @@ function groupAndRenderDriveFiles() {
         return;
     }
 
-    // Render folders as accordions
     Object.keys(groupedDriveFiles).sort().forEach(folderName => {
         const files = groupedDriveFiles[folderName];
+        const safeFolderId = 'folder-' + btoa(unescape(encodeURIComponent(folderName))).replace(/=/g, '');
         
-        // Folder Header
         html += `
-            <div class="folder-accordion" id="folder-${btoa(folderName).replace(/=/g, '')}">
-                <div class="folder-accordion-header" onclick="toggleAccordion('folder-${btoa(folderName).replace(/=/g, '')}')">
+            <div class="folder-accordion" id="${safeFolderId}">
+                <div class="folder-accordion-header" onclick="toggleAccordion('${safeFolderId}')">
                     <div style="display: flex; align-items: center; gap: 6px; overflow: hidden;">
                         <i class="fa-solid fa-chevron-right folder-icon-toggle" style="color: #2563eb;"></i>
                         <i class="fa-solid fa-folder" style="color: #f59e0b;"></i>
@@ -1184,20 +1249,20 @@ function groupAndRenderDriveFiles() {
                 <div class="folder-accordion-content">
         `;
 
-        // Files inside Folder
         files.forEach(f => {
             const size = f.size ? (parseInt(f.size) / 1024 / 1024).toFixed(1) + ' MB' : 'PDF';
             const safeId = f.id;
+            const safeName = f.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
             html += `
-                <div class="drive-file-item" id="file-item-${safeId}" onclick="openDriveFile('${safeId}', '${f.name.replace(/'/g, "\\'")}')"
-                    style="padding: 10px 14px 10px 30px; border-bottom: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.2s; background: var(--card-bg);">
-                    <div style="width: 24px; height: 24px; background: rgba(239, 68, 68, 0.1); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <i class="fa-solid fa-file-pdf" style="color: #ef4444; font-size: 12px;"></i>
+                <div class="drive-file-item" id="file-item-${safeId}" onclick="openDriveFile('${safeId}', '${safeName}')">
+                    <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #ef4444, #f43f5e); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 5px rgba(239, 68, 68, 0.3);">
+                        <i class="fa-solid fa-file-pdf" style="color: white; font-size: 14px;"></i>
                     </div>
                     <div style="flex: 1; min-width: 0;">
-                        <div style="font-size: 11.5px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-color);" title="${f.name}">${f.name}</div>
-                        <div style="font-size: 9.5px; color: var(--text-muted); margin-top: 1px;">${size}</div>
+                        <div style="font-size: 12px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-color);" title="${f.name}">${f.name}</div>
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px; font-weight: 600;"><i class="fa-solid fa-hard-drive"></i> ${size}</div>
                     </div>
+                    <i class="fa-solid fa-circle-play" style="color: #2563eb; font-size: 16px; opacity: 0.7;"></i>
                 </div>
             `;
         });
@@ -1207,18 +1272,16 @@ function groupAndRenderDriveFiles() {
 
     listEl.innerHTML = html;
     
-    // Auto open first folder for better UX
     const firstFolder = Object.keys(groupedDriveFiles).sort()[0];
     if (firstFolder) {
-        toggleAccordion('folder-' + btoa(firstFolder).replace(/=/g, ''));
+        const safeFolderId = 'folder-' + btoa(unescape(encodeURIComponent(firstFolder))).replace(/=/g, '');
+        toggleAccordion(safeFolderId);
     }
 }
 
 function toggleAccordion(elementId) {
     const el = document.getElementById(elementId);
-    if (el) {
-        el.classList.toggle('open');
-    }
+    if (el) el.classList.toggle('open');
 }
 
 function openDriveFile(fileId, fileName) {
@@ -1235,15 +1298,11 @@ function openDriveFile(fileId, fileName) {
     frame.style.display = 'block';
     frame.src = `https://drive.google.com/file/d/${fileId}/preview`;
 
-    // Highlight active file
     document.querySelectorAll('.drive-file-item').forEach(el => {
-        el.style.background = 'var(--card-bg)'; // Reset
+        el.classList.remove('active-file');
     });
     const activeItem = document.getElementById('file-item-' + fileId);
-    if (activeItem) {
-        activeItem.style.background = 'rgba(37, 99, 235, 0.15)';
-        activeItem.style.borderLeft = '3px solid #2563eb';
-    }
+    if (activeItem) activeItem.classList.add('active-file');
 }
 
 function openDriveFolderModal() {
@@ -1269,19 +1328,25 @@ function addManualPdf() {
 
     const name = prompt("PDF નું નામ દાખલ કરો:") || "Manual PDF";
 
-    // Add to manual folder group
     if (!groupedDriveFiles['Manual PDFs']) groupedDriveFiles['Manual PDFs'] = [];
-    groupedDriveFiles['Manual PDFs'].unshift({ id: fileId, name: name, mimeType: 'application/pdf', size: '', parentFolder: 'Manual PDFs' });
-    rawDriveFiles.push({ id: fileId, name: name, mimeType: 'application/pdf', size: '', parentFolder: 'Manual PDFs' });
+    const manualFile = { id: fileId, name: name, mimeType: 'application/pdf', size: '', parentFolder: 'Manual PDFs' };
+    groupedDriveFiles['Manual PDFs'].unshift(manualFile);
+    rawDriveFiles.push(manualFile);
     
-    groupAndRenderDriveFiles();
+    // Re-render with proper IDs
+    const currentRaw = rawDriveFiles.slice();
+    groupAndRenderDriveFilesFromArray(currentRaw);
     alert('✅ PDF ઉમેરાઈ ગયું! યાદીમાં ક્લિક કરો.');
 }
 
-/* ============================================================
-   End Drive Reader
-   ============================================================ */
+function groupAndRenderDriveFilesFromArray(filesArray) {
+    rawDriveFiles = filesArray;
+    groupAndRenderDriveFiles();
+}
 
+/* ============================================================
+   📚 Repo & Test System
+   ============================================================ */
 async function scanAllRepoFiles() {
     const promises = REPO_LIST.map(async (repo) => {
         try {
@@ -1289,9 +1354,7 @@ async function scanAllRepoFiles() {
             if (res.ok) {
                 const items = await res.json();
                 const htmlFiles = items.filter(f => f.name.endsWith('.html')).map(f => f.name);
-                if (htmlFiles.length > 0) {
-                    repoFilesCache[repo] = htmlFiles;
-                }
+                if (htmlFiles.length > 0) repoFilesCache[repo] = htmlFiles;
             }
         } catch (e) {}
     });
@@ -1335,7 +1398,7 @@ function filterAndRefreshData() {
     updateProfileCard();
     renderAllVisuals();
     renderRepoGrid();
-    if (currentOpenRepo) { openRepoFiles(currentOpenRepo); }
+    if (currentOpenRepo) openRepoFiles(currentOpenRepo);
     renderHistoryTable();
 }
 
@@ -1481,9 +1544,7 @@ async function fetchQuestionsFromLiveSource(targetSubject) {
             if (res.ok) {
                 const txt = await res.text();
                 const qs = extractQuestionsArrayFromText(txt);
-                if (qs && qs.length > 0) {
-                    return { questions: qs, repo: c.repo, file: c.file, url: testUrl };
-                }
+                if (qs && qs.length > 0) return { questions: qs, repo: c.repo, file: c.file, url: testUrl };
             }
         } catch(e) {}
     }
@@ -1660,10 +1721,6 @@ function parseAndRenderReviewHtml(rawHtml) {
     return false;
 }
 
-function escapeRegex(string) {
-    return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
-}
-
 function filterModalQuestions(type) {
     const items = document.querySelectorAll("#pdfDocQuestions .pdf-q-item");
     const btnAll = document.getElementById("btnFilterAll");
@@ -1673,12 +1730,8 @@ function filterModalQuestions(type) {
     items.forEach(item => {
         const isWrong = item.getAttribute("data-wrong") === "true" || item.classList.contains("is-wrong-answer") || item.innerHTML.includes("❌");
         if (type === "wrong") {
-            if (isWrong) {
-                item.style.display = "block";
-                wrongCount++;
-            } else {
-                item.style.display = "none";
-            }
+            if (isWrong) { item.style.display = "block"; wrongCount++; }
+            else item.style.display = "none";
         } else {
             item.style.display = "block";
         }
@@ -1687,9 +1740,7 @@ function filterModalQuestions(type) {
     if (type === "wrong") {
         btnWrong.style.opacity = "1";
         btnAll.style.opacity = "0.7";
-        if (wrongCount === 0) {
-            alert("આ કસોટીમાં કોઈ પ્રશ્ન ખોટો પડ્યો નથી અથવા વિગતવાર ડેટા ઉપલબ્ધ નથી.");
-        }
+        if (wrongCount === 0) alert("આ કસોટીમાં કોઈ પ્રશ્ન ખોટો પડ્યો નથી.");
     } else {
         btnAll.style.opacity = "1";
         btnWrong.style.opacity = "0.7";
@@ -1712,11 +1763,9 @@ function extractQuestionsArrayFromText(text) {
                         if (c === '\\') i++;
                         else if (c === quoteChar) inString = false;
                     } else {
-                        if (c === "'" || c === '"' || c === '`') {
-                            inString = true; quoteChar = c;
-                        } else if (c === '[') {
-                            bracketCount++;
-                        } else if (c === ']') {
+                        if (c === "'" || c === '"' || c === '`') { inString = true; quoteChar = c; }
+                        else if (c === '[') bracketCount++;
+                        else if (c === ']') {
                             bracketCount--;
                             if (bracketCount === 0) {
                                 const arrayStr = text.substring(start, i + 1);
@@ -1761,6 +1810,9 @@ function loadQuestionsViaIframe(url) {
     });
 }
 
+/* ============================================================
+   📊 પ્રોફાઇલ & ચાર્ટ્સ
+   ============================================================ */
 function updateProfileCard() {
     const isSingle = (selectedStudentEmail !== "ALL");
     let repRecord = isSingle 
@@ -1778,7 +1830,7 @@ function updateProfileCard() {
     if (repRecord.phone && repRecord.phone.length >= 10) {
         phoneLink.href = `tel:${repRecord.phone}`;
         const cleanPhone = repRecord.phone.replace(/[^0-9]/g, '');
-        waLink.href = `https://wa.me/91${cleanPhone.slice(-10)}?text=નમસ્તે%20${encodeURIComponent(name)},%20તમારો%20કસોટી%20અહેવાલ%20તૈયાર%20છે.`;
+        waLink.href = `https://wa.me/91${cleanPhone.slice(-10)}?text=નમસ્તે%20${encodeURIComponent(name)}`;
         phoneLink.style.display = "inline-flex";
         waLink.style.display = "inline-flex";
     } else {
