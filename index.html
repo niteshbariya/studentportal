@@ -423,9 +423,54 @@
             background: rgba(37, 99, 235, 0.15) !important;
             border-left: 3px solid #2563eb;
         }
+        
+        /* New Folder Accordion CSS */
+        .folder-accordion {
+            border-bottom: 1px solid var(--border-color);
+        }
+        .folder-accordion-header {
+            padding: 10px 14px;
+            background: var(--card-bg);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 800;
+            font-size: 12.5px;
+            color: var(--heading-color);
+            user-select: none;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .folder-accordion-header:hover { background: rgba(37, 99, 235, 0.05); }
+        .folder-accordion-content {
+            display: none;
+            background: var(--inner-box);
+        }
+        .folder-accordion.open .folder-accordion-content { display: block; }
+        .folder-accordion.open .folder-accordion-header { border-bottom: 2px solid #2563eb; }
+        .folder-accordion.open .folder-icon-toggle { transform: rotate(90deg); }
+        .folder-icon-toggle { transition: transform 0.2s; font-size: 10px; margin-right: 6px; }
+        
+        /* Mobile PDF Viewer Fix */
         @media (max-width: 768px) {
-            #driveFileList { width: 100% !important; max-height: 40vh; }
-            #driveViewerModal .modal-box > div:nth-child(2) { flex-direction: column; }
+            #driveViewerModal .modal-box {
+                height: 95vh !important;
+            }
+            #driveViewerModal > .modal-box > div:nth-child(2) {
+                flex-direction: column !important;
+            }
+            #driveFileList {
+                width: 100% !important;
+                max-height: 35vh !important;
+                border-right: none !important;
+                border-bottom: 2px solid var(--border-color) !important;
+            }
+            #driveViewerFrame {
+                min-height: 55vh;
+            }
         }
     </style>
 </head>
@@ -664,13 +709,16 @@
             </div>
         </div>
         <div style="flex: 1; display: flex; overflow: hidden; min-height: 0;">
+            <!-- File List Sidebar -->
             <div id="driveFileList" style="width: 320px; border-right: 2px solid var(--border-color); overflow-y: auto; background: var(--inner-box); flex-shrink: 0;"></div>
+            
+            <!-- Viewer -->
             <div style="flex: 1; position: relative; background: #e5e7eb; min-width: 0;">
                 <div id="driveViewerPlaceholder" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #94a3b8; text-align: center; flex-direction: column; gap: 12px; padding: 20px;">
                     <i class="fa-solid fa-file-pdf fa-4x" style="color: #ef4444; opacity: 0.5;"></i>
                     <div>
                         <h4 style="font-size: 16px; color: #475569; margin-bottom: 6px;">📖 PDF પસંદ કરો</h4>
-                        <p style="font-size: 12px;">ડાબી બાજુની યાદીમાંથી કોઈ PDF પર ક્લિક કરો</p>
+                        <p style="font-size: 12px;">ઉપરની યાદીમાંથી કોઈ PDF પર ક્લિક કરો</p>
                     </div>
                 </div>
                 <iframe id="driveViewerFrame" src="" style="width: 100%; height: 100%; border: none; display: none; background: #fff;" allow="autoplay"></iframe>
@@ -751,7 +799,8 @@ let currentBaseFilename = "Test_Paper";
    🌟 Google Drive PDF Reader Variables
    ============================================================ */
 const DRIVE_FOLDER_ID = "1SJY8cGqe3mgQPO51wYNYxTFMzucgAlnY";
-let driveFileList = [];
+let rawDriveFiles = []; // All files from API
+let groupedDriveFiles = {}; // Grouped by folder
 
 function loginWithPassword() {
     userEmail = document.getElementById("loginEmailInput").value.trim().toLowerCase();
@@ -977,7 +1026,7 @@ function closeImagePreview() {
 }
 
 /* ============================================================
-   🌟 મિશન 27 - Google Drive PDF Reader 🌟
+   🌟 મિશન 27 - Google Drive PDF Reader (Grouped & Mobile)
    ============================================================ */
 
 function getDriveApiKey() {
@@ -995,7 +1044,8 @@ function saveDriveApiKey() {
 function resetDriveApiKey() {
     if (!confirm('શું તમે API Key બદલવા માંગો છો?')) return;
     localStorage.removeItem('nb_drive_api_key');
-    driveFileList = [];
+    rawDriveFiles = [];
+    groupedDriveFiles = {};
     loadDriveFiles();
 }
 
@@ -1038,9 +1088,8 @@ async function loadDriveFiles() {
     `;
 
     try {
-        const files = await fetchAllPdfs(DRIVE_FOLDER_ID, apiKey);
-        driveFileList = files;
-        renderDriveFileList();
+        rawDriveFiles = await fetchAllPdfs(DRIVE_FOLDER_ID, apiKey);
+        groupAndRenderDriveFiles();
     } catch (e) {
         listEl.innerHTML = `
             <div style="padding: 20px; text-align: center; color: #ef4444; font-size: 12px;">
@@ -1055,8 +1104,8 @@ async function loadDriveFiles() {
     }
 }
 
-async function fetchAllPdfs(folderId, apiKey, depth = 0) {
-    if (depth > 2) return [];
+async function fetchAllPdfs(folderId, apiKey, currentFolderName = "Main Folder", depth = 0) {
+    if (depth > 3) return [];
     const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&key=${apiKey}&fields=files(id,name,mimeType,size)&pageSize=1000&orderBy=name`;
     const res = await fetch(url);
     const data = await res.json();
@@ -1069,92 +1118,132 @@ async function fetchAllPdfs(folderId, apiKey, depth = 0) {
     }
 
     const items = data.files || [];
-    const pdfs = [];
+    let pdfs = [];
     for (const f of items) {
         if (f.mimeType === 'application/vnd.google-apps.folder') {
-            const subPdfs = await fetchAllPdfs(f.id, apiKey, depth + 1);
+            // Recursively fetch from sub-folders, passing sub-folder's name
+            const subPdfs = await fetchAllPdfs(f.id, apiKey, f.name, depth + 1);
             pdfs.push(...subPdfs);
         } else if (f.mimeType === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf')) {
+            // Tag the file with its parent folder name
+            f.parentFolder = currentFolderName;
             pdfs.push(f);
         }
     }
     return pdfs;
 }
 
-function renderDriveFileList() {
+function groupAndRenderDriveFiles() {
+    groupedDriveFiles = {};
+    
+    // Group files by their parent folder name
+    rawDriveFiles.forEach(f => {
+        const folder = f.parentFolder || "Main Folder";
+        if (!groupedDriveFiles[folder]) groupedDriveFiles[folder] = [];
+        groupedDriveFiles[folder].push(f);
+    });
+
     const listEl = document.getElementById('driveFileList');
-    if (!listEl) return;
-
-    if (driveFileList.length === 0) {
-        listEl.innerHTML = `
-            <div style="padding: 30px 20px; text-align: center; color: var(--text-muted); font-size: 12px;">
-                <i class="fa-regular fa-folder-open fa-3x" style="color: #94a3b8; margin-bottom: 12px;"></i>
-                <p style="font-weight: 700;">આ ફોલ્ડરમાં કોઈ PDF મળી નથી</p>
-                <p style="font-size: 11px; margin-top: 6px;">Manual ઉમેરવા + બટન દબાવો</p>
-            </div>
-        `;
-        return;
-    }
-
-    const header = `
-        <div style="padding: 10px 14px; background: var(--card-bg); border-bottom: 1.5px solid var(--border-color); position: sticky; top: 0; z-index: 1;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 11.5px; font-weight: 800; color: var(--heading-color);">
-                    <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> ${driveFileList.length} PDF ફાઈલો
-                </span>
-                <button onclick="loadDriveFiles()" style="background: none; border: none; color: #2563eb; cursor: pointer; font-size: 13px;" title="રિફ્રેશ">
-                    <i class="fa-solid fa-rotate"></i>
-                </button>
-            </div>
+    let html = `
+        <div style="padding: 10px 14px; background: var(--card-bg); border-bottom: 1.5px solid var(--border-color); position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 11.5px; font-weight: 800; color: var(--heading-color);">
+                <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> ${rawDriveFiles.length} PDF ફાઈલો
+            </span>
+            <button onclick="loadDriveFiles()" style="background: none; border: none; color: #2563eb; cursor: pointer; font-size: 13px;" title="રિફ્રેશ">
+                <i class="fa-solid fa-rotate"></i>
+            </button>
         </div>
     `;
 
-    const items = driveFileList.map((f, idx) => {
-        const size = f.size ? (parseInt(f.size) / 1024 / 1024).toFixed(1) + ' MB' : '';
-        return `
-            <div class="drive-file-item" onclick="openDriveFile(${idx})"
-                style="padding: 12px 14px; border-bottom: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.2s;">
-                <div style="width: 32px; height: 32px; background: rgba(239, 68, 68, 0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <i class="fa-solid fa-file-pdf" style="color: #ef4444; font-size: 14px;"></i>
-                </div>
-                <div style="flex: 1; min-width: 0;">
-                    <div style="font-size: 12px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-color);" title="${f.name}">${f.name}</div>
-                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">${size || 'PDF'}</div>
-                </div>
-                <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 10px;"></i>
+    if (rawDriveFiles.length === 0) {
+        html += `
+            <div style="padding: 30px 20px; text-align: center; color: var(--text-muted); font-size: 12px;">
+                <i class="fa-regular fa-folder-open fa-3x" style="color: #94a3b8; margin-bottom: 12px;"></i>
+                <p style="font-weight: 700;">આ ફોલ્ડરમાં કોઈ PDF મળી નથી</p>
             </div>
         `;
-    }).join('');
+        listEl.innerHTML = html;
+        return;
+    }
 
-    listEl.innerHTML = header + items;
+    // Render folders as accordions
+    Object.keys(groupedDriveFiles).sort().forEach(folderName => {
+        const files = groupedDriveFiles[folderName];
+        
+        // Folder Header
+        html += `
+            <div class="folder-accordion" id="folder-${btoa(folderName).replace(/=/g, '')}">
+                <div class="folder-accordion-header" onclick="toggleAccordion('folder-${btoa(folderName).replace(/=/g, '')}')">
+                    <div style="display: flex; align-items: center; gap: 6px; overflow: hidden;">
+                        <i class="fa-solid fa-chevron-right folder-icon-toggle" style="color: #2563eb;"></i>
+                        <i class="fa-solid fa-folder" style="color: #f59e0b;"></i>
+                        <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${folderName}">${folderName}</span>
+                    </div>
+                    <span style="font-size: 10px; background: rgba(37,99,235,0.1); color: #2563eb; padding: 2px 6px; border-radius: 10px;">${files.length}</span>
+                </div>
+                <div class="folder-accordion-content">
+        `;
+
+        // Files inside Folder
+        files.forEach(f => {
+            const size = f.size ? (parseInt(f.size) / 1024 / 1024).toFixed(1) + ' MB' : 'PDF';
+            const safeId = f.id;
+            html += `
+                <div class="drive-file-item" id="file-item-${safeId}" onclick="openDriveFile('${safeId}', '${f.name.replace(/'/g, "\\'")}')"
+                    style="padding: 10px 14px 10px 30px; border-bottom: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.2s; background: var(--card-bg);">
+                    <div style="width: 24px; height: 24px; background: rgba(239, 68, 68, 0.1); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fa-solid fa-file-pdf" style="color: #ef4444; font-size: 12px;"></i>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-size: 11.5px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-color);" title="${f.name}">${f.name}</div>
+                        <div style="font-size: 9.5px; color: var(--text-muted); margin-top: 1px;">${size}</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `</div></div>`;
+    });
+
+    listEl.innerHTML = html;
+    
+    // Auto open first folder for better UX
+    const firstFolder = Object.keys(groupedDriveFiles).sort()[0];
+    if (firstFolder) {
+        toggleAccordion('folder-' + btoa(firstFolder).replace(/=/g, ''));
+    }
 }
 
-function openDriveFile(idx) {
-    const file = driveFileList[idx];
-    if (!file) return;
+function toggleAccordion(elementId) {
+    const el = document.getElementById(elementId);
+    if (el) {
+        el.classList.toggle('open');
+    }
+}
 
+function openDriveFile(fileId, fileName) {
     const frame = document.getElementById('driveViewerFrame');
     const placeholder = document.getElementById('driveViewerPlaceholder');
     const nameEl = document.getElementById('currentPdfName');
 
     if (placeholder) placeholder.style.display = 'none';
     if (nameEl) {
-        nameEl.innerText = file.name;
+        nameEl.innerText = fileName;
         nameEl.style.display = 'inline-block';
     }
 
     frame.style.display = 'block';
-    frame.src = `https://drive.google.com/file/d/${file.id}/preview`;
+    frame.src = `https://drive.google.com/file/d/${fileId}/preview`;
 
-    document.querySelectorAll('.drive-file-item').forEach((el, i) => {
-        if (i === idx) {
-            el.style.background = 'rgba(37, 99, 235, 0.15)';
-            el.style.borderLeft = '3px solid #2563eb';
-        } else {
-            el.style.background = '';
-            el.style.borderLeft = '';
-        }
+    // Highlight active file
+    document.querySelectorAll('.drive-file-item').forEach(el => {
+        el.style.background = 'var(--card-bg)'; // Reset
     });
+    const activeItem = document.getElementById('file-item-' + fileId);
+    if (activeItem) {
+        activeItem.style.background = 'rgba(37, 99, 235, 0.15)';
+        activeItem.style.borderLeft = '3px solid #2563eb';
+    }
 }
 
 function openDriveFolderModal() {
@@ -1180,8 +1269,12 @@ function addManualPdf() {
 
     const name = prompt("PDF નું નામ દાખલ કરો:") || "Manual PDF";
 
-    driveFileList.unshift({ id: fileId, name: name, mimeType: 'application/pdf', size: '' });
-    renderDriveFileList();
+    // Add to manual folder group
+    if (!groupedDriveFiles['Manual PDFs']) groupedDriveFiles['Manual PDFs'] = [];
+    groupedDriveFiles['Manual PDFs'].unshift({ id: fileId, name: name, mimeType: 'application/pdf', size: '', parentFolder: 'Manual PDFs' });
+    rawDriveFiles.push({ id: fileId, name: name, mimeType: 'application/pdf', size: '', parentFolder: 'Manual PDFs' });
+    
+    groupAndRenderDriveFiles();
     alert('✅ PDF ઉમેરાઈ ગયું! યાદીમાં ક્લિક કરો.');
 }
 
