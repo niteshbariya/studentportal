@@ -853,7 +853,7 @@ let notesScrollInterval = null;
 let currentModalLiveQuestions = null;
 let currentModalRawReviewHtml = "";
 
-/* 🌟 ૧૦૦% સેફ ઓપ્શન ક્લીનર: સિન્ટેક્સ એરર વગર 1, 2, 3, 4 કે બુલેટ્સ સાફ કરવા 🌟 */
+/* 🌟 સ્માર્ટ ઓપ્શન ક્લીનર: (A), 1., • કે - જેવા ચિહ્નો સાફ કરવા જેથી બેવડાય નહીં 🌟 */
 function cleanOptionText(text) {
     if (!text) return "";
     var s = String(text).trim();
@@ -864,7 +864,7 @@ function cleanOptionText(text) {
 }
 
 /* ============================================================
-   🚀 લોગિન સિસ્ટમ (સંપૂર્ણ સુધારેલ ફંક્શન)
+   🚀 લોગિન સિસ્ટમ (કોઈપણ CORS સમસ્યા વગર મૂળ સ્ટાન્ડર્ડ કૉલ)
    ============================================================ */
 function loginWithPassword() {
     var emailInput = document.getElementById("loginEmailInput");
@@ -885,11 +885,13 @@ function loginWithPassword() {
     btn.disabled = true;
 
     fetch(SCRIPT_URL, {
-        method: "POST", 
+        method: "POST",
         body: JSON.stringify({ action: "login", email: userEmail, password: enteredPassword })
-    }).then(function(res) {
+    })
+    .then(function(res) {
         return res.json();
-    }).then(function(data) {
+    })
+    .then(function(data) {
         if (data.success) {
             localStorage.setItem("portal_user_email", userEmail);
             localStorage.setItem("portal_user_role", data.role); 
@@ -902,8 +904,10 @@ function loginWithPassword() {
             btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
             btn.disabled = false;
         }
-    }).catch(function(err) {
-        alert("સર્વર સાથે કનેક્ટ ન થઈ શક્યું. કૃપા કરીને Apps Script તપાસો.");
+    })
+    .catch(function(err) {
+        console.error("Login Connection Error:", err);
+        alert("સર્વર સાથે કનેક્ટ ન થઈ શક્યું. કૃપા કરીને ફરી પ્રયાસ કરો.");
         btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
         btn.disabled = false;
     });
@@ -1004,13 +1008,18 @@ function escapeRegex(string) {
    ============================================================ */
 function fetchDataAndInit() {
     fetch(SCRIPT_URL, {
-        method: "POST", body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
-    }).then(res => res.json()).then(data => {
+        method: "POST",
+        body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
+    })
+    .then(function(res) {
+        return res.json();
+    })
+    .then(function(data) {
         if (data.error) { alert(data.error); return; }
         
         allRawRecords = data.history || [];
         adminNotesData = data.notes || [];
-        const testNotifications = data.notifications || [];
+        var testNotifications = data.notifications || [];
         
         if (isAdminUser) populateStudentDropdown();
         
@@ -1018,7 +1027,8 @@ function fetchDataAndInit() {
         filterAndRefreshData();
         renderAdminNotes();
         renderTestNotifications(testNotifications);
-    }).catch(err => {
+    })
+    .catch(function(err) {
         console.error("Data fetch failed", err);
     });
 }
