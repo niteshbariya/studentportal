@@ -240,7 +240,7 @@
             border-radius: 6px;
         }
 
-        /* 🌟 સુધારેલ એડમિન નોટ્સ સ્ટાઇલ (Inline Tag & Text + Smooth Auto Scroll) 🌟 */
+        /* 🌟 એડમિન નોટ્સ સ્ટાઇલ (Inline Tag & Text + Smooth Auto Scroll) 🌟 */
         #adminNotesList {
             max-height: 250px;
             overflow-y: auto;
@@ -1069,7 +1069,6 @@ function initAutoScrollAdminNotes() {
     container.ontouchstart = () => { isPaused = true; };
     container.ontouchend = () => { setTimeout(() => { isPaused = false; }, 2500); };
 
-    // Auto-scroll loop
     notesScrollInterval = setInterval(() => {
         if (isPaused) return;
         if (container.scrollHeight > container.clientHeight) {
@@ -1628,16 +1627,22 @@ function renderQuestionsToModal(questions, sheetRecord) {
     qContainer.innerHTML = questionsHtml;
 }
 
-/* 🌟 સુધારેલ parseAndRenderReviewHtml: લાલ/લીલા કલર સાથે જવાબો દર્શાવવા 🌟 */
+/* 🌟 સુધારેલ parseAndRenderReviewHtml: પરીક્ષાર્થીનો ખોટો જવાબ ❌ અને સાચો જવાબ ✅ સ્પષ્ટ દર્શાવવા 🌟 */
 function parseAndRenderReviewHtml(rawHtml) {
     const qContainer = document.getElementById("pdfDocQuestions");
     qContainer.innerHTML = rawHtml;
-    const potentialBoxes = qContainer.querySelectorAll("div[style*='border'], .review-item, .question-card, p");
+    
+    const potentialBoxes = qContainer.querySelectorAll("div[style*='border'], .review-item, .question-card");
     if (potentialBoxes.length > 0) {
         potentialBoxes.forEach(box => {
             const isWrong = box.innerHTML.includes("❌") || box.innerHTML.includes("ખોટો") || box.innerHTML.includes("is-wrong");
             box.className = `pdf-q-item ${isWrong ? 'is-wrong-answer' : ''}`;
             box.setAttribute("data-wrong", isWrong ? "true" : "false");
+            
+            box.style.borderRadius = "8px";
+            box.style.padding = "12px";
+            box.style.marginBottom = "12px";
+            
             if (isWrong) {
                 box.style.border = "2px solid #ef4444";
                 box.style.backgroundColor = "#fff5f5";
@@ -1660,8 +1665,12 @@ function filterModalQuestions(type) {
     items.forEach(item => {
         const isWrong = item.getAttribute("data-wrong") === "true" || item.classList.contains("is-wrong-answer") || item.innerHTML.includes("❌");
         if (type === "wrong") {
-            if (isWrong) { item.style.display = "block"; wrongCount++; }
-            else item.style.display = "none";
+            if (isWrong) { 
+                item.style.display = "block"; 
+                wrongCount++; 
+            } else { 
+                item.style.display = "none"; 
+            }
         } else {
             item.style.display = "block";
         }
@@ -1670,7 +1679,7 @@ function filterModalQuestions(type) {
     if (type === "wrong") {
         btnWrong.style.opacity = "1";
         btnAll.style.opacity = "0.7";
-        if (wrongCount === 0) alert("આ કસોટીમાં કોઈ પ્રશ્ન ખોટો પડ્યો નથી.");
+        if (wrongCount === 0) alert("અભિનંદન! આ કસોટીમાં કોઈ પ્રશ્ન ખોટો પડ્યો નથી.");
     } else {
         btnAll.style.opacity = "1";
         btnWrong.style.opacity = "0.7";
