@@ -860,11 +860,16 @@ function cleanOptionText(text) {
 }
 
 /* ============================================================
-   🚀 લોગિન સિસ્ટમ
+   🚀 લોગિન સિસ્ટમ (સંપૂર્ણ સુધારેલ ફંક્શન)
    ============================================================ */
 function loginWithPassword() {
-    userEmail = document.getElementById("loginEmailInput").value.trim().toLowerCase();
-    const enteredPassword = document.getElementById("loginPasswordInput").value.trim();
+    const emailInput = document.getElementById("loginEmailInput");
+    const passInput = document.getElementById("loginPasswordInput");
+    
+    if (!emailInput || !passInput) return;
+    
+    userEmail = emailInput.value.trim().toLowerCase();
+    const enteredPassword = passInput.value.trim();
     
     if (!userEmail.includes("@") || !enteredPassword) {
         alert("કૃપા કરીને ઈમેઈલ અને પાસવર્ડ બંને દાખલ કરો.");
@@ -890,7 +895,7 @@ function loginWithPassword() {
             btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
             btn.disabled = false;
         }
-    }).catch(() => {
+    }).catch(err => {
         alert("સર્વર સાથે કનેક્ટ ન થઈ શક્યું. કૃપા કરીને Apps Script તપાસો.");
         btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
         btn.disabled = false;
@@ -982,8 +987,9 @@ function formatPercentDisplay(val) {
     return `${parsePercentValue(val)}%`;
 }
 
+/* 🌟 સચોટ Regex Helper 🌟 */
 function escapeRegex(string) {
-    return string.replace(/[/\-\^$*+?.()|[\]{}]/g, '\$&');
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /* ============================================================
@@ -1005,8 +1011,8 @@ function fetchDataAndInit() {
         filterAndRefreshData();
         renderAdminNotes();
         renderTestNotifications(testNotifications);
-    }).catch(() => {
-        console.error("Data fetch failed");
+    }).catch(err => {
+        console.error("Data fetch failed", err);
     });
 }
 
@@ -1222,7 +1228,7 @@ function groupAndRenderDriveFiles() {
 
         files.forEach(f => {
             const safeId = f.id;
-            const safeName = f.name.replace(/'/g, "\'").replace(/"/g, '&quot;');
+            const safeName = f.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
             html += `
                 <div class="drive-file-item" id="file-item-${safeId}" onclick="openDriveFile('${safeId}', '${safeName}')">
                     <div style="width: 28px; height: 28px; background: linear-gradient(135deg, #ef4444, #f43f5e); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -1671,7 +1677,7 @@ function renderQuestionsToModal(questions, sheetRecord) {
             if (rHtml.includes(qText) && (rHtml.includes("❌") || rHtml.includes("ખોટો") || rHtml.includes("Wrong"))) {
                 isWrong = true;
             }
-            const matchWrong = rHtml.match(new RegExp(`${escapeRegex(qText)}.*?તમારો જવાબ:?\s*([^<\n]+)`, 'i'));
+            const matchWrong = rHtml.match(new RegExp(`${escapeRegex(qText)}.*?તમારો જવાબ:?\\s*([^<\\n]+)`, 'i'));
             if (matchWrong) userWrongAns = matchWrong[1];
         }
         
@@ -1848,7 +1854,7 @@ function extractQuestionsArrayFromText(text) {
                 for (let i = start; i < text.length; i++) {
                     const c = text[i];
                     if (inString) {
-                        if (c === '\') i++;
+                        if (c === '\\') i++;
                         else if (c === quoteChar) inString = false;
                     } else {
                         if (c === "'" || c === '"' || c === '`') { inString = true; quoteChar = c; }
