@@ -240,7 +240,7 @@
             border-radius: 6px;
         }
 
-        /* 🌟 એડમિન નોટ્સ સ્ટાઇલ (Inline Tag & Text + Smooth Auto Scroll) 🌟 */
+        /* એડમિન નોટ્સ સ્ટાઇલ */
         #adminNotesList {
             max-height: 250px;
             overflow-y: auto;
@@ -393,7 +393,7 @@
         }
         .portal-footer { text-align: center; padding: 12px 0 4px 0; font-size: 11.5px; color: var(--text-muted); font-weight: 700; }
 
-        /* 🌟 સુધારેલ મોડલ પોપ-અપ CSS (હંમેશા દેખાતું ક્લોઝ બટન અને પરફેક્ટ વ્યૂ) 🌟 */
+        /* મોડલ પોપ-અપ CSS */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.78); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 8px;
@@ -411,7 +411,7 @@
             position: sticky; top: 0; background: var(--card-bg); z-index: 20;
         }
         .modal-close-icon-btn {
-            background: #ef4444; color: white; border: none; font-size: 14px; font-weight: 800;
+            background: #ef4444; color: white; border: none; font-size: 13.5px; font-weight: 800;
             padding: 5px 12px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
             transition: all 0.2s;
         }
@@ -780,7 +780,7 @@
     </div>
 </div>
 
-<!-- 🌟 સુધારેલ Review Modal: સ્પષ્ટ ક્લોઝ બટન અને ક્લિક ઓવરલે પ્રોટેક્શન 🌟 -->
+<!-- 🌟 Review Modal: ૩ ફિલ્ટર્સ (તમામ / માત્ર ખોટા / જવાબ વગરનું પ્રશ્નપત્ર) સાથે 🌟 -->
 <div id="reviewModal" class="modal-overlay">
     <div class="modal-box">
         <div class="modal-header">
@@ -791,12 +791,15 @@
             <div style="font-size: 12.5px; font-weight: 700; color: var(--heading-color);">
                 <i class="fa-solid fa-filter"></i> રિપોર્ટ વ્યુ ફિલ્ટર:
             </div>
-            <div style="display:flex; gap:6px;">
+            <div style="display:flex; gap:6px; flex-wrap: wrap;">
                 <button class="btn-action-sm" id="btnFilterAll" onclick="filterModalQuestions('all')" style="background:#2563eb;">
                     📋 તમામ પ્રશ્નો
                 </button>
                 <button class="btn-action-sm" id="btnFilterWrong" onclick="filterModalQuestions('wrong')" style="background:#ef4444;">
                     ❌ માત્ર ખોટા પ્રશ્નો (ભૂલ બુકલેટ)
+                </button>
+                <button class="btn-action-sm" id="btnFilterBlank" onclick="filterModalQuestions('blank')" style="background:#059669;">
+                    📝 જવાબ વગરનું પ્રશ્નપત્ર
                 </button>
             </div>
         </div>
@@ -1030,7 +1033,7 @@ function renderTestNotifications(notifications) {
     });
 }
 
-/* 🌟 સુધારેલ એડમિન નોટ્સ રેન્ડર અને ઓટો-સ્ક્રોલ સિસ્ટમ 🌟 */
+/* 🌟 એડમિન નોટ્સ રેન્ડર અને ઓટો-સ્ક્રોલ 🌟 */
 function renderAdminNotes() {
     const notesContainer = document.getElementById("adminNotesList");
     if (!notesContainer) return;
@@ -1278,7 +1281,7 @@ function closeDriveFolderModal() {
 }
 
 /* ============================================================
-   📚 Repo & Test System (🌟 સુધારેલ સ્માર્ટ મેચિંગ લૉજિક 🌟)
+   📚 Repo & Test System (🌟 સાર્વત્રિક સ્માર્ટ મેચિંગ લૉજિક 🌟)
    ============================================================ */
 async function scanAllRepoFiles() {
     const promises = REPO_LIST.map(async (repo) => {
@@ -1335,7 +1338,7 @@ function filterAndRefreshData() {
     renderHistoryTable();
 }
 
-/* 🌟 ફાઇલ અને સબમિટ થયેલ ટેસ્ટને ઓળખવા માટેનું સર્વોચ્ચ સહાયક ફંક્શન 🌟 */
+/* 🌟 ફાઇલ અને ટેસ્ટ મેચિંગ (બધા જ ટેસ્ટ માટે એકસાથે) 🌟 */
 function isFileAttemptedByRecord(fileName, repoName, recordsList) {
     const clean = fileName.replace('.html', '').toLowerCase();
     const cleanNoSpace = clean.replace(/\s+/g, '');
@@ -1346,10 +1349,10 @@ function isFileAttemptedByRecord(fileName, repoName, recordsList) {
         const subNoSpace = sub.replace(/\s+/g, '');
 
         if (sub.includes(clean) || sub.includes(cleanNoSpace) || sub.includes(rName)) return true;
-        if (clean.includes("anew") || clean.includes("1a")) {
+        if (clean.includes("anew") || clean.includes("1a") || clean.includes("bal")) {
             if (sub.includes("વિકાસ") || sub.includes("પૂર્વ પ્રાથમિક") || sub.includes("hots") || sub.includes("કોર્ષ - ૧") || sub.includes("બાળકો")) return true;
         }
-        if (clean.includes("1b") && (sub.includes("બોધ") || sub.includes("અધ્યયન"))) return true;
+        if ((clean.includes("1b") || clean.includes("sy")) && (sub.includes("બોધ") || sub.includes("અધ્યયન") || sub.includes("દ્વિતીય"))) return true;
         if (clean.includes("maths") && sub.includes("ગણિત")) return true;
         if (clean.includes("evs") && (sub.includes("પર્યાવરણ") || sub.includes("evs"))) return true;
         if (clean.includes("guj") && sub.includes("ગુજરાતી")) return true;
@@ -1404,7 +1407,6 @@ async function openRepoFiles(repoName) {
     listGrid.innerHTML = "";
     
     fileList.forEach(fileName => {
-        // 🌟 દરેક ફાઇલ માટે સાચો રેકોર્ડ શોધવો 🌟
         const attemptRecord = isFileAttemptedByRecord(fileName, repoName, filteredRecords);
         const isAttempted = !!attemptRecord;
         
@@ -1506,7 +1508,7 @@ async function fetchQuestionsFromLiveSource(targetSubject) {
     return null;
 }
 
-/* 🌟 સુધારેલ openTestModal (બેક બટન પ્રોટેક્શન સાથે) 🌟 */
+/* 🌟 openTestModal 🌟 */
 async function openTestModal(idx) {
     const item = filteredRecords[idx];
     currentBaseFilename = `${item.name || 'Student'}_${item.subject || 'Test'}`;
@@ -1589,7 +1591,6 @@ async function loadDirectQuestionPaper(repoName, fileName, isAttempted) {
     window.history.pushState({ modalOpen: true }, "");
     currentBaseFilename = `${repoName}_${fileName.replace('.html','')}`;
     
-    // જો આ ટેસ્ટ આપેલો હોય અને તેનો રિવ્યુ ડ્રાઇવમાં હાજર હોય તો સીધો એ જ લોડ કરવો
     if (sheetRecord && sheetRecord.reviewHtml && sheetRecord.reviewHtml.length > 50) {
         if (parseAndRenderReviewHtml(sheetRecord.reviewHtml)) return;
     }
@@ -1672,7 +1673,7 @@ function renderQuestionsToModal(questions, sheetRecord) {
     qContainer.innerHTML = questionsHtml;
 }
 
-/* 🌟 સુધારેલ parseAndRenderReviewHtml: પરીક્ષાર્થીનો ખોટો જવાબ ❌ અને સાચો જવાબ ✅ સ્પષ્ટ દર્શાવવા 🌟 */
+/* 🌟 parseAndRenderReviewHtml: જવાબો, રંગો અને સમજૂતી સ્પષ્ટ દર્શાવવા 🌟 */
 function parseAndRenderReviewHtml(rawHtml) {
     const qContainer = document.getElementById("pdfDocQuestions");
     qContainer.innerHTML = rawHtml;
@@ -1701,15 +1702,32 @@ function parseAndRenderReviewHtml(rawHtml) {
     return false;
 }
 
+/* 🌟 ૩-ઇન-૧ ફિલ્ટર સિસ્ટમ (તમામ / માત્ર ખોટા / જવાબ વગરનું પ્રશ્નપત્ર) 🌟 */
 function filterModalQuestions(type) {
     const items = document.querySelectorAll("#pdfDocQuestions .pdf-q-item");
     const btnAll = document.getElementById("btnFilterAll");
     const btnWrong = document.getElementById("btnFilterWrong");
+    const btnBlank = document.getElementById("btnFilterBlank");
     let wrongCount = 0;
     
     items.forEach(item => {
         const isWrong = item.getAttribute("data-wrong") === "true" || item.classList.contains("is-wrong-answer") || item.innerHTML.includes("❌");
-        if (type === "wrong") {
+        
+        if (type === "blank") {
+            // જવાબ વગરનું પ્રશ્નપત્ર
+            item.style.display = "block";
+            item.style.backgroundColor = "#ffffff";
+            item.style.borderColor = "#cbd5e1";
+            
+            item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box").forEach(el => el.style.display = "none");
+            item.querySelectorAll("p").forEach(p => {
+                if (p.innerHTML.includes("ઉત્તર") || p.innerHTML.includes("જવાબ") || p.innerHTML.includes("સમજૂતી") || p.innerHTML.includes("✅") || p.innerHTML.includes("❌")) {
+                    p.style.display = "none";
+                }
+            });
+        } else if (type === "wrong") {
+            // માત્ર ખોટા પ્રશ્નો
+            item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box, p").forEach(el => el.style.display = "");
             if (isWrong) { 
                 item.style.display = "block"; 
                 wrongCount++; 
@@ -1717,17 +1735,25 @@ function filterModalQuestions(type) {
                 item.style.display = "none"; 
             }
         } else {
+            // તમામ પ્રશ્નો જવાબો સાથે
             item.style.display = "block";
+            item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box, p").forEach(el => el.style.display = "");
+            if (isWrong) {
+                item.style.backgroundColor = "#fff5f5";
+                item.style.borderColor = "#ef4444";
+            } else {
+                item.style.backgroundColor = "#ffffff";
+                item.style.borderColor = "#cbd5e1";
+            }
         }
     });
     
-    if (type === "wrong") {
-        btnWrong.style.opacity = "1";
-        btnAll.style.opacity = "0.7";
-        if (wrongCount === 0) alert("અભિનંદન! આ કસોટીમાં કોઈ પ્રશ્ન ખોટો પડ્યો નથી.");
-    } else {
-        btnAll.style.opacity = "1";
-        btnWrong.style.opacity = "0.7";
+    if (btnAll) btnAll.style.opacity = (type === "all") ? "1" : "0.6";
+    if (btnWrong) btnWrong.style.opacity = (type === "wrong") ? "1" : "0.6";
+    if (btnBlank) btnBlank.style.opacity = (type === "blank") ? "1" : "0.6";
+    
+    if (type === "wrong" && wrongCount === 0) {
+        alert("અભિનંદન! આ કસોટીમાં કોઈ પ્રશ્ન ખોટો પડ્યો નથી.");
     }
 }
 
@@ -1909,12 +1935,12 @@ function renderHistoryTable() {
     });
 }
 
-/* 🌟 મોડલ ક્લોઝ ફંક્શન્સ (Overlay + ESC + History Support) 🌟 */
+/* 🌟 મોડલ બંધ કરવા માટેના ફંક્શન્સ 🌟 */
 function closeModal() { 
     document.getElementById("reviewModal").style.display = "none"; 
 }
 
-// ૧. મોડલના બહારના કાળા ભાગ પર ક્લિક કરવાથી મોડલ બંધ કરવું
+// બહાર ક્લિક કરવાથી મોડલ બંધ
 window.addEventListener('click', function(event) {
     const modal = document.getElementById("reviewModal");
     if (event.target === modal) {
@@ -1922,7 +1948,7 @@ window.addEventListener('click', function(event) {
     }
 });
 
-// ૨. Escape (Esc) કી દબાવવાથી મોડલ બંધ કરવું
+// Esc કી દબાવવાથી મોડલ બંધ
 window.addEventListener('keydown', function(event) {
     if (event.key === "Escape" || event.key === "Esc") {
         closeModal();
@@ -1931,7 +1957,7 @@ window.addEventListener('keydown', function(event) {
     }
 });
 
-// ૩. બ્રાઉઝરનું Back બટન દબાઈ જાય તો લૉગઆઉટ ન થતાં માત્ર મોડલ બંધ થશે
+// બ્રાઉઝર Back બટન દબાય તો લૉગઆઉટ થવાને બદલે માત્ર પોપ-અપ બંધ થશે
 window.addEventListener('popstate', function(e) {
     const modal = document.getElementById("reviewModal");
     const driveModal = document.getElementById("driveViewerModal");
@@ -1950,7 +1976,7 @@ function exportPDF(mode) {
     const scrollBody = document.getElementById("modalScrollBody");
     if (scrollBody) scrollBody.scrollTop = 0;
     
-    const suffix = (mode === "wrong") ? "_માત્ર_ખોટા_પ્રશ્નો" : "_સંપૂર્ણ_પ્રશ્નપત્ર";
+    const suffix = (mode === "wrong") ? "_માત્ર_ખોટા_પ્રશ્નો" : (mode === "blank" ? "_મૂળ_પ્રશ્નપત્ર" : "_સંપૂર્ણ_પ્રશ્નપત્ર");
     const filename = `${currentBaseFilename}${suffix}.pdf`;
     
     const opt = {
