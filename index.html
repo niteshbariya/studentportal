@@ -240,7 +240,7 @@
             border-radius: 6px;
         }
 
-        /* 🌟 એડમિન નોટ્સ સ્ટાઇલ (Inline Tag & Text + Smooth Auto Scroll) 🌟 */
+        /* 🌟 એડમિન નોટ્સ સ્ટાઇલ 🌟 */
         #adminNotesList {
             max-height: 250px;
             overflow-y: auto;
@@ -780,7 +780,7 @@
     </div>
 </div>
 
-<!-- 🌟 Review Modal: ૩ ફિલ્ટર્સ (તમામ / માત્ર ખોટા / જવાબ વગરનું પ્રશ્નપત્ર) સાથે 🌟 -->
+<!-- 🌟 Review Modal: ૩ ફિલ્ટર્સ (તમામ / માત્ર ખોટા / જવાબ વગરનું પ્રશ્નપત્ર) 🌟 -->
 <div id="reviewModal" class="modal-overlay">
     <div class="modal-box">
         <div class="modal-header">
@@ -853,36 +853,43 @@ let notesScrollInterval = null;
 let currentModalLiveQuestions = null;
 let currentModalRawReviewHtml = "";
 
-/* 🌟 સ્માર્ટ ઓપ્શન ક્લીનર: (A), 1., • કે - જેવા ચિહ્નો સાફ કરવા જેથી બેવડાય નહીં 🌟 */
+/* 🌟 ૧૦૦% સેફ ઓપ્શન ક્લીનર: સિન્ટેક્સ એરર વગર 1, 2, 3, 4 કે બુલેટ્સ સાફ કરવા 🌟 */
 function cleanOptionText(text) {
     if (!text) return "";
-    return String(text).replace(/^(\([A-Za-z0-9]\)|[A-Za-z0-9][\.\)]|[•‣◦⁃∙\*\-\▪\▫\–\—])\s*/u, "").trim();
+    var s = String(text).trim();
+    s = s.replace(/^\([A-Za-z0-9]+\)\s*/, "");
+    s = s.replace(/^[A-Za-z0-9]+[.\)]\s*/, "");
+    s = s.replace(/^[•‣◦⁃∙*\-▪▫–—]\s*/, "");
+    return s.trim();
 }
 
 /* ============================================================
    🚀 લોગિન સિસ્ટમ (સંપૂર્ણ સુધારેલ ફંક્શન)
    ============================================================ */
 function loginWithPassword() {
-    const emailInput = document.getElementById("loginEmailInput");
-    const passInput = document.getElementById("loginPasswordInput");
+    var emailInput = document.getElementById("loginEmailInput");
+    var passInput = document.getElementById("loginPasswordInput");
     
     if (!emailInput || !passInput) return;
     
     userEmail = emailInput.value.trim().toLowerCase();
-    const enteredPassword = passInput.value.trim();
+    var enteredPassword = passInput.value.trim();
     
     if (!userEmail.includes("@") || !enteredPassword) {
         alert("કૃપા કરીને ઈમેઈલ અને પાસવર્ડ બંને દાખલ કરો.");
         return;
     }
 
-    const btn = document.getElementById("loginSubmitBtn");
+    var btn = document.getElementById("loginSubmitBtn");
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ચેક થઈ રહ્યું છે...';
     btn.disabled = true;
 
     fetch(SCRIPT_URL, {
-        method: "POST", body: JSON.stringify({ action: "login", email: userEmail, password: enteredPassword })
-    }).then(res => res.json()).then(data => {
+        method: "POST", 
+        body: JSON.stringify({ action: "login", email: userEmail, password: enteredPassword })
+    }).then(function(res) {
+        return res.json();
+    }).then(function(data) {
         if (data.success) {
             localStorage.setItem("portal_user_email", userEmail);
             localStorage.setItem("portal_user_role", data.role); 
@@ -895,7 +902,7 @@ function loginWithPassword() {
             btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
             btn.disabled = false;
         }
-    }).catch(err => {
+    }).catch(function(err) {
         alert("સર્વર સાથે કનેક્ટ ન થઈ શક્યું. કૃપા કરીને Apps Script તપાસો.");
         btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
         btn.disabled = false;
@@ -989,7 +996,7 @@ function formatPercentDisplay(val) {
 
 /* 🌟 સચોટ Regex Helper 🌟 */
 function escapeRegex(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /* ============================================================
@@ -1228,7 +1235,7 @@ function groupAndRenderDriveFiles() {
 
         files.forEach(f => {
             const safeId = f.id;
-            const safeName = f.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const safeName = f.name.replace(/'/g, "&#39;").replace(/"/g, '&quot;');
             html += `
                 <div class="drive-file-item" id="file-item-${safeId}" onclick="openDriveFile('${safeId}', '${safeName}')">
                     <div style="width: 28px; height: 28px; background: linear-gradient(135deg, #ef4444, #f43f5e); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -1549,7 +1556,6 @@ async function openTestModal(idx) {
     currentModalRawReviewHtml = item.reviewHtml || "";
     currentModalLiveQuestions = null;
 
-    // બેકગ્રાઉન્ડમાં મૂળ પ્રશ્નો અને ૪ વિકલ્પો ફેચ કરી રાખવા
     fetchQuestionsFromLiveSource(item.subject).then(liveData => {
         if (liveData && liveData.questions) {
             currentModalLiveQuestions = liveData.questions;
@@ -1558,12 +1564,10 @@ async function openTestModal(idx) {
 
     let loaded = false;
 
-    // ૧. પ્રાથમિકતા: ડ્રાઇવમાંથી આવેલો વિદ્યાર્થીનો સાચો-ખોટો રિવ્યુ જ પહેલાં બતાવો
     if (item.reviewHtml && item.reviewHtml.length > 50) {
         loaded = parseAndRenderReviewHtml(item.reviewHtml);
     }
     
-    // ૨. જો ડ્રાઇવ રિવ્યુ ન હોય, તો જ મૂળ પ્રશ્નપત્ર લોડ કરવું
     if (!loaded) {
         const liveData = await fetchQuestionsFromLiveSource(item.subject);
         if (liveData && liveData.questions && liveData.questions.length > 0) {
@@ -1715,7 +1719,7 @@ function renderQuestionsToModal(questions, sheetRecord) {
     qContainer.innerHTML = questionsHtml;
 }
 
-/* 🌟 parseAndRenderReviewHtml: જવાબો, રંગો અને સમજૂતી સ્પષ્ટ દર્શાવવા 🌟 */
+/* 🌟 parseAndRenderReviewHtml 🌟 */
 function parseAndRenderReviewHtml(rawHtml) {
     const qContainer = document.getElementById("pdfDocQuestions");
     qContainer.innerHTML = rawHtml;
@@ -1744,14 +1748,13 @@ function parseAndRenderReviewHtml(rawHtml) {
     return false;
 }
 
-/* 🌟 ૩-ઇન-૧ ફિલ્ટર સિસ્ટમ (તમામ / માત્ર ખોટા / જવાબ વગરનું પ્રશ્નપત્ર) 🌟 */
+/* 🌟 ૩-ઇન-૧ ફિલ્ટર સિસ્ટમ 🌟 */
 function filterModalQuestions(type) {
     const qContainer = document.getElementById("pdfDocQuestions");
     const btnAll = document.getElementById("btnFilterAll");
     const btnWrong = document.getElementById("btnFilterWrong");
     const btnBlank = document.getElementById("btnFilterBlank");
 
-    // ૧. જો 'જવાબ વગરનું પ્રશ્નપત્ર' પસંદ કર્યું હોય
     if (type === "blank") {
         if (currentModalLiveQuestions && currentModalLiveQuestions.length > 0) {
             let blankHtml = "";
@@ -1777,7 +1780,6 @@ function filterModalQuestions(type) {
             });
             qContainer.innerHTML = blankHtml;
         } else {
-            // જો લાઈવ ક્વેશ્ચન એરે ન હોય તો ડ્રાઇવ HTMLમાંથી જવાબો છુપાવીને ૪ વિકલ્પો કાયમ ખુલ્લા રાખવા
             const items = qContainer.querySelectorAll(".pdf-q-item, div[style*='border']");
             items.forEach(item => {
                 item.style.display = "block";
@@ -1793,9 +1795,7 @@ function filterModalQuestions(type) {
                 });
             });
         }
-    } 
-    // ૨. જો 'તમામ પ્રશ્નો' અથવા 'માત્ર ખોટા પ્રશ્નો' પસંદ કર્યા હોય
-    else {
+    } else {
         if (currentModalRawReviewHtml && currentModalRawReviewHtml.length > 50) {
             parseAndRenderReviewHtml(currentModalRawReviewHtml);
         } else if (currentModalLiveQuestions && currentModalLiveQuestions.length > 0) {
@@ -2024,7 +2024,6 @@ function closeModal() {
     document.getElementById("reviewModal").style.display = "none"; 
 }
 
-// બહાર ક્લિક કરવાથી મોડલ બંધ
 window.addEventListener('click', function(event) {
     const modal = document.getElementById("reviewModal");
     if (event.target === modal) {
@@ -2032,7 +2031,6 @@ window.addEventListener('click', function(event) {
     }
 });
 
-// Esc કી દબાવવાથી મોડલ બંધ
 window.addEventListener('keydown', function(event) {
     if (event.key === "Escape" || event.key === "Esc") {
         closeModal();
@@ -2041,7 +2039,6 @@ window.addEventListener('keydown', function(event) {
     }
 });
 
-// બ્રાઉઝર Back બટન દબાય તો લૉગઆઉટ થવાને બદલે માત્ર પોપ-અપ બંધ થશે
 window.addEventListener('popstate', function(e) {
     const modal = document.getElementById("reviewModal");
     const driveModal = document.getElementById("driveViewerModal");
