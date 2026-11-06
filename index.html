@@ -814,10 +814,10 @@
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
+var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 
-// 🌟 ૧. કસોટી રિપોઝિટરીઝ (studentportal સિવાય)
-const REPO_LIST = [
+// ૧. કસોટી રિપોઝિટરીઝ (studentportal સિવાય)
+var REPO_LIST = [
     "fy",
     "evs",
     "sy",
@@ -831,8 +831,8 @@ const REPO_LIST = [
     "guj"
 ];
 
-// 🌟 ૨. મૂળ કેશ
-let repoFilesCache = {
+// ૨. કેશ
+var repoFilesCache = {
     "fy": [
         "1anew100question.html",
         "1a.html",
@@ -849,25 +849,25 @@ let repoFilesCache = {
     ]
 };
 
-let userEmail = "";
-let allRawRecords = [];
-let filteredRecords = [];
-let adminNotesData = [];
-let isAdminUser = false;
-let selectedStudentEmail = "";
-let gaugeChart = null;
-let progressChart = null;
-let currentOpenRepo = "";
-let currentBaseFilename = "Test_Paper";
+var userEmail = "";
+var allRawRecords = [];
+var filteredRecords = [];
+var adminNotesData = [];
+var isAdminUser = false;
+var selectedStudentEmail = "";
+var gaugeChart = null;
+var progressChart = null;
+var currentOpenRepo = "";
+var currentBaseFilename = "Test_Paper";
 
-let rawDriveFiles = [];
-let groupedDriveFiles = {};
-let notesScrollInterval = null;
+var rawDriveFiles = [];
+var groupedDriveFiles = {};
+var notesScrollInterval = null;
 
 function checkSavedLoginSession() {
-    const savedEmail = localStorage.getItem("portal_user_email");
-    const savedRole = localStorage.getItem("portal_user_role");
-    const savedName = localStorage.getItem("portal_user_name");
+    var savedEmail = localStorage.getItem("portal_user_email");
+    var savedRole = localStorage.getItem("portal_user_role");
+    var savedName = localStorage.getItem("portal_user_name");
 
     if (savedEmail && savedRole) {
         userEmail = savedEmail.toLowerCase().trim();
@@ -877,16 +877,19 @@ function checkSavedLoginSession() {
 }
 
 function loginWithPassword() {
-    const emailInput = document.getElementById("loginEmailInput");
-    const passInput = document.getElementById("loginPasswordInput");
-    const btn = document.getElementById("loginSubmitBtn");
+    var emailInput = document.getElementById("loginEmailInput");
+    var passInput = document.getElementById("loginPasswordInput");
+    var btn = document.getElementById("loginSubmitBtn");
 
-    if (!emailInput || !passInput) return;
+    if (!emailInput || !passInput) {
+        alert("ઇનપુટ ફિલ્ડ મળ્યા નથી.");
+        return;
+    }
 
     userEmail = emailInput.value.trim().toLowerCase();
-    const enteredPassword = passInput.value.trim();
+    var enteredPassword = passInput.value.trim();
     
-    if (!userEmail.includes("@") || !enteredPassword) {
+    if (userEmail === "" || enteredPassword === "") {
         alert("કૃપા કરીને ઈમેઈલ અને પાસવર્ડ બંને દાખલ કરો.");
         return;
     }
@@ -896,10 +899,11 @@ function loginWithPassword() {
 
     fetch(SCRIPT_URL, {
         method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ action: "login", email: userEmail, password: enteredPassword })
     })
-    .then(res => res.json())
-    .then(data => {
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
         if (data && data.success) {
             localStorage.setItem("portal_user_email", userEmail);
             localStorage.setItem("portal_user_role", data.role || "Student"); 
@@ -913,9 +917,9 @@ function loginWithPassword() {
             btn.disabled = false;
         }
     })
-    .catch(err => {
+    .catch(function(err) {
         console.error("Login Connection Error:", err);
-        alert("સર્વર સાથે કનેક્ટ ન થઈ શક્યું. કૃપા કરીને થોડીવાર પછી ફરી પ્રયાસ કરો.");
+        alert("સર્વર સાથે કનેક્ટ ન થઈ શક્યું. ફરી પ્રયાસ કરો.");
         btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
         btn.disabled = false;
     });
@@ -928,28 +932,28 @@ function performLogout() {
     location.reload();
 }
 
-async function setupDashboardEnvironment(role, name) {
+function setupDashboardEnvironment(role, name) {
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("dashboardScreen").style.display = "block";
     document.getElementById("logoutBtn").style.display = "inline-flex";
     
     isAdminUser = (role === "Admin");
     if (isAdminUser) {
-        document.getElementById("roleBadge").innerHTML = `👑 ${name} (Admin)`;
+        document.getElementById("roleBadge").innerHTML = "👑 " + name + " (Admin)";
         document.getElementById("studentSelectWrapper").style.display = "flex";
     } else {
-        document.getElementById("roleBadge").innerHTML = `🎓 ${name} (Student)`;
+        document.getElementById("roleBadge").innerHTML = "🎓 " + name + " (Student)";
         selectedStudentEmail = userEmail;
     }
     
     populateSubjectDropdown();
     filterAndRefreshData();
     renderAdminNotes();
-    await scanAllRepoFiles();
+    scanAllRepoFiles();
 }
 
 function switchTheme() {
-    const isDark = document.body.classList.toggle("dark-mode");
+    var isDark = document.body.classList.toggle("dark-mode");
     document.getElementById("themeIcon").className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
     document.getElementById("themeText").innerText = isDark ? "લાઈટ મોડ" : "ડાર્ક મોડ";
     renderAllVisuals();
@@ -957,71 +961,67 @@ function switchTheme() {
 
 function formatShortDateOnly(dtStr) {
     if (!dtStr) return "-";
-    let s = String(dtStr).trim();
-    if (s.includes(' ')) s = s.split(' ')[0];
-    const parts = s.split(/[-/]/);
+    var s = String(dtStr).trim();
+    if (s.indexOf(' ') !== -1) s = s.split(' ')[0];
+    var parts = s.split(/[-/]/);
     if (parts.length === 3) {
-        let day = parseInt(parts[0], 10);
-        let month = parseInt(parts[1], 10);
-        let year = parts[2];
+        var day = parseInt(parts[0], 10);
+        var month = parseInt(parts[1], 10);
+        var year = parts[2];
         if (year.length === 4) year = year.slice(-2);
-        return `${day}/${month}/${year}`;
+        return day + "/" + month + "/" + year;
     }
     return s;
 }
 
 function formatDurationTime(timeStr) {
     if (!timeStr) return "-";
-    let s = String(timeStr).trim();
-    if (s.includes(':')) return s;
-    let hr = 0, min = 0, sec = 0;
-    const hrMatch = s.match(/(\d+)\s*(કલાક|hr|hour)/i);
-    const minMatch = s.match(/(\d+)\s*(મિનિટ|min)/i);
-    const secMatch = s.match(/(\d+)\s*(સેકન્ડ|sec)/i);
+    var s = String(timeStr).trim();
+    if (s.indexOf(':') !== -1) return s;
+    var hr = 0, min = 0, sec = 0;
+    var hrMatch = s.match(/(\d+)\s*(કલાક|hr|hour)/i);
+    var minMatch = s.match(/(\d+)\s*(મિનિટ|min)/i);
+    var secMatch = s.match(/(\d+)\s*(સેકન્ડ|sec)/i);
     if (hrMatch) hr = parseInt(hrMatch[1], 10);
     if (minMatch) min = parseInt(minMatch[1], 10);
     if (secMatch) sec = parseInt(secMatch[1], 10);
     if (hrMatch || minMatch || secMatch) {
-        const pMin = String(min).padStart(2, '0');
-        const pSec = String(sec).padStart(2, '0');
-        if (hr > 0) return `${String(hr).padStart(2, '0')}:${pMin}:${pSec}`;
-        return `${pMin}:${pSec}`;
+        var pMin = String(min).padStart(2, '0');
+        var pSec = String(sec).padStart(2, '0');
+        if (hr > 0) return String(hr).padStart(2, '0') + ":" + pMin + ":" + pSec;
+        return pMin + ":" + pSec;
     }
     return s;
 }
 
 function formatStackedName(fullName) {
     if (!fullName) return "-";
-    const parts = fullName.trim().split(/\s+/);
-    if (parts.length === 1) return `<div class="student-stacked-name">${parts[0]}</div>`;
-    const firstName = parts[0];
-    const lastName = parts.slice(1).join(' ');
-    return `<div class="student-stacked-name">${firstName}<span>${lastName}</span></div>`;
+    var parts = fullName.trim().split(/\s+/);
+    if (parts.length === 1) return '<div class="student-stacked-name">' + parts[0] + '</div>';
+    var firstName = parts[0];
+    var lastName = parts.slice(1).join(' ');
+    return '<div class="student-stacked-name">' + firstName + '<span>' + lastName + '</span></div>';
 }
 
 function parsePercentValue(val) {
     if (!val && val !== 0) return 0;
-    let s = String(val).replace('%', '').trim();
-    let num = parseFloat(s);
+    var s = String(val).replace('%', '').trim();
+    var num = parseFloat(s);
     if (isNaN(num)) return 0;
-    if (num > 0 && num <= 1 && !String(val).includes('%')) num = num * 100;
+    if (num > 0 && num <= 1 && String(val).indexOf('%') === -1) num = num * 100;
     return Math.round(num * 100) / 100;
 }
 
 function formatPercentDisplay(val) {
     if (!val && val !== 0) return "-";
-    return `${parsePercentValue(val)}%`;
-}
-
-function escapeRegex(string) {
-    return string.replace(/[/\-\^$*+?.()|[\]{}]/g, '\$&');
+    return parsePercentValue(val) + "%";
 }
 
 function convertGujaratiDigitsToEnglish(str) {
     if (!str) return "";
-    const guj = ["૦", "૧", "૨", "૩", "૪", "૫", "૬", "૭", "૮", "૯"];
-    let res = String(str);
-    for (let i = 0; i < 10; i++) {
+    var guj = ["૦", "૧", "૨", "૩", "૪", "૫", "૬", "૭", "૮", "૯"];
+    var res = String(str);
+    for (var i = 0; i < 10; i++) {
         res = res.split(guj[i]).join(i.toString());
     }
     return res;
@@ -1029,13 +1029,17 @@ function convertGujaratiDigitsToEnglish(str) {
 
 function fetchDataAndInit() {
     fetch(SCRIPT_URL, {
-        method: "POST", body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
-    }).then(res => res.json()).then(data => {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
         if (data.error) { alert(data.error); return; }
         
         allRawRecords = data.history || [];
         adminNotesData = data.notes || [];
-        const testNotifications = data.notifications || [];
+        var testNotifications = data.notifications || [];
         
         if (isAdminUser) populateStudentDropdown();
         
@@ -1043,14 +1047,15 @@ function fetchDataAndInit() {
         filterAndRefreshData();
         renderAdminNotes();
         renderTestNotifications(testNotifications);
-    }).catch(err => {
+    })
+    .catch(function(err) {
         console.error("Data fetch failed", err);
     });
 }
 
 function renderTestNotifications(notifications) {
-    const section = document.getElementById("notificationSection");
-    const card = document.getElementById("notificationCard");
+    var section = document.getElementById("notificationSection");
+    var card = document.getElementById("notificationCard");
     
     if (!notifications || notifications.length === 0) {
         section.style.display = "none";
@@ -1060,28 +1065,26 @@ function renderTestNotifications(notifications) {
     section.style.display = "block";
     card.innerHTML = "";
 
-    notifications.forEach((notif, index) => {
-        const dateStr = formatShortDateOnly(notif.date);
-        const isNew = index === 0;
+    notifications.forEach(function(notif, index) {
+        var dateStr = formatShortDateOnly(notif.date);
+        var isNew = index === 0;
         
-        const div = document.createElement("div");
+        var div = document.createElement("div");
         div.className = "notif-item";
-        div.innerHTML = `
-            <div style="flex: 1;">
-                <div style="font-size: 12.5px; font-weight: 800; color: var(--heading-color);">
-                    📢 ${notif.title} 
-                    ${isNew ? '<span class="new-badge">નવું (NEW)</span>' : ''}
-                </div>
-                <div class="notif-date"><i class="fa-regular fa-clock"></i> ${dateStr} એ ઉમેરાયું</div>
-            </div>
-            ${notif.link ? `<a href="${notif.link}" target="_blank" class="btn-action-sm" style="background: var(--primary-gradient);">ટેસ્ટ આપો <i class="fa-solid fa-arrow-right"></i></a>` : ''}
-        `;
+        div.innerHTML = '<div style="flex: 1;">' +
+            '<div style="font-size: 12.5px; font-weight: 800; color: var(--heading-color);">' +
+            '📢 ' + notif.title + ' ' +
+            (isNew ? '<span class="new-badge">નવું (NEW)</span>' : '') +
+            '</div>' +
+            '<div class="notif-date"><i class="fa-regular fa-clock"></i> ' + dateStr + ' એ ઉમેરાયું</div>' +
+            '</div>' +
+            (notif.link ? '<a href="' + notif.link + '" target="_blank" class="btn-action-sm" style="background: var(--primary-gradient);">ટેસ્ટ આપો <i class="fa-solid fa-arrow-right"></i></a>' : '');
         card.appendChild(div);
     });
 }
 
 function renderAdminNotes() {
-    const notesContainer = document.getElementById("adminNotesList");
+    var notesContainer = document.getElementById("adminNotesList");
     if (!notesContainer) return;
     
     if (notesScrollInterval) {
@@ -1090,60 +1093,54 @@ function renderAdminNotes() {
     }
 
     if (adminNotesData && adminNotesData.length > 0) {
-        notesContainer.innerHTML = adminNotesData.map(note => {
-            let imageHtml = "";
-            let imgUrl = note.imageUrl || note.image || "";
-            if (imgUrl.includes("drive.google.com")) {
-                const matchId = imgUrl.match(/[-\w]{25,}/);
-                if (matchId) imgUrl = `https://drive.google.com/uc?export=view&id=${matchId[0]}`;
+        notesContainer.innerHTML = adminNotesData.map(function(note) {
+            var imageHtml = "";
+            var imgUrl = note.imageUrl || note.image || "";
+            if (imgUrl.indexOf("drive.google.com") !== -1) {
+                var matchId = imgUrl.match(/[-\w]{25,}/);
+                if (matchId) imgUrl = "https://drive.google.com/uc?export=view&id=" + matchId[0];
             }
             if (imgUrl && imgUrl.trim().length > 5) {
-                imageHtml = `<div class="note-image-box" onclick="showImagePreview('${imgUrl}')"><img src="${imgUrl}" loading="lazy" onerror="this.style.display='none'"></div>`;
+                imageHtml = '<div class="note-image-box" onclick="showImagePreview(\'' + imgUrl + '\')"><img src="' + imgUrl + '" loading="lazy" onerror="this.style.display=\'none\'"></div>';
             }
-            return `
-                <div class="admin-note-item">
-                    <div class="note-inline-row">
-                        <span class="note-tag-badge"><i class="fa-solid fa-bullhorn"></i> ${note.tag || 'સૂચના'}</span>
-                        <span class="note-text-inline">${note.message || note.text || ''}</span>
-                        <span class="note-date-pill"><i class="fa-regular fa-clock"></i> ${formatShortDateOnly(note.date)}</span>
-                    </div>
-                    ${imageHtml}
-                </div>
-            `;
+            return '<div class="admin-note-item">' +
+                '<div class="note-inline-row">' +
+                '<span class="note-tag-badge"><i class="fa-solid fa-bullhorn"></i> ' + (note.tag || 'સૂચના') + '</span>' +
+                '<span class="note-text-inline">' + (note.message || note.text || '') + '</span>' +
+                '<span class="note-date-pill"><i class="fa-regular fa-clock"></i> ' + formatShortDateOnly(note.date) + '</span>' +
+                '</div>' +
+                imageHtml +
+                '</div>';
         }).join('');
     } else {
-        notesContainer.innerHTML = `
-            <div class="admin-note-item">
-                <div class="note-inline-row">
-                    <span class="note-tag-badge"><i class="fa-solid fa-bullhorn"></i> સૂચના</span>
-                    <span class="note-text-inline">સતત પરિશ્રમ એ જ સફળતાની સાચી ચાવી છે.</span>
-                    <span class="note-date-pill"><i class="fa-regular fa-clock"></i> ${formatShortDateOnly(new Date())}</span>
-                </div>
-            </div>
-        `;
+        notesContainer.innerHTML = '<div class="admin-note-item">' +
+            '<div class="note-inline-row">' +
+            '<span class="note-tag-badge"><i class="fa-solid fa-bullhorn"></i> સૂચના</span>' +
+            '<span class="note-text-inline">સતત પરિશ્રમ એ જ સફળતાની સાચી ચાવી છે.</span>' +
+            '<span class="note-date-pill"><i class="fa-regular fa-clock"></i> ' + formatShortDateOnly(new Date()) + '</span>' +
+            '</div>' +
+            '</div>';
     }
 
     initAutoScrollAdminNotes();
 }
 
 function initAutoScrollAdminNotes() {
-    const container = document.getElementById("adminNotesList");
+    var container = document.getElementById("adminNotesList");
     if (!container) return;
 
-    let isPaused = false;
-    container.onmouseenter = () => { isPaused = true; };
-    container.onmouseleave = () => { isPaused = false; };
-    container.ontouchstart = () => { isPaused = true; };
-    container.ontouchend = () => { setTimeout(() => { isPaused = false; }, 2500); };
+    var isPaused = false;
+    container.onmouseenter = function() { isPaused = true; };
+    container.onmouseleave = function() { isPaused = false; };
+    container.ontouchstart = function() { isPaused = true; };
+    container.ontouchend = function() { setTimeout(function() { isPaused = false; }, 2500); };
 
-    notesScrollInterval = setInterval(() => {
+    notesScrollInterval = setInterval(function() {
         if (isPaused) return;
         if (container.scrollHeight > container.clientHeight) {
             container.scrollTop += 1;
             if (container.scrollTop >= container.scrollHeight - container.clientHeight - 1) {
-                setTimeout(() => {
-                    container.scrollTop = 0;
-                }, 1200);
+                setTimeout(function() { container.scrollTop = 0; }, 1200);
             }
         }
     }, 45);
@@ -1158,38 +1155,32 @@ function closeImagePreview() {
     document.getElementById("imagePreviewModal").style.display = "none";
 }
 
-async function loadDriveFiles() {
-    const listEl = document.getElementById('driveFileList');
+function loadDriveFiles() {
+    var listEl = document.getElementById('driveFileList');
     if (!listEl) return;
 
-    listEl.innerHTML = `
-        <div style="padding: 35px 20px; text-align: center; color: var(--text-muted); font-size: 12px;">
-            <i class="fa-solid fa-spinner fa-spin fa-2x" style="color: #2563eb; margin-bottom: 10px;"></i>
-            <p style="font-weight:700;">પુસ્તકાલય લોડ થઈ રહ્યું છે...</p>
-        </div>
-    `;
+    listEl.innerHTML = '<div style="padding: 35px 20px; text-align: center; color: var(--text-muted); font-size: 12px;">' +
+        '<i class="fa-solid fa-spinner fa-spin fa-2x" style="color: #2563eb; margin-bottom: 10px;"></i>' +
+        '<p style="font-weight:700;">પુસ્તકાલય લોડ થઈ રહ્યું છે...</p>' +
+        '</div>';
 
-    try {
-        const response = await fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify({ action: "getDriveFolderFiles" })
-        });
-        const resData = await response.json();
-
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "getDriveFolderFiles" })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(resData) {
         if (resData.status === "success" && resData.data) {
             rawDriveFiles = [];
             groupedDriveFiles = {};
 
-            resData.data.forEach(group => {
-                const folderName = group.folderName || "સામાન્ય સાહિત્ય";
+            resData.data.forEach(function(group) {
+                var folderName = group.folderName || "સામાન્ય સાહિત્ય";
                 if (!groupedDriveFiles[folderName]) groupedDriveFiles[folderName] = [];
 
-                group.files.forEach(f => {
-                    const fileObj = {
-                        id: f.id,
-                        name: f.name,
-                        parentFolder: folderName
-                    };
+                group.files.forEach(function(f) {
+                    var fileObj = { id: f.id, name: f.name, parentFolder: folderName };
                     groupedDriveFiles[folderName].push(fileObj);
                     rawDriveFiles.push(fileObj);
                 });
@@ -1199,98 +1190,89 @@ async function loadDriveFiles() {
         } else {
             throw new Error(resData.message || "PDF મળી શકી નથી");
         }
-    } catch (e) {
-        listEl.innerHTML = `
-            <div style="padding: 20px; text-align: center; color: #ef4444; font-size: 12px;">
-                <i class="fa-solid fa-triangle-exclamation fa-2x" style="margin-bottom: 10px;"></i>
-                <p style="font-weight: 700; margin-bottom: 8px;">PDF લોડ કરવામાં ભૂલ આવી</p>
-                <p style="font-size: 11px; color: var(--text-muted);">${e.message}</p>
-                <button onclick="loadDriveFiles()" class="btn-action-sm" style="background: #2563eb; margin-top: 10px;">
-                    <i class="fa-solid fa-rotate"></i> ફરી પ્રયાસ કરો
-                </button>
-            </div>
-        `;
-    }
+    })
+    .catch(function(e) {
+        listEl.innerHTML = '<div style="padding: 20px; text-align: center; color: #ef4444; font-size: 12px;">' +
+            '<i class="fa-solid fa-triangle-exclamation fa-2x" style="margin-bottom: 10px;"></i>' +
+            '<p style="font-weight: 700; margin-bottom: 8px;">PDF લોડ કરવામાં ભૂલ આવી</p>' +
+            '<p style="font-size: 11px; color: var(--text-muted);">' + e.message + '</p>' +
+            '<button onclick="loadDriveFiles()" class="btn-action-sm" style="background: #2563eb; margin-top: 10px;">' +
+            '<i class="fa-solid fa-rotate"></i> ફરી પ્રયાસ કરો' +
+            '</button>' +
+            '</div>';
+    });
 }
 
 function groupAndRenderDriveFiles() {
-    const listEl = document.getElementById('driveFileList');
-    let html = `
-        <div style="padding: 10px 14px; background: var(--card-bg); border-bottom: 1.5px solid var(--border-color); position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 11.5px; font-weight: 800; color: var(--heading-color);">
-                <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> ${rawDriveFiles.length} PDF સાહિત્ય
-            </span>
-            <button onclick="loadDriveFiles()" style="background: none; border: none; color: #2563eb; cursor: pointer; font-size: 13px;" title="રિફ્રેશ">
-                <i class="fa-solid fa-rotate"></i>
-            </button>
-        </div>
-    `;
+    var listEl = document.getElementById('driveFileList');
+    var html = '<div style="padding: 10px 14px; background: var(--card-bg); border-bottom: 1.5px solid var(--border-color); position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center;">' +
+        '<span style="font-size: 11.5px; font-weight: 800; color: var(--heading-color);">' +
+        '<i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> ' + rawDriveFiles.length + ' PDF સાહિત્ય' +
+        '</span>' +
+        '<button onclick="loadDriveFiles()" style="background: none; border: none; color: #2563eb; cursor: pointer; font-size: 13px;" title="રિફ્રેશ">' +
+        '<i class="fa-solid fa-rotate"></i>' +
+        '</button>' +
+        '</div>';
 
     if (rawDriveFiles.length === 0) {
-        html += `
-            <div style="padding: 30px 20px; text-align: center; color: var(--text-muted); font-size: 12px;">
-                <i class="fa-regular fa-folder-open fa-3x" style="color: #94a3b8; margin-bottom: 12px;"></i>
-                <p style="font-weight: 700;">આ ફોલ્ડરમાં કોઈ PDF મળી નથી</p>
-            </div>
-        `;
+        html += '<div style="padding: 30px 20px; text-align: center; color: var(--text-muted); font-size: 12px;">' +
+            '<i class="fa-regular fa-folder-open fa-3x" style="color: #94a3b8; margin-bottom: 12px;"></i>' +
+            '<p style="font-weight: 700;">આ ફોલ્ડરમાં કોઈ PDF મળી નથી</p>' +
+            '</div>';
         listEl.innerHTML = html;
         return;
     }
 
-    Object.keys(groupedDriveFiles).sort().forEach(folderName => {
-        const files = groupedDriveFiles[folderName];
-        const safeFolderId = 'folder-' + btoa(unescape(encodeURIComponent(folderName))).replace(/=/g, '');
+    Object.keys(groupedDriveFiles).sort().forEach(function(folderName) {
+        var files = groupedDriveFiles[folderName];
+        var safeFolderId = 'folder-' + btoa(unescape(encodeURIComponent(folderName))).replace(/=/g, '');
         
-        html += `
-            <div class="folder-accordion" id="${safeFolderId}">
-                <div class="folder-accordion-header" onclick="toggleAccordion('${safeFolderId}')">
-                    <div style="display: flex; align-items: center; gap: 6px; overflow: hidden;">
-                        <i class="fa-solid fa-chevron-right folder-icon-toggle" style="color: #2563eb;"></i>
-                        <i class="fa-solid fa-folder" style="color: #f59e0b;"></i>
-                        <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${folderName}">${folderName}</span>
-                    </div>
-                    <span style="font-size: 10px; background: rgba(37,99,235,0.1); color: #2563eb; padding: 2px 6px; border-radius: 10px;">${files.length}</span>
-                </div>
-                <div class="folder-accordion-content">
-        `;
+        html += '<div class="folder-accordion" id="' + safeFolderId + '">' +
+            '<div class="folder-accordion-header" onclick="toggleAccordion(\'' + safeFolderId + '\')">' +
+            '<div style="display: flex; align-items: center; gap: 6px; overflow: hidden;">' +
+            '<i class="fa-solid fa-chevron-right folder-icon-toggle" style="color: #2563eb;"></i>' +
+            '<i class="fa-solid fa-folder" style="color: #f59e0b;"></i>' +
+            '<span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="' + folderName + '">' + folderName + '</span>' +
+            '</div>' +
+            '<span style="font-size: 10px; background: rgba(37,99,235,0.1); color: #2563eb; padding: 2px 6px; border-radius: 10px;">' + files.length + '</span>' +
+            '</div>' +
+            '<div class="folder-accordion-content">';
 
-        files.forEach(f => {
-            const safeId = f.id;
-            const safeName = f.name.replace(/'/g, "\'").replace(/"/g, '&quot;');
-            html += `
-                <div class="drive-file-item" id="file-item-${safeId}" onclick="openDriveFile('${safeId}', '${safeName}')">
-                    <div style="width: 28px; height: 28px; background: linear-gradient(135deg, #ef4444, #f43f5e); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <i class="fa-solid fa-file-pdf" style="color: white; font-size: 13px;"></i>
-                    </div>
-                    <div style="flex: 1; min-width: 0;">
-                        <div style="font-size: 12px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-color);" title="${f.name}">${f.name}</div>
-                    </div>
-                    <i class="fa-solid fa-eye" style="color: #2563eb; font-size: 13px; opacity: 0.8;"></i>
-                </div>
-            `;
+        files.forEach(function(f) {
+            var safeId = f.id;
+            var safeName = f.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            html += '<div class="drive-file-item" id="file-item-' + safeId + '" onclick="openDriveFile(\'' + safeId + '\', \'' + safeName + '\')">' +
+                '<div style="width: 28px; height: 28px; background: linear-gradient(135deg, #ef4444, #f43f5e); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">' +
+                '<i class="fa-solid fa-file-pdf" style="color: white; font-size: 13px;"></i>' +
+                '</div>' +
+                '<div style="flex: 1; min-width: 0;">' +
+                '<div style="font-size: 12px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-color);" title="' + f.name + '">' + f.name + '</div>' +
+                '</div>' +
+                '<i class="fa-solid fa-eye" style="color: #2563eb; font-size: 13px; opacity: 0.8;"></i>' +
+                '</div>';
         });
 
-        html += `</div></div>`;
+        html += '</div></div>';
     });
 
     listEl.innerHTML = html;
     
-    const firstFolder = Object.keys(groupedDriveFiles).sort()[0];
+    var firstFolder = Object.keys(groupedDriveFiles).sort()[0];
     if (firstFolder) {
-        const safeFolderId = 'folder-' + btoa(unescape(encodeURIComponent(firstFolder))).replace(/=/g, '');
+        var safeFolderId = 'folder-' + btoa(unescape(encodeURIComponent(firstFolder))).replace(/=/g, '');
         toggleAccordion(safeFolderId);
     }
 }
 
 function toggleAccordion(elementId) {
-    const el = document.getElementById(elementId);
+    var el = document.getElementById(elementId);
     if (el) el.classList.toggle('open');
 }
 
 function openDriveFile(fileId, fileName) {
-    const frame = document.getElementById('driveViewerFrame');
-    const placeholder = document.getElementById('driveViewerPlaceholder');
-    const nameEl = document.getElementById('currentPdfName');
+    var frame = document.getElementById('driveViewerFrame');
+    var placeholder = document.getElementById('driveViewerPlaceholder');
+    var nameEl = document.getElementById('currentPdfName');
 
     if (placeholder) placeholder.style.display = 'none';
     if (nameEl) {
@@ -1299,12 +1281,12 @@ function openDriveFile(fileId, fileName) {
     }
 
     frame.style.display = 'block';
-    frame.src = `https://drive.google.com/file/d/${fileId}/preview`;
+    frame.src = "https://drive.google.com/file/d/" + fileId + "/preview";
 
-    document.querySelectorAll('.drive-file-item').forEach(el => {
+    document.querySelectorAll('.drive-file-item').forEach(function(el) {
         el.classList.remove('active-file');
     });
-    const activeItem = document.getElementById('file-item-' + fileId);
+    var activeItem = document.getElementById('file-item-' + fileId);
     if (activeItem) activeItem.classList.add('active-file');
 }
 
@@ -1316,52 +1298,57 @@ function openDriveFolderModal() {
 }
 
 function closeDriveFolderModal() {
-    const frame = document.getElementById('driveViewerFrame');
+    var frame = document.getElementById('driveViewerFrame');
     if (frame) frame.src = '';
-    const nameEl = document.getElementById('currentPdfName');
+    var nameEl = document.getElementById('currentPdfName');
     if (nameEl) nameEl.style.display = 'none';
     document.getElementById('driveViewerModal').style.display = 'none';
 }
 
-/* ============================================================
-   📚 Repo & Test Scanner
-   ============================================================ */
-async function scanAllRepoFiles() {
+function scanAllRepoFiles() {
     renderRepoGrid();
 
-    const promises = REPO_LIST.map(async (repo) => {
-        try {
-            const res = await fetch(`https://api.github.com/repos/niteshbariya/${repo}/contents/`);
-            if (res.ok) {
-                const items = await res.json();
-                const htmlFiles = items.filter(f => f.name.endsWith('.html')).map(f => f.name);
-                if (htmlFiles.length > 0) {
-                    repoFilesCache[repo] = htmlFiles;
+    var promises = REPO_LIST.map(function(repo) {
+        return fetch("https://api.github.com/repos/niteshbariya/" + repo + "/contents/")
+            .then(function(res) {
+                if (res.ok) return res.json();
+                return [];
+            })
+            .then(function(items) {
+                if (Array.isArray(items)) {
+                    var htmlFiles = items
+                        .filter(function(f) { return f.name && f.name.toLowerCase().endsWith('.html'); })
+                        .map(function(f) { return f.name; });
+                    if (htmlFiles.length > 0) {
+                        repoFilesCache[repo] = htmlFiles;
+                    }
                 }
-            }
-        } catch (e) {}
+            })
+            .catch(function() {});
     });
-    await Promise.all(promises);
-    renderRepoGrid();
+
+    Promise.all(promises).then(function() {
+        renderRepoGrid();
+    });
 }
 
 function populateStudentDropdown() {
-    const sMap = {};
-    allRawRecords.forEach(r => { if (r.email) sMap[r.email.toLowerCase()] = r.name || r.email; });
-    const sSelect = document.getElementById("studentDropdown");
-    sSelect.innerHTML = `<option value="ALL">👥 તમામ વિદ્યાર્થીઓ</option>`;
-    Object.keys(sMap).forEach(m => {
-        sSelect.innerHTML += `<option value="${m}">👤 ${sMap[m]}</option>`;
+    var sMap = {};
+    allRawRecords.forEach(function(r) { if (r.email) sMap[r.email.toLowerCase()] = r.name || r.email; });
+    var sSelect = document.getElementById("studentDropdown");
+    sSelect.innerHTML = '<option value="ALL">👥 તમામ વિદ્યાર્થીઓ</option>';
+    Object.keys(sMap).forEach(function(m) {
+        sSelect.innerHTML += '<option value="' + m + '">👤 ' + sMap[m] + '</option>';
     });
     selectedStudentEmail = "ALL";
 }
 
 function populateSubjectDropdown() {
-    const sSet = new Set();
-    allRawRecords.forEach(r => { if (r.subject) sSet.add(r.subject.trim()); });
-    const subSelect = document.getElementById("subjectDropdown");
-    subSelect.innerHTML = `<option value="ALL">📋 તમામ કસોટીઓ</option>`;
-    sSet.forEach(s => subSelect.innerHTML += `<option value="${s}">${s}</option>`);
+    var sSet = new Set();
+    allRawRecords.forEach(function(r) { if (r.subject) sSet.add(r.subject.trim()); });
+    var subSelect = document.getElementById("subjectDropdown");
+    subSelect.innerHTML = '<option value="ALL">📋 તમામ કસોટીઓ</option>';
+    sSet.forEach(function(s) { subSelect.innerHTML += '<option value="' + s + '">' + s + '</option>'; });
 }
 
 function onStudentSelectChange() {
@@ -1372,8 +1359,8 @@ function onStudentSelectChange() {
 function onSubjectFilterChange() { filterAndRefreshData(); }
 
 function filterAndRefreshData() {
-    const targetSub = document.getElementById("subjectDropdown").value;
-    filteredRecords = allRawRecords.filter(r => {
+    var targetSub = document.getElementById("subjectDropdown").value;
+    filteredRecords = allRawRecords.filter(function(r) {
         if (selectedStudentEmail !== "ALL" && (r.email || "").toLowerCase().trim() !== selectedStudentEmail) return false;
         if (targetSub !== "ALL" && r.subject !== targetSub) return false;
         return true;
@@ -1385,66 +1372,65 @@ function filterAndRefreshData() {
     renderHistoryTable();
 }
 
-/* 🌟 ચોક્કસ અને સચોટ ટેસ્ટ મેચિંગ લોજિક (Strict Matching) 🌟 */
 function isFileAttemptedByRecord(fileName, repoName, recordsList) {
-    const cleanFileName = fileName.split('/').pop().replace(/\.html$/i, '').toLowerCase().trim();
-    const cleanNoSpace = cleanFileName.replace(/[\s\-_()]+/g, '');
+    var cleanFileName = fileName.split('/').pop().replace(/\.html$/i, '').toLowerCase().trim();
+    var cleanNoSpace = cleanFileName.replace(/[\s\-_()]+/g, '');
 
-    return recordsList.find(r => {
-        const subRaw = (r.subject || "").toLowerCase().trim();
-        const sub = convertGujaratiDigitsToEnglish(subRaw);
-        const subNoSpace = sub.replace(/[\s\-_()]+/g, '');
+    return recordsList.find(function(r) {
+        var subRaw = (r.subject || "").toLowerCase().trim();
+        var sub = convertGujaratiDigitsToEnglish(subRaw);
+        var subNoSpace = sub.replace(/[\s\-_()]+/g, '');
 
-        if (sub.includes(cleanFileName) || subNoSpace.includes(cleanNoSpace)) {
+        if (sub.indexOf(cleanFileName) !== -1 || subNoSpace.indexOf(cleanNoSpace) !== -1) {
             return true;
         }
 
-        const isPartOr100File = cleanFileName.includes("100") || cleanFileName.includes("part");
-        const isPartOr100Sub = sub.includes("100") || sub.includes("part");
+        var isPartOr100File = cleanFileName.indexOf("100") !== -1 || cleanFileName.indexOf("part") !== -1;
+        var isPartOr100Sub = sub.indexOf("100") !== -1 || sub.indexOf("part") !== -1;
         if (isPartOr100File !== isPartOr100Sub) {
             return false;
         }
 
-        const isNewFile = cleanFileName.includes("new");
-        const isNewSub = sub.includes("new") || sub.includes("નવું");
+        var isNewFile = cleanFileName.indexOf("new") !== -1;
+        var isNewSub = sub.indexOf("new") !== -1 || sub.indexOf("નવું") !== -1;
         if (isNewFile !== isNewSub) {
             return false;
         }
 
         if (cleanFileName === "1b") {
-            return (sub.includes("1 (બ)") || sub.includes("1(બ)") || sub.includes("અધ્યેતા")) && !isNewSub;
+            return (sub.indexOf("1 (બ)") !== -1 || sub.indexOf("1(બ)") !== -1 || sub.indexOf("અધ્યેતા") !== -1) && !isNewSub;
         }
 
         if (cleanFileName === "1bnew") {
-            return (sub.includes("1 (બ)") || sub.includes("1(બ)")) && isNewSub;
+            return (sub.indexOf("1 (બ)") !== -1 || sub.indexOf("1(બ)") !== -1) && isNewSub;
         }
 
         if (cleanFileName === "5bevs") {
-            return (sub.includes("5 (બ)") || sub.includes("5(બ)") || sub.includes("પર્યાવરણ") || sub.includes("evs")) && !isPartOr100Sub;
+            return (sub.indexOf("5 (બ)") !== -1 || sub.indexOf("5(બ)") !== -1 || sub.indexOf("પર્યાવરણ") !== -1 || sub.indexOf("evs") !== -1) && !isPartOr100Sub;
         }
 
         if (cleanFileName === "5bevspart1q100") {
-            return (sub.includes("5 (બ)") || sub.includes("5(બ)") || sub.includes("પર્યાવરણ") || sub.includes("evs")) && isPartOr100Sub;
+            return (sub.indexOf("5 (બ)") !== -1 || sub.indexOf("5(બ)") !== -1 || sub.indexOf("પર્યાવરણ") !== -1 || sub.indexOf("evs") !== -1) && isPartOr100Sub;
         }
 
         if (cleanFileName === "1a") {
-            return (sub.includes("1 (અ)") || sub.includes("1(અ)") || sub.includes("વિકાસ")) && !isPartOr100Sub;
+            return (sub.indexOf("1 (અ)") !== -1 || sub.indexOf("1(અ)") !== -1 || sub.indexOf("વિકાસ") !== -1) && !isPartOr100Sub;
         }
 
         if (cleanFileName === "1anew100question") {
-            return (sub.includes("1 (અ)") || sub.includes("1(અ)") || sub.includes("વિકાસ")) && isPartOr100Sub;
+            return (sub.indexOf("1 (અ)") !== -1 || sub.indexOf("1(અ)") !== -1 || sub.indexOf("વિકાસ") !== -1) && isPartOr100Sub;
         }
 
-        if (cleanFileName.includes("math")) {
-            return sub.includes("ગણિત") || sub.includes("math");
+        if (cleanFileName.indexOf("math") !== -1) {
+            return sub.indexOf("ગણિત") !== -1 || sub.indexOf("math") !== -1;
         }
 
-        if (cleanFileName.includes("guj")) {
-            return sub.includes("ગુજરાતી") || sub.includes("guj");
+        if (cleanFileName.indexOf("guj") !== -1) {
+            return sub.indexOf("ગુજરાતી") !== -1 || sub.indexOf("guj") !== -1;
         }
 
-        if (cleanFileName.includes("sy")) {
-            return sub.includes("દ્વિતીય") || sub.includes("બોધ") || sub.includes("sy");
+        if (cleanFileName.indexOf("sy") !== -1) {
+            return sub.indexOf("દ્વિતીય") !== -1 || sub.indexOf("બોધ") !== -1 || sub.indexOf("sy") !== -1;
         }
 
         return false;
@@ -1452,102 +1438,98 @@ function isFileAttemptedByRecord(fileName, repoName, recordsList) {
 }
 
 function renderRepoGrid() {
-    const grid = document.getElementById("repoCardsGrid");
+    var grid = document.getElementById("repoCardsGrid");
     grid.innerHTML = "";
-    let totalPendingAll = 0;
+    var totalPendingAll = 0;
 
-    REPO_LIST.forEach(repoName => {
-        let files = repoFilesCache[repoName] || ["index.html"];
+    REPO_LIST.forEach(function(repoName) {
+        var files = repoFilesCache[repoName] || ["index.html"];
         
         if (files.length > 1) {
-            files = files.filter(f => f.toLowerCase() !== "index.html");
+            files = files.filter(function(f) { return f.toLowerCase() !== "index.html"; });
         }
 
-        let repoPending = 0;
-        files.forEach(fileName => {
-            const attempt = isFileAttemptedByRecord(fileName, repoName, filteredRecords);
+        var repoPending = 0;
+        files.forEach(function(fileName) {
+            var attempt = isFileAttemptedByRecord(fileName, repoName, filteredRecords);
             if (!attempt) repoPending++;
         });
         totalPendingAll += repoPending;
-        const card = document.createElement("div");
-        card.className = `repo-box ${currentOpenRepo === repoName ? 'active-repo' : ''}`;
-        card.onclick = () => openRepoFiles(repoName);
-        card.innerHTML = `
-            <div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span class="repo-name-tag"><i class="fa-regular fa-folder" style="color:#2563eb;"></i> ${repoName}</span>
-                    <span style="font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:12px; background:${repoPending > 0 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)'}; color:${repoPending > 0 ? '#ef4444' : '#10b981'};">
-                        ${repoPending > 0 ? `⏳ ${repoPending} બાકી` : '✅ પૂર્ણ'}
-                    </span>
-                </div>
-                <div style="font-size:12px; color:var(--text-muted); font-weight:700;">કુલ ટેસ્ટ: ${files.length}</div>
-            </div>
-            <div style="margin-top:8px; font-size:11.5px; color:#2563eb; font-weight:700;">ટેસ્ટ ખોલો <i class="fa-solid fa-chevron-right"></i></div>
-        `;
+        var card = document.createElement("div");
+        card.className = "repo-box " + (currentOpenRepo === repoName ? 'active-repo' : '');
+        card.onclick = function() { openRepoFiles(repoName); };
+        card.innerHTML = '<div>' +
+            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">' +
+            '<span class="repo-name-tag"><i class="fa-regular fa-folder" style="color:#2563eb;"></i> ' + repoName + '</span>' +
+            '<span style="font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:12px; background:' + (repoPending > 0 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)') + '; color:' + (repoPending > 0 ? '#ef4444' : '#10b981') + ';">' +
+            (repoPending > 0 ? '⏳ ' + repoPending + ' બાકી' : '✅ પૂર્ણ') +
+            '</span>' +
+            '</div>' +
+            '<div style="font-size:12px; color:var(--text-muted); font-weight:700;">કુલ ટેસ્ટ: ' + files.length + '</div>' +
+            '</div>' +
+            '<div style="margin-top:8px; font-size:11.5px; color:#2563eb; font-weight:700;">ટેસ્ટ ખોલો <i class="fa-solid fa-chevron-right"></i></div>';
         grid.appendChild(card);
     });
     document.getElementById("statPendingTests").innerText = totalPendingAll;
 }
 
-async function openRepoFiles(repoName) {
+function openRepoFiles(repoName) {
     currentOpenRepo = repoName;
     renderRepoGrid();
-    const container = document.getElementById("repoFilesContainer");
-    const listGrid = document.getElementById("filesListGrid");
+    var container = document.getElementById("repoFilesContainer");
+    var listGrid = document.getElementById("filesListGrid");
     container.style.display = "block";
-    document.getElementById("activeRepoTitle").innerHTML = `<i class="fa-regular fa-folder-open"></i> ${repoName}`;
-    document.getElementById("activeRepoSubtitle").innerText = `કસોટી ફાઈલો:`;
+    document.getElementById("activeRepoTitle").innerHTML = '<i class="fa-regular fa-folder-open"></i> ' + repoName;
+    document.getElementById("activeRepoSubtitle").innerText = "કસોટી ફાઈલો:";
     
-    let fileList = repoFilesCache[repoName] || ["index.html"];
+    var fileList = repoFilesCache[repoName] || ["index.html"];
     if (fileList.length > 1) {
-        fileList = fileList.filter(f => f.toLowerCase() !== "index.html");
+        fileList = fileList.filter(function(f) { return f.toLowerCase() !== "index.html"; });
     }
 
     listGrid.innerHTML = "";
     
-    fileList.forEach(fileName => {
-        const attemptRecord = isFileAttemptedByRecord(fileName, repoName, filteredRecords);
-        const isAttempted = !!attemptRecord;
+    fileList.forEach(function(fileName) {
+        var attemptRecord = isFileAttemptedByRecord(fileName, repoName, filteredRecords);
+        var isAttempted = !!attemptRecord;
         
-        const testUrl = (fileName === "index.html")
-            ? `https://niteshbariya.github.io/${repoName}/`
-            : `https://niteshbariya.github.io/${repoName}/${fileName}`;
-        const fileCard = document.createElement("div");
+        var testUrl = (fileName === "index.html")
+            ? "https://niteshbariya.github.io/" + repoName + "/"
+            : "https://niteshbariya.github.io/" + repoName + "/" + fileName;
+        var fileCard = document.createElement("div");
         fileCard.className = "file-card";
-        fileCard.style.borderLeft = `4.5px solid ${isAttempted ? '#10b981' : '#f43f5e'}`;
+        fileCard.style.borderLeft = "4.5px solid " + (isAttempted ? '#10b981' : '#f43f5e');
         
-        let scoreHtml = isAttempted ? `
-            <div class="test-score-banner">
-                <span>🎯 ગુણ: <strong>${attemptRecord.score || '-'}</strong></span>
-                <span>ટકા: <strong>${formatPercentDisplay(attemptRecord.percentage)}</strong></span>
-            </div>` : '';
+        var scoreHtml = isAttempted ? 
+            '<div class="test-score-banner">' +
+            '<span>🎯 ગુણ: <strong>' + (attemptRecord.score || '-') + '</strong></span>' +
+            '<span>ટકા: <strong>' + formatPercentDisplay(attemptRecord.percentage) + '</strong></span>' +
+            '</div>' : '';
             
-        let paperButtonHtml = (isAttempted || isAdminUser) ? `
-            <button class="btn-view-paper" onclick="loadDirectQuestionPaper('${repoName}', '${fileName}', true)">
-                <i class="fa-solid fa-file-pdf"></i> પ્રશ્નપત્ર & PDF
-            </button>` : `
-            <button class="btn-locked-paper" title="પહેલાં કસોટી આપો, પછી જ પ્રશ્નપત્ર ખુલશે!">
-                <i class="fa-solid fa-lock"></i> પ્રશ્નપત્ર લૉક છે
-            </button>`;
+        var paperButtonHtml = (isAttempted || isAdminUser) ? 
+            '<button class="btn-view-paper" onclick="loadDirectQuestionPaper(\'' + repoName + '\', \'' + fileName + '\', true)">' +
+            '<i class="fa-solid fa-file-pdf"></i> પ્રશ્નપત્ર & PDF' +
+            '</button>' : 
+            '<button class="btn-locked-paper" title="પહેલાં કસોટી આપો, પછી જ પ્રશ્નપત્ર ખુલશે!">' +
+            '<i class="fa-solid fa-lock"></i> પ્રશ્નપત્ર લૉક છે' +
+            '</button>';
 
-        fileCard.innerHTML = `
-            <div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span class="file-exact-name"><i class="fa-regular fa-file-lines"></i> ${fileName}</span>
-                    <span style="color:${isAttempted ? '#10b981' : '#ef4444'}; background:${isAttempted ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)'}; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:800;">
-                        ${isAttempted ? '✅ પૂર્ણ' : '⏳ બાકી'}
-                    </span>
-                </div>
-                <div style="font-size:11.5px; color:var(--text-muted); font-family:monospace; margin-bottom:6px;">${repoName}/${fileName}</div>
-                ${scoreHtml}
-            </div>
-            <div class="file-action-buttons">
-                <a href="${testUrl}" target="_blank" class="btn-take-test">
-                    <i class="fa-solid ${isAttempted ? 'fa-rotate-right' : 'fa-play'}"></i> ${isAttempted ? 'ફરી આપો' : 'કસોટી આપો'}
-                </a>
-                ${paperButtonHtml}
-            </div>
-        `;
+        fileCard.innerHTML = '<div>' +
+            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">' +
+            '<span class="file-exact-name"><i class="fa-regular fa-file-lines"></i> ' + fileName + '</span>' +
+            '<span style="color:' + (isAttempted ? '#10b981' : '#ef4444') + '; background:' + (isAttempted ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)') + '; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:800;">' +
+            (isAttempted ? '✅ પૂર્ણ' : '⏳ બાકી') +
+            '</span>' +
+            '</div>' +
+            '<div style="font-size:11.5px; color:var(--text-muted); font-family:monospace; margin-bottom:6px;">' + repoName + '/' + fileName + '</div>' +
+            scoreHtml +
+            '</div>' +
+            '<div class="file-action-buttons">' +
+            '<a href="' + testUrl + '" target="_blank" class="btn-take-test">' +
+            '<i class="fa-solid ' + (isAttempted ? 'fa-rotate-right' : 'fa-play') + '"></i> ' + (isAttempted ? 'ફરી આપો' : 'કસોટી આપો') +
+            '</a>' +
+            paperButtonHtml +
+            '</div>';
         listGrid.appendChild(fileCard);
     });
 }
@@ -1558,232 +1540,142 @@ function closeRepoFiles() {
     renderRepoGrid();
 }
 
-async function fetchQuestionsFromLiveSource(targetSubject) {
-    if (!targetSubject) return null;
-    const s = targetSubject.toLowerCase();
-    let candidates = [];
+function openTestModal(idx) {
+    var item = filteredRecords[idx];
+    currentBaseFilename = (item.name || 'Student') + "_" + (item.subject || 'Test');
+    document.getElementById("modalHeading").innerText = (item.subject || 'કસોટી') + " - પરિણામ & પ્રશ્નપત્ર";
+    document.getElementById("pdfDocSubject").innerText = (item.subject || 'કસોટી મૂલ્યાંકન પત્રક');
     
-    if (s.includes("evs") || s.includes("પર્યાવરણ")) {
-        candidates.push({ repo: "evs", file: "index.html" });
-        candidates.push({ repo: "paryavanrantest", file: "index.html" });
-        candidates.push({ repo: "fy", file: "5bevs.html" });
-    }
-    if (s.includes("nep") || s.includes("નીતિ")) {
-        candidates.push({ repo: "baou", file: "index.html" });
-        candidates.push({ repo: "revision", file: "index.html" });
-    }
-    if (s.includes("guj") || s.includes("ગુજરાતી")) {
-        candidates.push({ repo: "guj", file: "index.html" });
-        candidates.push({ repo: "fy", file: "4aguj.html" });
-    }
-    if (s.includes("maths") || s.includes("ગણિત")) {
-        candidates.push({ repo: "maths", file: "index.html" });
-    }
-    if (s.includes("sy") || s.includes("દ્વિતીય")) {
-        candidates.push({ repo: "sy", file: "index.html" });
-    }
-    if (s.includes("fy") || s.includes("પ્રથમ") || s.includes("વિકાસ")) {
-        candidates.push({ repo: "fy", file: "1a.html" });
-        candidates.push({ repo: "fy", file: "1anew100question.html" });
-    }
-
-    REPO_LIST.forEach(r => {
-        candidates.push({ repo: r, file: "index.html" });
-    });
-
-    for (const c of candidates) {
-        const testUrl = (c.file === "index.html")
-            ? `https://niteshbariya.github.io/${c.repo}/`
-            : `https://niteshbariya.github.io/${c.repo}/${c.file}`;
-        try {
-            const res = await fetch(testUrl);
-            if (res.ok) {
-                const txt = await res.text();
-                const qs = extractQuestionsArrayFromText(txt);
-                if (qs && qs.length > 0) return { questions: qs, repo: c.repo, file: c.file, url: testUrl };
-            }
-        } catch(e) {}
-    }
-    return null;
-}
-
-async function openTestModal(idx) {
-    const item = filteredRecords[idx];
-    currentBaseFilename = `${item.name || 'Student'}_${item.subject || 'Test'}`;
-    document.getElementById("modalHeading").innerText = `${item.subject || 'કસોટી'} - પરિણામ & પ્રશ્નપત્ર`;
-    document.getElementById("pdfDocSubject").innerText = `${item.subject || 'કસોટી મૂલ્યાંકન પત્રક'}`;
+    document.getElementById("pdfDocMeta").innerHTML = '<div><strong>વિદ્યાર્થી:</strong> ' + (item.name || '-') + '</div>' +
+        '<div><strong>તારીખ:</strong> ' + formatShortDateOnly(item.dateTime) + '</div>' +
+        '<div><strong>મેળવેલ ગુણ:</strong> <span style="color:#10b981; font-weight:bold;">' + (item.score || '-') + ' (' + formatPercentDisplay(item.percentage) + ')</span></div>' +
+        '<div><strong>લીધેલ સમય:</strong> ' + formatDurationTime(item.timeTaken) + '</div>';
     
-    document.getElementById("pdfDocMeta").innerHTML = `
-        <div><strong>વિદ્યાર્થી:</strong> ${item.name || '-'}</div>
-        <div><strong>તારીખ:</strong> ${formatShortDateOnly(item.dateTime)}</div>
-        <div><strong>મેળવેલ ગુણ:</strong> <span style="color:#10b981; font-weight:bold;">${item.score || '-'} (${formatPercentDisplay(item.percentage)})</span></div>
-        <div><strong>લીધેલ સમય:</strong> ${formatDurationTime(item.timeTaken)}</div>
-    `;
-    
-    const qContainer = document.getElementById("pdfDocQuestions");
-    qContainer.innerHTML = `<div style="text-align:center; padding:35px; color:#2563eb;">
-        <i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>
-        <strong>પરીક્ષાર્થીનું પરિણામ પત્રક લોડ થઈ રહ્યું છે...</strong>
-    </div>`;
+    var qContainer = document.getElementById("pdfDocQuestions");
+    qContainer.innerHTML = '<div style="text-align:center; padding:35px; color:#2563eb;">' +
+        '<i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>' +
+        '<strong>પરીક્ષાર્થીનું પરિણામ પત્રક લોડ થઈ રહ્યું છે...</strong>' +
+        '</div>';
     
     document.getElementById("reviewModal").style.display = "flex";
-    window.history.pushState({ modalOpen: true }, "");
-
-    let loaded = false;
 
     if (item.reviewHtml && item.reviewHtml.length > 50) {
-        loaded = parseAndRenderReviewHtml(item.reviewHtml);
-    }
-    
-    if (!loaded) {
-        const liveData = await fetchQuestionsFromLiveSource(item.subject);
-        if (liveData && liveData.questions && liveData.questions.length > 0) {
-            renderQuestionsToModal(liveData.questions, item);
-            loaded = true;
-        }
-    }
-    
-    if (!loaded) {
-        qContainer.innerHTML = `
-            <div class="pdf-q-item" style="text-align:center; padding:25px;">
-                <div class="pdf-q-title">મેળવેલ ગુણ: ${item.score || '-'} (${formatPercentDisplay(item.percentage)})</div>
-                <p style="color:var(--text-muted); font-size:12px; margin-top:8px;">
-                    વિગતવાર ઉત્તરવહી ડેટા મળ્યો નથી.
-                </p>
-            </div>
-        `;
+        parseAndRenderReviewHtml(item.reviewHtml);
+    } else {
+        qContainer.innerHTML = '<div class="pdf-q-item" style="text-align:center; padding:25px;">' +
+            '<div class="pdf-q-title">મેળવેલ ગુણ: ' + (item.score || '-') + ' (' + formatPercentDisplay(item.percentage) + ')</div>' +
+            '<p style="color:var(--text-muted); font-size:12px; margin-top:8px;">વિગતવાર ઉત્તરવહી ડેટા મળ્યો નથી.</p>' +
+            '</div>';
     }
 }
 
-async function loadDirectQuestionPaper(repoName, fileName, isAttempted) {
-    const testUrl = (fileName === "index.html")
-        ? `https://niteshbariya.github.io/${repoName}/`
-        : `https://niteshbariya.github.io/${repoName}/${fileName}`;
-    document.getElementById("modalHeading").innerText = `${repoName}/${fileName} - પ્રશ્નપત્ર & ઉત્તરવહી`;
-    document.getElementById("pdfDocSubject").innerText = `${repoName}/${fileName} - મૂલ્યાંકન પ્રશ્નપત્ર`;
+function loadDirectQuestionPaper(repoName, fileName, isAttempted) {
+    var testUrl = (fileName === "index.html")
+        ? "https://niteshbariya.github.io/" + repoName + "/"
+        : "https://niteshbariya.github.io/" + repoName + "/" + fileName;
+    document.getElementById("modalHeading").innerText = repoName + "/" + fileName + " - પ્રશ્નપત્ર & ઉત્તરવહી";
+    document.getElementById("pdfDocSubject").innerText = repoName + "/" + fileName + " - મૂલ્યાંકન પ્રશ્નપત્ર";
     
-    const sheetRecord = isFileAttemptedByRecord(fileName, repoName, filteredRecords);
+    var sheetRecord = isFileAttemptedByRecord(fileName, repoName, filteredRecords);
     
-    let metaHtml = `
-        <div><strong>રિપોઝિટરી:</strong> ${repoName}</div>
-        <div><strong>ફાઈલ:</strong> ${fileName}</div>
-        <div><strong>તારીખ:</strong> ${sheetRecord ? formatShortDateOnly(sheetRecord.dateTime) : formatShortDateOnly(new Date())}</div>
-    `;
+    var metaHtml = '<div><strong>રિપોઝિટરી:</strong> ' + repoName + '</div>' +
+        '<div><strong>ફાઈલ:</strong> ' + fileName + '</div>' +
+        '<div><strong>તારીખ:</strong> ' + (sheetRecord ? formatShortDateOnly(sheetRecord.dateTime) : formatShortDateOnly(new Date())) + '</div>';
     if (sheetRecord) {
-        metaHtml += `
-            <div style="grid-column: 1/-1; background:#ecfdf5; padding:6px 10px; border-radius:6px; color:#065f46; font-weight:800;">
-                🎯 મેળવેલ ગુણ: ${sheetRecord.score || '-'} (${formatPercentDisplay(sheetRecord.percentage)}) | વિદ્યાર્થી: ${sheetRecord.name || '-'}
-            </div>
-        `;
+        metaHtml += '<div style="grid-column: 1/-1; background:#ecfdf5; padding:6px 10px; border-radius:6px; color:#065f46; font-weight:800;">' +
+            '🎯 મેળવેલ ગુણ: ' + (sheetRecord.score || '-') + ' (' + formatPercentDisplay(sheetRecord.percentage) + ') | વિદ્યાર્થી: ' + (sheetRecord.name || '-') +
+            '</div>';
     }
     document.getElementById("pdfDocMeta").innerHTML = metaHtml;
-    const qContainer = document.getElementById("pdfDocQuestions");
-    qContainer.innerHTML = `<div style="text-align:center; padding:35px; color:#2563eb;">
-        <i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>
-        <strong>સંપૂર્ણ પ્રશ્નપત્ર લોડ થઈ રહ્યું છે...</strong>
-    </div>`;
+    var qContainer = document.getElementById("pdfDocQuestions");
+    qContainer.innerHTML = '<div style="text-align:center; padding:35px; color:#2563eb;">' +
+        '<i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>' +
+        '<strong>સંપૂર્ણ પ્રશ્નપત્ર લોડ થઈ રહ્યું છે...</strong>' +
+        '</div>';
     
     document.getElementById("reviewModal").style.display = "flex";
-    window.history.pushState({ modalOpen: true }, "");
-    currentBaseFilename = `${repoName}_${fileName.replace('.html','')}`;
+    currentBaseFilename = repoName + "_" + fileName.replace('.html','');
     
     if (sheetRecord && sheetRecord.reviewHtml && sheetRecord.reviewHtml.length > 50) {
-        if (parseAndRenderReviewHtml(sheetRecord.reviewHtml)) return;
+        parseAndRenderReviewHtml(sheetRecord.reviewHtml);
+        return;
     }
 
-    try {
-        const response = await fetch(testUrl);
-        if (!response.ok) throw new Error("File fetch failed");
-        const htmlText = await response.text();
-        let foundQuestions = extractQuestionsArrayFromText(htmlText);
-        if (!foundQuestions || foundQuestions.length === 0) {
-            foundQuestions = await loadQuestionsViaIframe(testUrl);
-        }
-        
-        if (foundQuestions && foundQuestions.length > 0) {
-            renderQuestionsToModal(foundQuestions, sheetRecord);
-        } else {
-            qContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444;">પ્રશ્નો મળી શક્યા નહીં.</div>`;
-        }
-    } catch(err) {
-        qContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444;">પ્રશ્નપત્ર લોડ કરવામાં ક્ષતિ આવી.</div>`;
-    }
+    fetch(testUrl)
+        .then(function(res) {
+            if (!res.ok) throw new Error("File fetch failed");
+            return res.text();
+        })
+        .then(function(htmlText) {
+            var found = extractQuestionsArrayFromText(htmlText);
+            if (found && found.length > 0) {
+                renderQuestionsToModal(found, sheetRecord);
+            } else {
+                qContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#ef4444;">પ્રશ્નો મળી શક્યા નહીં.</div>';
+            }
+        })
+        .catch(function() {
+            qContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#ef4444;">પ્રશ્નપત્ર લોડ કરવામાં ક્ષતિ આવી.</div>';
+        });
 }
 
 function renderQuestionsToModal(questions, sheetRecord) {
-    const qContainer = document.getElementById("pdfDocQuestions");
-    let questionsHtml = "";
+    var qContainer = document.getElementById("pdfDocQuestions");
+    var questionsHtml = "";
     
-    questions.forEach((q, idx) => {
-        const qText = q.question || q.q || `પ્રશ્ન ${idx + 1}`;
-        const opts = q.options || q.opts || q.choices || [];
-        const ans = q.answer !== undefined ? q.answer : q.ans;
+    questions.forEach(function(q, idx) {
+        var qText = q.question || q.q || ("પ્રશ્ન " + (idx + 1));
+        var opts = q.options || q.opts || q.choices || [];
+        var ans = q.answer !== undefined ? q.answer : q.ans;
         
-        let correctOptText = ans;
+        var correctOptText = ans;
         if (opts.length > 0) {
             if (typeof ans === 'number' && opts[ans] !== undefined) {
-                correctOptText = `(${String.fromCharCode(65 + ans)}) ${opts[ans]}`;
+                correctOptText = "(" + String.fromCharCode(65 + ans) + ") " + opts[ans];
             } else if (typeof ans === 'string' && /^[0-3]$/.test(ans)) {
-                correctOptText = `(${String.fromCharCode(65 + parseInt(ans, 10))}) ${opts[parseInt(ans, 10)]}`;
+                correctOptText = "(" + String.fromCharCode(65 + parseInt(ans, 10)) + ") " + opts[parseInt(ans, 10)];
             }
         }
         
-        let isWrong = false;
-        let userWrongAns = "";
+        var isWrong = false;
+        var userWrongAns = "";
         if (sheetRecord && sheetRecord.reviewHtml) {
-            const rHtml = sheetRecord.reviewHtml;
-            if (rHtml.includes(qText) && (rHtml.includes("❌") || rHtml.includes("ખોટો") || rHtml.includes("Wrong"))) {
+            var rHtml = sheetRecord.reviewHtml;
+            if (rHtml.indexOf(qText) !== -1 && (rHtml.indexOf("❌") !== -1 || rHtml.indexOf("ખોટો") !== -1 || rHtml.indexOf("Wrong") !== -1)) {
                 isWrong = true;
             }
-            const matchWrong = rHtml.match(new RegExp(`${escapeRegex(qText)}.*?તમારો જવાબ:?\s*([^<\n]+)`, 'i'));
-            if (matchWrong) userWrongAns = matchWrong[1];
         }
         
-        const explanation = q.explanation || q.exp || q.detail || q.reason || "";
+        var explanation = q.explanation || q.exp || q.detail || q.reason || "";
         
-        questionsHtml += `
-            <div class="pdf-q-item ${isWrong ? 'is-wrong-answer' : ''}" data-wrong="${isWrong ? 'true' : 'false'}">
-                <div class="pdf-q-title">
-                    પ્રશ્ન ${idx + 1}: ${qText} 
-                    ${isWrong ? '<span style="color:#ef4444; font-size:12px; font-weight:800;">(ખોટો પડેલ ❌)</span>' : ''}
-                </div>
-                ${opts.length > 0 ? `
-                    <div class="pdf-options-list">
-                        ${opts.map((opt, oIdx) => `<div><strong>(${String.fromCharCode(65 + oIdx)})</strong> ${opt}</div>`).join('')}
-                    </div>
-                ` : ''}
-                ${isWrong && userWrongAns ? `
-                    <div class="pdf-wrong-user-ans">
-                        ❌ પરીક્ષાર્થીએ આપેલો જવાબ: <strong>${userWrongAns}</strong>
-                    </div>` : ''}
-                <div class="pdf-ans-box">
-                    ✅ સાચો જવાબ: <strong>${correctOptText}</strong>
-                </div>
-                ${explanation ? `
-                    <div class="pdf-exp-box">
-                        💡 <strong>વિગતવાર સમજૂતી:</strong> ${explanation}
-                    </div>` : ''}
-            </div>
-        `;
+        questionsHtml += '<div class="pdf-q-item ' + (isWrong ? 'is-wrong-answer' : '') + '" data-wrong="' + (isWrong ? 'true' : 'false') + '">' +
+            '<div class="pdf-q-title">' +
+            'પ્રશ્ન ' + (idx + 1) + ': ' + qText + ' ' +
+            (isWrong ? '<span style="color:#ef4444; font-size:12px; font-weight:800;">(ખોટો પડેલ ❌)</span>' : '') +
+            '</div>' +
+            (opts.length > 0 ? '<div class="pdf-options-list">' + opts.map(function(opt, oIdx) {
+                return '<div><strong>(' + String.fromCharCode(65 + oIdx) + ')</strong> ' + opt + '</div>';
+            }).join('') + '</div>' : '') +
+            '<div class="pdf-ans-box">✅ સાચો જવાબ: <strong>' + correctOptText + '</strong></div>' +
+            (explanation ? '<div class="pdf-exp-box">💡 <strong>વિગતવાર સમજૂતી:</strong> ' + explanation + '</div>' : '') +
+            '</div>';
     });
     qContainer.innerHTML = questionsHtml;
 }
 
 function parseAndRenderReviewHtml(rawHtml) {
-    const qContainer = document.getElementById("pdfDocQuestions");
+    var qContainer = document.getElementById("pdfDocQuestions");
     qContainer.innerHTML = rawHtml;
     
-    const potentialBoxes = qContainer.querySelectorAll("div[style*='border'], .review-item, .question-card");
+    var potentialBoxes = qContainer.querySelectorAll("div[style*='border'], .review-item, .question-card");
     if (potentialBoxes.length > 0) {
-        potentialBoxes.forEach(box => {
-            const isWrong = box.innerHTML.includes("❌") || box.innerHTML.includes("ખોટો") || box.innerHTML.includes("is-wrong");
-            box.className = `pdf-q-item ${isWrong ? 'is-wrong-answer' : ''}`;
+        potentialBoxes.forEach(function(box) {
+            var isWrong = box.innerHTML.indexOf("❌") !== -1 || box.innerHTML.indexOf("ખોટો") !== -1 || box.innerHTML.indexOf("is-wrong") !== -1;
+            box.className = "pdf-q-item " + (isWrong ? 'is-wrong-answer' : '');
             box.setAttribute("data-wrong", isWrong ? "true" : "false");
-            
             box.style.borderRadius = "8px";
             box.style.padding = "12px";
             box.style.marginBottom = "12px";
-            
             if (isWrong) {
                 box.style.border = "2px solid #ef4444";
                 box.style.backgroundColor = "#fff5f5";
@@ -1798,28 +1690,27 @@ function parseAndRenderReviewHtml(rawHtml) {
 }
 
 function filterModalQuestions(type) {
-    const items = document.querySelectorAll("#pdfDocQuestions .pdf-q-item");
-    const btnAll = document.getElementById("btnFilterAll");
-    const btnWrong = document.getElementById("btnFilterWrong");
-    const btnBlank = document.getElementById("btnFilterBlank");
-    let wrongCount = 0;
+    var items = document.querySelectorAll("#pdfDocQuestions .pdf-q-item");
+    var btnAll = document.getElementById("btnFilterAll");
+    var btnWrong = document.getElementById("btnFilterWrong");
+    var btnBlank = document.getElementById("btnFilterBlank");
+    var wrongCount = 0;
     
-    items.forEach(item => {
-        const isWrong = item.getAttribute("data-wrong") === "true" || item.classList.contains("is-wrong-answer") || item.innerHTML.includes("❌");
+    items.forEach(function(item) {
+        var isWrong = item.getAttribute("data-wrong") === "true" || item.classList.contains("is-wrong-answer") || item.innerHTML.indexOf("❌") !== -1;
         
         if (type === "blank") {
             item.style.display = "block";
             item.style.backgroundColor = "#ffffff";
             item.style.borderColor = "#cbd5e1";
-            
-            item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box").forEach(el => el.style.display = "none");
-            item.querySelectorAll("p").forEach(p => {
-                if (p.innerHTML.includes("ઉત્તર") || p.innerHTML.includes("જવાબ") || p.innerHTML.includes("સમજૂતી") || p.innerHTML.includes("✅") || p.innerHTML.includes("❌")) {
+            item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box").forEach(function(el) { el.style.display = "none"; });
+            item.querySelectorAll("p").forEach(function(p) {
+                if (p.innerHTML.indexOf("ઉત્તર") !== -1 || p.innerHTML.indexOf("જવાબ") !== -1 || p.innerHTML.indexOf("સમજૂતી") !== -1 || p.innerHTML.indexOf("✅") !== -1 || p.innerHTML.indexOf("❌") !== -1) {
                     p.style.display = "none";
                 }
             });
         } else if (type === "wrong") {
-            item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box, p").forEach(el => el.style.display = "");
+            item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box, p").forEach(function(el) { el.style.display = ""; });
             if (isWrong) { 
                 item.style.display = "block"; 
                 wrongCount++; 
@@ -1828,7 +1719,7 @@ function filterModalQuestions(type) {
             }
         } else {
             item.style.display = "block";
-            item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box, p").forEach(el => el.style.display = "");
+            item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box, p").forEach(function(el) { el.style.display = ""; });
             if (isWrong) {
                 item.style.backgroundColor = "#fff5f5";
                 item.style.borderColor = "#ef4444";
@@ -1849,19 +1740,20 @@ function filterModalQuestions(type) {
 }
 
 function extractQuestionsArrayFromText(text) {
-    const varNames = ["questions", "quizData", "myQuestions", "quizQuestions", "testData"];
-    for (const vName of varNames) {
-        let idx = text.indexOf(vName);
+    var varNames = ["questions", "quizData", "myQuestions", "quizQuestions", "testData"];
+    for (var k = 0; k < varNames.length; k++) {
+        var vName = varNames[k];
+        var idx = text.indexOf(vName);
         while (idx !== -1) {
-            const start = text.indexOf('[', idx);
+            var start = text.indexOf('[', idx);
             if (start !== -1 && start - idx < 60) {
-                let bracketCount = 0;
-                let inString = false;
-                let quoteChar = '';
-                for (let i = start; i < text.length; i++) {
-                    const c = text[i];
+                var bracketCount = 0;
+                var inString = false;
+                var quoteChar = '';
+                for (var i = start; i < text.length; i++) {
+                    var c = text[i];
                     if (inString) {
-                        if (c === '\') i++;
+                        if (c === '\\') i++;
                         else if (c === quoteChar) inString = false;
                     } else {
                         if (c === "'" || c === '"' || c === '`') { inString = true; quoteChar = c; }
@@ -1869,9 +1761,9 @@ function extractQuestionsArrayFromText(text) {
                         else if (c === ']') {
                             bracketCount--;
                             if (bracketCount === 0) {
-                                const arrayStr = text.substring(start, i + 1);
+                                var arrayStr = text.substring(start, i + 1);
                                 try {
-                                    const parsed = new Function(`return ${arrayStr}`)();
+                                    var parsed = new Function("return " + arrayStr)();
                                     if (Array.isArray(parsed) && parsed.length > 0) return parsed;
                                 } catch (e) {}
                                 break;
@@ -1886,49 +1778,24 @@ function extractQuestionsArrayFromText(text) {
     return null;
 }
 
-function loadQuestionsViaIframe(url) {
-    return new Promise((resolve) => {
-        const ifr = document.createElement("iframe");
-        ifr.style.display = "none";
-        ifr.src = url;
-        document.body.appendChild(ifr);
-        const timeout = setTimeout(() => {
-            try { document.body.removeChild(ifr); } catch(e){}
-            resolve(null);
-        }, 4000);
-        ifr.onload = () => {
-            clearTimeout(timeout);
-            try {
-                const win = ifr.contentWindow;
-                const qs = win.questions || win.quizData || win.myQuestions || win.quizQuestions;
-                document.body.removeChild(ifr);
-                resolve(Array.isArray(qs) && qs.length > 0 ? qs : null);
-            } catch (e) {
-                try { document.body.removeChild(ifr); } catch(err){}
-                resolve(null);
-            }
-        };
-    });
-}
-
 function updateProfileCard() {
-    const isSingle = (selectedStudentEmail !== "ALL");
-    let repRecord = isSingle 
-        ? allRawRecords.find(r => (r.email || "").toLowerCase().trim() === selectedStudentEmail) || {}
+    var isSingle = (selectedStudentEmail !== "ALL");
+    var repRecord = isSingle 
+        ? allRawRecords.find(function(r) { return (r.email || "").toLowerCase().trim() === selectedStudentEmail; }) || {}
         : { name: "સમગ્ર મૂલ્યાંકન અહેવાલ", email: "તમામ વિદ્યાર્થીઓ", phone: "-" };
         
-    const name = repRecord.name || "વિદ્યાર્થી";
+    var name = repRecord.name || "વિદ્યાર્થી";
     document.getElementById("profName").innerText = name;
     document.getElementById("avatarInitial").innerText = name.charAt(0);
     document.getElementById("profEmail").innerText = repRecord.email || "-";
     document.getElementById("profPhone").innerText = repRecord.phone || "-";
     
-    const phoneLink = document.getElementById("phoneLink");
-    const waLink = document.getElementById("whatsappLink");
+    var phoneLink = document.getElementById("phoneLink");
+    var waLink = document.getElementById("whatsappLink");
     if (repRecord.phone && repRecord.phone.length >= 10) {
-        phoneLink.href = `tel:${repRecord.phone}`;
-        const cleanPhone = repRecord.phone.replace(/[^0-9]/g, '');
-        waLink.href = `https://wa.me/91${cleanPhone.slice(-10)}?text=નમસ્તે%20${encodeURIComponent(name)}`;
+        phoneLink.href = "tel:" + repRecord.phone;
+        var cleanPhone = repRecord.phone.replace(/[^0-9]/g, '');
+        waLink.href = "https://wa.me/91" + cleanPhone.slice(-10) + "?text=" + encodeURIComponent("નમસ્તે " + name);
         phoneLink.style.display = "inline-flex";
         waLink.style.display = "inline-flex";
     } else {
@@ -1936,29 +1803,29 @@ function updateProfileCard() {
         waLink.style.display = "none";
     }
     
-    const totalCount = filteredRecords.length;
+    var totalCount = filteredRecords.length;
     document.getElementById("statTests").innerText = totalCount;
-    let maxPct = 0; let totalP = 0;
-    filteredRecords.forEach(r => {
-        const p = parsePercentValue(r.percentage);
+    var maxPct = 0; var totalP = 0;
+    filteredRecords.forEach(function(r) {
+        var p = parsePercentValue(r.percentage);
         totalP += p;
         if (p > maxPct) maxPct = p;
     });
-    document.getElementById("statHighest").innerText = `${maxPct}%`;
-    document.getElementById("statAvg").innerText = `${totalCount ? (totalP / totalCount).toFixed(1) : 0}%`;
+    document.getElementById("statHighest").innerText = maxPct + "%";
+    document.getElementById("statAvg").innerText = (totalCount ? (totalP / totalCount).toFixed(1) : 0) + "%";
 }
 
 function renderAllVisuals() {
-    const isDark = document.body.classList.contains("dark-mode");
-    const textColor = isDark ? "#94a3b8" : "#475569";
-    const gridColor = isDark ? "#334155" : "#e2e8f0";
-    let totalP = 0;
-    filteredRecords.forEach(r => totalP += parsePercentValue(r.percentage));
-    const avgPct = filteredRecords.length ? (totalP / filteredRecords.length).toFixed(1) : 0;
+    var isDark = document.body.classList.contains("dark-mode");
+    var textColor = isDark ? "#94a3b8" : "#475569";
+    var gridColor = isDark ? "#334155" : "#e2e8f0";
+    var totalP = 0;
+    filteredRecords.forEach(function(r) { totalP += parsePercentValue(r.percentage); });
+    var avgPct = filteredRecords.length ? (totalP / filteredRecords.length).toFixed(1) : 0;
     updateSpeedometer(avgPct);
     
-    const progLabels = filteredRecords.map((r, idx) => r.subject ? (r.subject.length > 15 ? r.subject.substring(0, 15) + '..' : r.subject) : `ટેસ્ટ ${idx+1}`);
-    const progData = filteredRecords.map(r => parsePercentValue(r.percentage));
+    var progLabels = filteredRecords.map(function(r, idx) { return r.subject ? (r.subject.length > 15 ? r.subject.substring(0, 15) + '..' : r.subject) : ('ટેસ્ટ ' + (idx + 1)); });
+    var progData = filteredRecords.map(function(r) { return parsePercentValue(r.percentage); });
     
     if (progressChart) progressChart.destroy();
     progressChart = new Chart(document.getElementById("verticalProgressChart"), {
@@ -1968,7 +1835,7 @@ function renderAllVisuals() {
             datasets: [{
                 label: 'ટકાવારી (%)',
                 data: progData,
-                backgroundColor: progData.map(v => v >= 75 ? '#10b981' : (v >= 40 ? '#3b82f6' : '#ef4444')),
+                backgroundColor: progData.map(function(v) { return v >= 75 ? '#10b981' : (v >= 40 ? '#3b82f6' : '#ef4444'); }),
                 borderRadius: 6
             }]
         },
@@ -1984,12 +1851,12 @@ function renderAllVisuals() {
 }
 
 function updateSpeedometer(score) {
-    const val = parseFloat(score) || 0;
-    document.getElementById("gaugeDisplayValue").innerText = `${val}%`;
-    let statusColor = val >= 75 ? "#10b981" : (val < 40 ? "#ef4444" : "#3b82f6");
+    var val = parseFloat(score) || 0;
+    document.getElementById("gaugeDisplayValue").innerText = val + "%";
+    var statusColor = val >= 75 ? "#10b981" : (val < 40 ? "#ef4444" : "#3b82f6");
     document.getElementById("gaugeStatusText").style.color = statusColor;
     if (gaugeChart) gaugeChart.destroy();
-    const isDark = document.body.classList.contains("dark-mode");
+    var isDark = document.body.classList.contains("dark-mode");
     gaugeChart = new Chart(document.getElementById("gaugeCanvas"), {
         type: 'doughnut',
         data: {
@@ -2004,24 +1871,22 @@ function updateSpeedometer(score) {
 }
 
 function renderHistoryTable() {
-    const tbody = document.getElementById("testTableBody");
+    var tbody = document.getElementById("testTableBody");
     tbody.innerHTML = "";
     if (filteredRecords.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:25px; color:var(--text-muted);">કોઈ રેકોર્ડ મળ્યો નથી.</td></tr>`;
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:25px; color:var(--text-muted);">કોઈ રેકોર્ડ મળ્યો નથી.</td></tr>';
         return;
     }
     
-    filteredRecords.forEach((item, idx) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td><span class="date-badge">${formatShortDateOnly(item.dateTime)}</span></td>
-            <td>${formatStackedName(item.name)}</td>
-            <td><strong style="color:#2563eb;">${item.subject || "-"}</strong></td>
-            <td style="text-align:center;"><span style="background:rgba(37, 99, 235, 0.1); color:#2563eb; padding:2px 6px; border-radius:6px; font-weight:700;">${item.score || "-"}</span></td>
-            <td style="text-align:center;"><strong style="color:#10b981; font-size:13px;">${formatPercentDisplay(item.percentage)}</strong></td>
-            <td><span class="time-badge">${formatDurationTime(item.timeTaken)}</span></td>
-            <td style="text-align:center;"><button class="btn-action-sm" onclick="openTestModal(${idx})" style="background:var(--primary-gradient);"><i class="fa-solid fa-file-lines"></i> પરિણામ PDF</button></td>
-        `;
+    filteredRecords.forEach(function(item, idx) {
+        var tr = document.createElement("tr");
+        tr.innerHTML = '<td><span class="date-badge">' + formatShortDateOnly(item.dateTime) + '</span></td>' +
+            '<td>' + formatStackedName(item.name) + '</td>' +
+            '<td><strong style="color:#2563eb;">' + (item.subject || "-") + '</strong></td>' +
+            '<td style="text-align:center;"><span style="background:rgba(37, 99, 235, 0.1); color:#2563eb; padding:2px 6px; border-radius:6px; font-weight:700;">' + (item.score || "-") + '</span></td>' +
+            '<td style="text-align:center;"><strong style="color:#10b981; font-size:13px;">' + formatPercentDisplay(item.percentage) + '</strong></td>' +
+            '<td><span class="time-badge">' + formatDurationTime(item.timeTaken) + '</span></td>' +
+            '<td style="text-align:center;"><button class="btn-action-sm" onclick="openTestModal(' + idx + ')" style="background:var(--primary-gradient);"><i class="fa-solid fa-file-lines"></i> પરિણામ PDF</button></td>';
         tbody.appendChild(tr);
     });
 }
@@ -2031,10 +1896,8 @@ function closeModal() {
 }
 
 window.addEventListener('click', function(event) {
-    const modal = document.getElementById("reviewModal");
-    if (event.target === modal) {
-        closeModal();
-    }
+    var modal = document.getElementById("reviewModal");
+    if (event.target === modal) closeModal();
 });
 
 window.addEventListener('keydown', function(event) {
@@ -2045,28 +1908,17 @@ window.addEventListener('keydown', function(event) {
     }
 });
 
-window.addEventListener('popstate', function(e) {
-    const modal = document.getElementById("reviewModal");
-    const driveModal = document.getElementById("driveViewerModal");
-    if (modal && modal.style.display === "flex") {
-        modal.style.display = "none";
-    }
-    if (driveModal && driveModal.style.display === "flex") {
-        driveModal.style.display = "none";
-    }
-});
-
 function exportPDF(mode) {
-    const element = document.getElementById("pdfPrintArea");
+    var element = document.getElementById("pdfPrintArea");
     filterModalQuestions(mode);
     
-    const scrollBody = document.getElementById("modalScrollBody");
+    var scrollBody = document.getElementById("modalScrollBody");
     if (scrollBody) scrollBody.scrollTop = 0;
     
-    const suffix = (mode === "wrong") ? "_માત્ર_ખોટા_પ્રશ્નો" : (mode === "blank" ? "_મૂળ_પ્રશ્નપત્ર" : "_સંપૂર્ણ_પ્રશ્નપત્ર");
-    const filename = `${currentBaseFilename}${suffix}.pdf`;
+    var suffix = (mode === "wrong") ? "_માત્ર_ખોટા_પ્રશ્નો" : (mode === "blank" ? "_મૂળ_પ્રશ્નપત્ર" : "_સંપૂર્ણ_પ્રશ્નપત્ર");
+    var filename = currentBaseFilename + suffix + ".pdf";
     
-    const opt = {
+    var opt = {
         margin: [8, 8, 8, 8],
         filename: filename,
         image: { type: 'jpeg', quality: 0.98 },
@@ -2075,7 +1927,7 @@ function exportPDF(mode) {
         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
     
-    html2pdf().set(opt).from(element).save().then(() => {
+    html2pdf().set(opt).from(element).save().then(function() {
         filterModalQuestions('all');
     });
 }
