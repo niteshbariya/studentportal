@@ -1678,26 +1678,22 @@ function parseAndRenderReviewHtml(rawHtml) {
     var qContainer = document.getElementById("pdfDocQuestions");
     qContainer.innerHTML = rawHtml;
     
-    var potentialBoxes = qContainer.querySelectorAll("div[style*='border'], .review-item, .question-card");
+    var potentialBoxes = qContainer.querySelectorAll("div[style*='border'], .review-item, .question-card, [class*='question']");
     if (potentialBoxes.length > 0) {
         potentialBoxes.forEach(function(box) {
             var isWrong = box.innerHTML.indexOf("❌") !== -1 || box.innerHTML.indexOf("ખોટો") !== -1 || box.innerHTML.indexOf("is-wrong") !== -1;
-            box.className = "pdf-q-item " + (isWrong ? 'is-wrong-answer' : '');
-            box.setAttribute("data-wrong", isWrong ? "true" : "false");
-            box.style.borderRadius = "8px";
-            box.style.padding = "12px";
-            box.style.marginBottom = "12px";
+            box.classList.add("pdf-q-item");
             if (isWrong) {
-                box.style.border = "2px solid #ef4444";
-                box.style.backgroundColor = "#fff5f5";
+                box.classList.add("is-wrong-answer");
+                box.setAttribute("data-wrong", "true");
             } else {
-                box.style.border = "1.5px solid #cbd5e1";
-                box.style.backgroundColor = "#ffffff";
+                box.setAttribute("data-wrong", "false");
             }
         });
         return true;
     }
     return false;
+}
 }
 
 function filterModalQuestions(type) {
