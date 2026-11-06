@@ -816,7 +816,7 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 
-// 🌟 ૧. સ્ક્રીનશોટ મુજબની તમામ કસોટી રિપોઝિટરીઝ (studentportal બાદ રાખેલ છે)
+// 🌟 ૧. કસોટી રિપોઝિટરીઝ (studentportal સિવાય)
 const REPO_LIST = [
     "fy",
     "evs",
@@ -831,7 +831,7 @@ const REPO_LIST = [
     "guj"
 ];
 
-// 🌟 ૨. ડિફોલ્ટ કેશ જેથી પેજ લોડ થતાં જ fy ની કસોટીઓ તરત દેખાય
+// 🌟 ૨. મૂળ કેશ
 let repoFilesCache = {
     "fy": [
         "1anew100question.html",
@@ -877,35 +877,45 @@ function checkSavedLoginSession() {
 }
 
 function loginWithPassword() {
-    userEmail = document.getElementById("loginEmailInput").value.trim().toLowerCase();
-    const enteredPassword = document.getElementById("loginPasswordInput").value.trim();
+    const emailInput = document.getElementById("loginEmailInput");
+    const passInput = document.getElementById("loginPasswordInput");
+    const btn = document.getElementById("loginSubmitBtn");
+
+    if (!emailInput || !passInput) return;
+
+    userEmail = emailInput.value.trim().toLowerCase();
+    const enteredPassword = passInput.value.trim();
     
     if (!userEmail.includes("@") || !enteredPassword) {
         alert("કૃપા કરીને ઈમેઈલ અને પાસવર્ડ બંને દાખલ કરો.");
         return;
     }
 
-    const btn = document.getElementById("loginSubmitBtn");
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ચેક થઈ રહ્યું છે...';
     btn.disabled = true;
 
     fetch(SCRIPT_URL, {
-        method: "POST", body: JSON.stringify({ action: "login", email: userEmail, password: enteredPassword })
-    }).then(res => res.json()).then(data => {
-        if (data.success) {
+        method: "POST",
+        body: JSON.stringify({ action: "login", email: userEmail, password: enteredPassword })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data && data.success) {
             localStorage.setItem("portal_user_email", userEmail);
-            localStorage.setItem("portal_user_role", data.role); 
-            localStorage.setItem("portal_user_name", data.name);
+            localStorage.setItem("portal_user_role", data.role || "Student"); 
+            localStorage.setItem("portal_user_name", data.name || userEmail);
             
-            setupDashboardEnvironment(data.role, data.name);
+            setupDashboardEnvironment(data.role || "Student", data.name || userEmail);
             fetchDataAndInit();
         } else {
-            alert(data.message || "લોગિન નિષ્ફળ!");
+            alert((data && data.message) ? data.message : "ઈમેઈલ અથવા પાસવર્ડ ખોટો છે!");
             btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
             btn.disabled = false;
         }
-    }).catch(() => {
-        alert("સર્વર સાથે કનેક્ટ ન થઈ શક્યું. કૃપા કરીને Apps Script તપાસો.");
+    })
+    .catch(err => {
+        console.error("Login Connection Error:", err);
+        alert("સર્વર સાથે કનેક્ટ ન થઈ શક્યું. કૃપા કરીને થોડીવાર પછી ફરી પ્રયાસ કરો.");
         btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
         btn.disabled = false;
     });
@@ -1004,7 +1014,7 @@ function formatPercentDisplay(val) {
 }
 
 function escapeRegex(string) {
-    return String(string).replace(/[/\-\^$*+?.()|[\]{}]/g, '\$&');
+    return string.replace(/[/\-\^$*+?.()|[\]{}]/g, '\$&');
 }
 
 function convertGujaratiDigitsToEnglish(str) {
@@ -1033,8 +1043,8 @@ function fetchDataAndInit() {
         filterAndRefreshData();
         renderAdminNotes();
         renderTestNotifications(testNotifications);
-    }).catch(() => {
-        console.error("Data fetch failed");
+    }).catch(err => {
+        console.error("Data fetch failed", err);
     });
 }
 
@@ -1314,7 +1324,7 @@ function closeDriveFolderModal() {
 }
 
 /* ============================================================
-   📚 Repo & Test System (મૂળ કાર્યક્ષમ પદ્ધતિ)
+   📚 Repo & Test Scanner
    ============================================================ */
 async function scanAllRepoFiles() {
     renderRepoGrid();
@@ -1375,7 +1385,7 @@ function filterAndRefreshData() {
     renderHistoryTable();
 }
 
-/* 🌟 સુધારેલું ચોક્કસ (Strict) મેચિંગ ફંક્શન જેથી 1b અને 1bnew, 5bevs અને 5bevspart1q100 મિક્સ ન થાય 🌟 */
+/* 🌟 ચોક્કસ અને સચોટ ટેસ્ટ મેચિંગ લોજિક (Strict Matching) 🌟 */
 function isFileAttemptedByRecord(fileName, repoName, recordsList) {
     const cleanFileName = fileName.split('/').pop().replace(/\.html$/i, '').toLowerCase().trim();
     const cleanNoSpace = cleanFileName.replace(/[\s\-_()]+/g, '');
@@ -1385,26 +1395,22 @@ function isFileAttemptedByRecord(fileName, repoName, recordsList) {
         const sub = convertGujaratiDigitsToEnglish(subRaw);
         const subNoSpace = sub.replace(/[\s\-_()]+/g, '');
 
-        // ૧. જો શીટના સબ્જેક્ટમાં સીધું જ આખું ફાઇલનું નામ હોય તો જ સાચું
         if (sub.includes(cleanFileName) || subNoSpace.includes(cleanNoSpace)) {
             return true;
         }
 
-        // ૨. ૧૦૦ પ્રશ્નો કે Part વાળી ફાઇલો માટે ચોકસાઈ
         const isPartOr100File = cleanFileName.includes("100") || cleanFileName.includes("part");
         const isPartOr100Sub = sub.includes("100") || sub.includes("part");
         if (isPartOr100File !== isPartOr100Sub) {
             return false;
         }
 
-        // ૩. "new" વાળી ફાઇલો અલગ રહે તે માટે
         const isNewFile = cleanFileName.includes("new");
         const isNewSub = sub.includes("new") || sub.includes("નવું");
         if (isNewFile !== isNewSub) {
             return false;
         }
 
-        // ૪. વિષય વાર ચોક્કસ મેચિંગ
         if (cleanFileName === "1b") {
             return (sub.includes("1 (બ)") || sub.includes("1(બ)") || sub.includes("અધ્યેતા")) && !isNewSub;
         }
