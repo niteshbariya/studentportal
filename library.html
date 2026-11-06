@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ડિજિટલ પુસ્તકાલય - Nitesh Baria Web Developer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #06b6d4 100%);
+            --bg-color: #f8fafc;
+            --container-bg: #ffffff;
+            --card-bg: #ffffff;
+            --inner-box: #f1f5f9;
+            --text-color: #0f172a;
+            --text-muted: #64748b;
+            --heading-color: #1e3a8a;
+            --border-color: #cbd5e1;
+            --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+            --gradient-violet: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+            --gradient-amber: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+        }
+        body.dark-mode {
+            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #38bdf8 100%);
+            --bg-color: #030712;
+            --container-bg: #0b1329;
+            --card-bg: #111c44;
+            --inner-box: #1e293b;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --heading-color: #93c5fd;
+            --border-color: #334155;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Noto Sans Gujarati', 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 12px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .portal-wrapper {
+            width: 100%;
+            max-width: 1400px;
+            background: var(--container-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--border-color);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        @media (max-width: 768px) {
+            body { padding: 4px; }
+            .portal-wrapper { padding: 10px; border-radius: 12px; gap: 12px; }
+        }
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .portal-brand { display: flex; align-items: center; gap: 10px; }
+        .portal-logo-icon {
+            width: 42px; height: 42px;
+            background: var(--primary-gradient);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 18px;
+            flex-shrink: 0;
+        }
+        .brand-text h1 {
+            font-size: 19px; font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .brand-text p { font-size: 11.5px; color: var(--text-muted); font-weight: 600; }
+        .nav-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .badge-role {
+            padding: 4px 10px; border-radius: 30px; font-size: 11px; font-weight: 700;
+            background: rgba(37, 99, 235, 0.1); color: #2563eb; border: 1.5px solid #60a5fa;
+        }
+        body.dark-mode .badge-role { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; }
+        .theme-toggle-btn {
+            background: var(--inner-box); color: var(--text-color);
+            border: 1.5px solid var(--border-color); padding: 5px 12px;
+            font-size: 11.5px; font-weight: 700; border-radius: 20px; cursor: pointer;
+            display: flex; align-items: center; gap: 5px;
+        }
+
+        /* પોર્ટલ નેવિગેશન બાર */
+        .portal-nav-bar {
+            display: flex; gap: 8px; flex-wrap: wrap; padding-bottom: 6px; border-bottom: 1.5px dashed var(--border-color);
+        }
+        .nav-link-btn {
+            padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700;
+            color: var(--text-muted); background: var(--inner-box); border: 1.5px solid var(--border-color);
+            text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;
+        }
+        .nav-link-btn:hover { color: #2563eb; border-color: #2563eb; }
+        .nav-link-btn.active {
+            background: var(--primary-gradient); color: #ffffff; border-color: transparent;
+        }
+
+        .study-hub-two-col {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+        }
+        @media (max-width: 900px) {
+            .study-hub-two-col { grid-template-columns: 1fr; }
+        }
+        .hub-card {
+            background: var(--card-bg); border: 2px solid var(--border-color);
+            border-radius: 14px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .hub-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1.5px solid var(--border-color); padding-bottom: 8px;
+        }
+        .hub-header h3 { font-size: 15px; font-weight: 800; color: var(--heading-color); }
+        .folder-banner-box {
+            background: var(--inner-box); border: 1.5px dashed var(--border-color);
+            border-radius: 10px; padding: 16px; text-align: center; margin: 12px 0;
+        }
+        .folder-sub-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 10px; }
+        .folder-sub-badge {
+            background: rgba(37, 99, 235, 0.08); border: 1px solid #93c5fd; color: #2563eb;
+            font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+        }
+        .btn-gradient {
+            background: var(--primary-gradient); color: white; border: none;
+            padding: 9px 16px; font-size: 13px; font-weight: 700; border-radius: 8px;
+            cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+
+        #adminNotesList {
+            max-height: 380px; overflow-y: auto; scroll-behavior: smooth; padding-right: 4px; margin-top: 10px;
+        }
+        #adminNotesList::-webkit-scrollbar { width: 4px; }
+        #adminNotesList::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        .admin-note-item {
+            background: var(--inner-box); border-left: 4px solid #f59e0b;
+            border-radius: 8px; padding: 9px 12px; margin-bottom: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03); transition: all 0.2s ease;
+        }
+        .admin-note-item:hover { border-left-color: #2563eb; background: rgba(37, 99, 235, 0.04); }
+        .note-inline-row { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; line-height: 1.45; }
+        .note-tag-badge {
+            background: var(--gradient-amber); color: white; font-size: 10.5px; font-weight: 800;
+            padding: 2px 7px; border-radius: 5px; display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;
+        }
+        .note-text-inline { font-size: 12.5px; font-weight: 600; color: #1e3a8a; flex: 1; min-width: 160px; }
+        body.dark-mode .note-text-inline { color: #93c5fd; }
+        .note-date-pill {
+            font-size: 10px; font-weight: 700; color: var(--text-muted);
+            background: rgba(148, 163, 184, 0.15); padding: 2px 6px; border-radius: 4px;
+            display: inline-flex; align-items: center; gap: 3px; margin-left: auto; flex-shrink: 0;
+        }
+        .note-image-box {
+            margin-top: 6px; border-radius: 6px; overflow: hidden; border: 1.5px solid var(--border-color);
+            max-height: 180px; cursor: pointer;
+        }
+        .note-image-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        /* પુસ્તકાલય મોડલ */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.78); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 8px;
+            backdrop-filter: blur(3px);
+        }
+        .modal-box {
+            background: var(--card-bg); border-radius: 14px; width: 100%; max-width: 1250px; 
+            height: 92vh; max-height: 92vh;
+            display: flex; flex-direction: column; overflow: hidden; border: 2px solid var(--border-color);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+        .modal-header { 
+            padding: 10px 16px; border-bottom: 2px solid var(--border-color); 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: var(--card-bg); z-index: 20;
+        }
+        .modal-close-icon-btn {
+            background: #ef4444; color: white; border: none; font-size: 13.5px; font-weight: 800;
+            padding: 5px 12px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
+        }
+
+        .folder-accordion { border-bottom: 1px solid var(--border-color); }
+        .folder-accordion-header {
+            padding: 10px 14px; background: var(--card-bg); cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 800; font-size: 12.5px; color: var(--heading-color);
+            user-select: none; border-bottom: 1px solid var(--border-color);
+        }
+        .folder-accordion-header:hover { background: rgba(37, 99, 235, 0.05); }
+        .folder-accordion-content {
+            display: none; background: linear-gradient(180deg, rgba(37,99,235,0.05) 0%, rgba(37,99,235,0.12) 100%);
+            padding: 6px; border-radius: 0 0 10px 10px;
+        }
+        .folder-accordion.open .folder-accordion-content { display: block; }
+        .folder-accordion.open .folder-accordion-header { border-bottom: 2px solid #2563eb; }
+        .folder-accordion.open .folder-icon-toggle { transform: rotate(90deg); }
+        .folder-icon-toggle { transition: transform 0.2s; font-size: 10px; margin-right: 6px; }
+
+        .drive-file-item {
+            padding: 9px 12px; margin: 5px 4px; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; gap: 10px; transition: all 0.2s ease;
+            background: #ffffff; border: 1.5px solid transparent; box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+        body.dark-mode .drive-file-item { background: #1e293b; border-color: #334155; }
+        .drive-file-item:hover { transform: translateX(3px); border-color: #3b82f6 !important; }
+        .drive-file-item.active-file {
+            background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(6,182,212,0.15)) !important;
+            border: 1.5px solid #2563eb !important; border-left: 4px solid #2563eb !important;
+        }
+
+        @media (max-width: 768px) {
+            #driveViewerModal .modal-box { height: 95vh !important; }
+            #driveViewerModal > .modal-box > div:nth-child(2) { flex-direction: column !important; }
+            #driveFileList { width: 100% !important; max-height: 35vh !important; border-right: none !important; border-bottom: 2px solid var(--border-color) !important; }
+            #driveViewerFrame { min-height: 55vh; }
+        }
+        .portal-footer { text-align: center; padding: 12px 0 4px 0; font-size: 11.5px; color: var(--text-muted); font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="portal-wrapper">
+    <header class="top-navbar">
+        <div class="portal-brand">
+            <div class="portal-logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div class="brand-text">
+                <h1>ડિજિટલ પુસ્તકાલય & નોટ્સ</h1>
+                <p>Nitesh Baria - Web Developer</p>
+            </div>
+        </div>
+        <div class="nav-controls">
+            <button id="themeToggleBtn" class="theme-toggle-btn" onclick="switchTheme()">
+                <i class="fa-solid fa-moon" id="themeIcon"></i> <span id="themeText">ડાર્ક મોડ</span>
+            </button>
+            <span id="roleBadge" class="badge-role"><i class="fa-solid fa-user-graduate"></i> લોડ થઈ રહ્યું છે...</span>
+        </div>
+    </header>
+
+    <!-- નેવિગેશન બાર -->
+    <nav class="portal-nav-bar">
+        <a href="index.html" class="nav-link-btn"><i class="fa-solid fa-chart-line"></i> ડેશબોર્ડ</a>
+        <a href="tests.html" class="nav-link-btn"><i class="fa-solid fa-folder-tree"></i> કસોટી કેન્દ્ર</a>
+        <a href="library.html" class="nav-link-btn active"><i class="fa-solid fa-book-bookmark"></i> પુસ્તકાલય</a>
+        <a href="history.html" class="nav-link-btn"><i class="fa-solid fa-table-list"></i> પરિણામ પત્રક</a>
+    </nav>
+
+    <!-- સાહિત્ય કેન્દ્ર & એડમિન નોટ્સ -->
+    <section class="study-hub-two-col">
+        <!-- મિશન ૨૭ પુસ્તકાલય કાર્ડ -->
+        <div class="hub-card">
+            <div>
+                <div class="hub-header">
+                    <h3><i class="fa-solid fa-book-bookmark" style="color: #2563eb;"></i> ડિજિટલ પુસ્તકાલય - મિશન 27</h3>
+                    <span class="badge-role">સાહિત્ય કેન્દ્ર</span>
+                </div>
+                <p style="font-size: 11.5px; color: var(--text-muted); margin: 8px 0;">
+                    તમામ કેટેગરીના પુસ્તકો અને જરૂરી સંદર્ભ PDF સીધા પોપ-અપમાં આસાનીથી વાંચી શકાશે:
+                </p>
+                <div class="folder-banner-box">
+                    <i class="fa-solid fa-folder-open fa-3x" style="color: #2563eb; margin-bottom: 8px;"></i>
+                    <h4 style="font-size: 15px; font-weight: 800; color: var(--heading-color);">મિશન 27 સાહિત્ય ભંડાર</h4>
+                    <div class="folder-sub-tags">
+                        <span class="folder-sub-badge"><i class="fa-regular fa-folder"></i> સબ-કેટેગરી</span>
+                        <span class="folder-sub-badge"><i class="fa-regular fa-file-pdf"></i> PDF બુક્સ</span>
+                        <span class="folder-sub-badge"><i class="fa-solid fa-eye"></i> લાઈવ રીડર</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button class="btn-gradient" onclick="openDriveFolderModal()">
+                    <i class="fa-solid fa-book-open"></i> 📚 પુસ્તકાલય ખોલો અને વાંચો
+                </button>
+            </div>
+        </div>
+
+        <!-- એડમિન લાઈવ નોટ્સ કાર્ડ -->
+        <div class="hub-card">
+            <div>
+                <div class="hub-header">
+                    <h3><i class="fa-solid fa-bullhorn" style="color: #f59e0b;"></i> એડમિન નોટ્સ & અગત્યની સૂચનાઓ</h3>
+                    <span class="badge-role" style="background: rgba(245, 158, 11, 0.1); color: #d97706; border-color: #fbbf24;">Live Updates</span>
+                </div>
+                <p style="font-size: 11.5px; color: var(--text-muted); margin: 8px 0;">
+                    શિક્ષક / એડમિન તરફથી અગત્યનું માર્ગદર્શન:
+                </p>
+                <div id="adminNotesList">
+                    <div style="text-align: center; color: var(--text-muted); padding: 30px; font-size: 12px;">
+                        <i class="fa-solid fa-spinner fa-spin"></i> નોટ્સ લોડ થઈ રહી છે...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="portal-footer">
+        Design & Development: <strong>Nitesh Baria Web Developer</strong> | All Rights Reserved
+    </footer>
+</div>
+
+<!-- ગૂગલ ડ્રાઈવ PDF રીડર મોડલ -->
+<div id="driveViewerModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 style="font-size: 15px; font-weight: 800; color: var(--heading-color);">
+                📚 મિશન 27 - સાહિત્ય ભંડાર
+            </h3>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span id="currentPdfName" style="font-size: 11.5px; font-weight: 700; color: #2563eb; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: none;"></span>
+                <button class="modal-close-icon-btn" onclick="closeDriveFolderModal()"><i class="fa-solid fa-xmark"></i> બંધ કરો</button>
+            </div>
+        </div>
+        <div style="flex: 1; display: flex; overflow: hidden; min-height: 0;">
+            <div id="driveFileList" style="width: 320px; border-right: 2px solid var(--border-color); overflow-y: auto; background: var(--inner-box); flex-shrink: 0;"></div>
+            
+            <div style="flex: 1; position: relative; background: #0f172a; min-width: 0; padding: 6px;">
+                <div id="driveViewerPlaceholder" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #94a3b8; text-align: center; flex-direction: column; gap: 12px; padding: 20px;">
+                    <i class="fa-solid fa-book-open-reader fa-4x" style="color: #3b82f6; opacity: 0.6;"></i>
+                    <div>
+                        <h4 style="font-size: 16px; color: #cbd5e1; margin-bottom: 6px;">📖 વાંચવા માટે PDF પસંદ કરો</h4>
+                        <p style="font-size: 12px; color: #94a3b8;">ડાબી બાજુની યાદીમાંથી કોઈપણ પુસ્તક / સાહિત્ય પર ક્લિક કરો</p>
+                    </div>
+                </div>
+                <iframe id="driveViewerFrame" src="" style="width: 100%; height: 100%; border: none; display: none; background: #ffffff; border-radius: 6px;" allow="autoplay"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ઈમેજ પ્રિવ્યુ મોડલ -->
+<div id="imagePreviewModal" class="modal-overlay" onclick="closeImagePreview()">
+    <div style="max-width: 90%; max-height: 90%; position: relative;">
+        <img id="previewModalImg" src="" style="width: auto; height: auto; max-width: 100%; max-height: 85vh; border-radius: 8px; border: 2px solid white;">
+    </div>
+</div>
+
+<script>
+var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
+
+var userEmail = "";
+var adminNotesData = [];
+var rawDriveFiles = [];
+var groupedDriveFiles = {};
+var notesScrollInterval = null;
+
+function checkSession() {
+    var savedEmail = localStorage.getItem("portal_user_email");
+    var savedRole = localStorage.getItem("portal_user_role");
+    var savedName = localStorage.getItem("portal_user_name");
+
+    if (!savedEmail) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    userEmail = savedEmail.toLowerCase().trim();
+    document.getElementById("roleBadge").innerHTML = (savedRole === "Admin" ? "👑 " : "🎓 ") + (savedName || userEmail);
+
+    fetchNotesAndInit();
+}
+
+function switchTheme() {
+    var isDark = document.body.classList.toggle("dark-mode");
+    document.getElementById("themeIcon").className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
+    document.getElementById("themeText").innerText = isDark ? "લાઈટ મોડ" : "ડાર્ક મોડ";
+}
+
+function formatShortDateOnly(dtStr) {
+    if (!dtStr) return "-";
+    var s = String(dtStr).trim();
+    if (s.indexOf(' ') !== -1) s = s.split(' ')[0];
+    var parts = s.split(/[-/]/);
+    if (parts.length === 3) {
+        var day = parseInt(parts[0], 10);
+        var month = parseInt(parts[1], 10);
+        var year = parts[2];
+        if (year.length === 4) year = year.slice(-2);
+        return day + "/" + month + "/" + year;
+    }
+    return s;
+}
+
+function fetchNotesAndInit() {
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        adminNotesData = data.notes || [];
+        renderAdminNotes();
+    })
+    .catch(function(err) {
+        console.error("Notes fetch failed", err);
+        renderAdminNotes();
+    });
+}
+
+function renderAdminNotes() {
+    var notesContainer = document.getElementById("adminNotesList");
+    if (!notesContainer) return;
+    
+    if (notesScrollInterval) {
+        clearInterval(notesScrollInterval);
+        notesScrollInterval = null;
+    }
+
+    if (adminNotesData && adminNotesData.length > 0) {
+        notesContainer.innerHTML = adminNotesData.map(function(note) {
+            var imageHtml = "";
+            var imgUrl = note.imageUrl || note.image || "";
+            if (imgUrl.indexOf("drive.google.com") !== -1) {
+                var matchId = imgUrl.match(/[-\w]{25,}/);
+                if (matchId) imgUrl = "https://drive.google.com/uc?export=view&id=" + matchId[0];
+            }
+            if (imgUrl && imgUrl.trim().length > 5) {
+                imageHtml = '<div class="note-image-box" onclick="showImagePreview(\'' + imgUrl + '\')"><img src="' + imgUrl + '" loading="lazy" onerror="this.style.display=\'none\'"></div>';
+            }
+            return '<div class="admin-note-item">' +
+                '<div class="note-inline-row">' +
+                '<span class="note-tag-badge"><i class="fa-solid fa-bullhorn"></i> ' + (note.tag || 'સૂચના') + '</span>' +
+                '<span class="note-text-inline">' + (note.message || note.text || '') + '</span>' +
+                '<span class="note-date-pill"><i class="fa-regular fa-clock"></i> ' + formatShortDateOnly(note.date) + '</span>' +
+                '</div>' +
+                imageHtml +
+                '</div>';
+        }).join('');
+    } else {
+        notesContainer.innerHTML = '<div class="admin-note-item">' +
+            '<div class="note-inline-row">' +
+            '<span class="note-tag-badge"><i class="fa-solid fa-bullhorn"></i> સૂચના</span>' +
+            '<span class="note-text-inline">સતત પરિશ્રમ એ જ સફળતાની સાચી ચાવી છે.</span>' +
+            '<span class="note-date-pill"><i class="fa-regular fa-clock"></i> ' + formatShortDateOnly(new Date()) + '</span>' +
+            '</div>' +
+            '</div>';
+    }
+
+    initAutoScrollAdminNotes();
+}
+
+function initAutoScrollAdminNotes() {
+    var container = document.getElementById("adminNotesList");
+    if (!container) return;
+
+    var isPaused = false;
+    container.onmouseenter = function() { isPaused = true; };
+    container.onmouseleave = function() { isPaused = false; };
+    container.ontouchstart = function() { isPaused = true; };
+    container.ontouchend = function() { setTimeout(function() { isPaused = false; }, 2500); };
+
+    notesScrollInterval = setInterval(function() {
+        if (isPaused) return;
+        if (container.scrollHeight > container.clientHeight) {
+            container.scrollTop += 1;
+            if (container.scrollTop >= container.scrollHeight - container.clientHeight - 1) {
+                setTimeout(function() { container.scrollTop = 0; }, 1200);
+            }
+        }
+    }, 45);
+}
+
+function showImagePreview(url) {
+    document.getElementById("previewModalImg").src = url;
+    document.getElementById("imagePreviewModal").style.display = "flex";
+}
+
+function closeImagePreview() {
+    document.getElementById("imagePreviewModal").style.display = "none";
+}
+
+function loadDriveFiles() {
+    var listEl = document.getElementById('driveFileList');
+    if (!listEl) return;
+
+    listEl.innerHTML = '<div style="padding: 35px 20px; text-align: center; color: var(--text-muted); font-size: 12px;">' +
+        '<i class="fa-solid fa-spinner fa-spin fa-2x" style="color: #2563eb; margin-bottom: 10px;"></i>' +
+        '<p style="font-weight:700;">પુસ્તકાલય લોડ થઈ રહ્યું છે...</p>' +
+        '</div>';
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "getDriveFolderFiles" })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(resData) {
+        if (resData.status === "success" && resData.data) {
+            rawDriveFiles = [];
+            groupedDriveFiles = {};
+
+            resData.data.forEach(function(group) {
+                var folderName = group.folderName || "સામાન્ય સાહિત્ય";
+                if (!groupedDriveFiles[folderName]) groupedDriveFiles[folderName] = [];
+
+                group.files.forEach(function(f) {
+                    var fileObj = { id: f.id, name: f.name, parentFolder: folderName };
+                    groupedDriveFiles[folderName].push(fileObj);
+                    rawDriveFiles.push(fileObj);
+                });
+            });
+
+            groupAndRenderDriveFiles();
+        } else {
+            throw new Error(resData.message || "PDF મળી શકી નથી");
+        }
+    })
+    .catch(function(e) {
+        listEl.innerHTML = '<div style="padding: 20px; text-align: center; color: #ef4444; font-size: 12px;">' +
+            '<i class="fa-solid fa-triangle-exclamation fa-2x" style="margin-bottom: 10px;"></i>' +
+            '<p style="font-weight: 700; margin-bottom: 8px;">PDF લોડ કરવામાં ભૂલ આવી</p>' +
+            '<p style="font-size: 11px; color: var(--text-muted);">' + e.message + '</p>' +
+            '<button onclick="loadDriveFiles()" style="background: #2563eb; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-top: 10px;">' +
+            'ફરી પ્રયાસ કરો' +
+            '</button>' +
+            '</div>';
+    });
+}
+
+function groupAndRenderDriveFiles() {
+    var listEl = document.getElementById('driveFileList');
+    var html = '<div style="padding: 10px 14px; background: var(--card-bg); border-bottom: 1.5px solid var(--border-color); position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center;">' +
+        '<span style="font-size: 11.5px; font-weight: 800; color: var(--heading-color);">' +
+        '<i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> ' + rawDriveFiles.length + ' PDF સાહિત્ય' +
+        '</span>' +
+        '<button onclick="loadDriveFiles()" style="background: none; border: none; color: #2563eb; cursor: pointer; font-size: 13px;" title="રિફ્રેશ">' +
+        '<i class="fa-solid fa-rotate"></i>' +
+        '</button>' +
+        '</div>';
+
+    if (rawDriveFiles.length === 0) {
+        html += '<div style="padding: 30px 20px; text-align: center; color: var(--text-muted); font-size: 12px;">' +
+            '<i class="fa-regular fa-folder-open fa-3x" style="color: #94a3b8; margin-bottom: 12px;"></i>' +
+            '<p style="font-weight: 700;">આ ફોલ્ડરમાં કોઈ PDF મળી નથી</p>' +
+            '</div>';
+        listEl.innerHTML = html;
+        return;
+    }
+
+    Object.keys(groupedDriveFiles).sort().forEach(function(folderName) {
+        var files = groupedDriveFiles[folderName];
+        var safeFolderId = 'folder-' + btoa(unescape(encodeURIComponent(folderName))).replace(/=/g, '');
+        
+        html += '<div class="folder-accordion" id="' + safeFolderId + '">' +
+            '<div class="folder-accordion-header" onclick="toggleAccordion(\'' + safeFolderId + '\')">' +
+            '<div style="display: flex; align-items: center; gap: 6px; overflow: hidden;">' +
+            '<i class="fa-solid fa-chevron-right folder-icon-toggle" style="color: #2563eb;"></i>' +
+            '<i class="fa-solid fa-folder" style="color: #f59e0b;"></i>' +
+            '<span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="' + folderName + '">' + folderName + '</span>' +
+            '</div>' +
+            '<span style="font-size: 10px; background: rgba(37,99,235,0.1); color: #2563eb; padding: 2px 6px; border-radius: 10px;">' + files.length + '</span>' +
+            '</div>' +
+            '<div class="folder-accordion-content">';
+
+        files.forEach(function(f) {
+            var safeId = f.id;
+            var safeName = f.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            html += '<div class="drive-file-item" id="file-item-' + safeId + '" onclick="openDriveFile(\'' + safeId + '\', \'' + safeName + '\')">' +
+                '<div style="width: 28px; height: 28px; background: linear-gradient(135deg, #ef4444, #f43f5e); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">' +
+                '<i class="fa-solid fa-file-pdf" style="color: white; font-size: 13px;"></i>' +
+                '</div>' +
+                '<div style="flex: 1; min-width: 0;">' +
+                '<div style="font-size: 12px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-color);" title="' + f.name + '">' + f.name + '</div>' +
+                '</div>' +
+                '<i class="fa-solid fa-eye" style="color: #2563eb; font-size: 13px; opacity: 0.8;"></i>' +
+                '</div>';
+        });
+
+        html += '</div></div>';
+    });
+
+    listEl.innerHTML = html;
+    
+    var firstFolder = Object.keys(groupedDriveFiles).sort()[0];
+    if (firstFolder) {
+        var safeFolderId = 'folder-' + btoa(unescape(encodeURIComponent(firstFolder))).replace(/=/g, '');
+        toggleAccordion(safeFolderId);
+    }
+}
+
+function toggleAccordion(elementId) {
+    var el = document.getElementById(elementId);
+    if (el) el.classList.toggle('open');
+}
+
+function openDriveFile(fileId, fileName) {
+    var frame = document.getElementById('driveViewerFrame');
+    var placeholder = document.getElementById('driveViewerPlaceholder');
+    var nameEl = document.getElementById('currentPdfName');
+
+    if (placeholder) placeholder.style.display = 'none';
+    if (nameEl) {
+        nameEl.innerText = fileName;
+        nameEl.style.display = 'inline-block';
+    }
+
+    frame.style.display = 'block';
+    frame.src = "https://drive.google.com/file/d/" + fileId + "/preview";
+
+    document.querySelectorAll('.drive-file-item').forEach(function(el) {
+        el.classList.remove('active-file');
+    });
+    var activeItem = document.getElementById('file-item-' + fileId);
+    if (activeItem) activeItem.classList.add('active-file');
+}
+
+function openDriveFolderModal() {
+    document.getElementById('driveViewerModal').style.display = 'flex';
+    if (rawDriveFiles.length === 0) {
+        loadDriveFiles();
+    }
+}
+
+function closeDriveFolderModal() {
+    var frame = document.getElementById('driveViewerFrame');
+    if (frame) frame.src = '';
+    var nameEl = document.getElementById('currentPdfName');
+    if (nameEl) nameEl.style.display = 'none';
+    document.getElementById('driveViewerModal').style.display = 'none';
+}
+
+window.addEventListener('keydown', function(event) {
+    if (event.key === "Escape" || event.key === "Esc") {
+        closeDriveFolderModal();
+        closeImagePreview();
+    }
+});
+
+window.addEventListener("DOMContentLoaded", function() {
+    checkSession();
+});
+</script>
+</body>
+</html>
