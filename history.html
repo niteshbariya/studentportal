@@ -340,7 +340,7 @@ var filteredRecords = [];
 var isAdminUser = false;
 var selectedStudentEmail = "";
 var currentBaseFilename = "Test_Paper";
-var currentModalQuestions = []; // વર્તમાન ખુલેલી કસોટીના તમામ પ્રશ્નો
+var currentModalQuestions = [];
 
 function checkSession() {
     var savedEmail = localStorage.getItem("portal_user_email");
@@ -362,6 +362,10 @@ function checkSession() {
         selectedStudentEmail = userEmail;
     }
 
+    // ⚡ ૧. કેશમાંથી તાત્કાલિક ડેટા દર્શાવો (Zero Delay)
+    loadHistoryFromCache();
+
+    // ⚡ ૨. સર્વર પરથી નવો ડેટા સિન્ક કરો
     fetchHistoryData();
 }
 
@@ -369,6 +373,7 @@ function switchTheme() {
     var isDark = document.body.classList.toggle("dark-mode");
     document.getElementById("themeIcon").className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
     document.getElementById("themeText").innerText = isDark ? "લાઈટ મોડ" : "ડાર્ક મોડ";
+    localStorage.setItem("portal_theme", isDark ? "dark" : "light");
 }
 
 function formatShortDateOnly(dtStr) {
@@ -429,6 +434,18 @@ function formatPercentDisplay(val) {
     return parsePercentValue(val) + "%";
 }
 
+function loadHistoryFromCache() {
+    var cached = localStorage.getItem("portal_cached_history");
+    if (cached) {
+        try {
+            allRawRecords = JSON.parse(cached);
+            if (isAdminUser) populateStudentDropdown();
+            populateSubjectDropdown();
+            filterAndRefreshData();
+        } catch(e) {}
+    }
+}
+
 function fetchHistoryData() {
     fetch(SCRIPT_URL, {
         method: "POST",
@@ -437,15 +454,16 @@ function fetchHistoryData() {
     })
     .then(function(res) { return res.json(); })
     .then(function(data) {
-        if (data.error) { alert(data.error); return; }
+        if (data.error) return;
         allRawRecords = data.history || [];
+        localStorage.setItem("portal_cached_history", JSON.stringify(allRawRecords));
 
         if (isAdminUser) populateStudentDropdown();
         populateSubjectDropdown();
         filterAndRefreshData();
     })
     .catch(function(err) {
-        console.error("Data fetch failed", err);
+        console.warn("Background fetch failed", err);
     });
 }
 
@@ -457,15 +475,17 @@ function populateStudentDropdown() {
     Object.keys(sMap).forEach(function(m) {
         sSelect.innerHTML += '<option value="' + m + '">👤 ' + sMap[m] + '</option>';
     });
-    selectedStudentEmail = "ALL";
+    if (!selectedStudentEmail) selectedStudentEmail = "ALL";
 }
 
 function populateSubjectDropdown() {
     var sSet = new Set();
     allRawRecords.forEach(function(r) { if (r.subject) sSet.add(r.subject.trim()); });
     var subSelect = document.getElementById("subjectDropdown");
+    var currentSub = subSelect.value;
     subSelect.innerHTML = '<option value="ALL">📋 તમામ કસોટીઓ</option>';
     sSet.forEach(function(s) { subSelect.innerHTML += '<option value="' + s + '">' + s + '</option>'; });
+    if (currentSub) subSelect.value = currentSub;
 }
 
 function onStudentSelectChange() {
@@ -508,6 +528,7 @@ function renderHistoryTable() {
     });
 }
 
+// 🎯 કસોટી પરિણામ અને વિગતવાર ઉત્તરવહી મોડલ ઓપન કરવું
 function openTestModal(idx) {
     var item = filteredRecords[idx];
     currentBaseFilename = (item.name || 'Student') + "_" + (item.subject || 'Test');
@@ -527,7 +548,7 @@ function openTestModal(idx) {
     
     document.getElementById("reviewModal").style.display = "flex";
 
-    // ૧. Google Sheet માંથી JSON પ્રશ્નપત્ર ડેટા
+    // ૧. ગૂગલ શીટમાં રહેલા JSON પ્રશ્નો તપાસવા
     var rawJson = item.testQuestionsData || "";
     currentModalQuestions = [];
     if (rawJson && rawJson.length > 5) {
@@ -543,24 +564,166 @@ function openTestModal(idx) {
         return;
     }
 
-    // ૨. બેકઅપ: reviewHtml ઉપલબ્ધ હોય તો
+    // ૨. શીટમાં રહેલ reviewHtml તપાસવું
     if (item.reviewHtml && String(item.reviewHtml).trim().length > 50) {
         parseAndRenderReviewHtml(item.reviewHtml);
         filterModalQuestions('all');
         return;
     }
 
-    // ૩. બેકઅપ: જો બંને ન હોય તો Fallback મેસેજ
-    showFallbackMessage(qContainer, item);
+    // ૩. બેકઅપ: GitHub પરથી લાઈવ પ્રશ્નપત્ર ફેચ કરવું (જૂની કસોટીઓ માટે)
+    var testUrls = buildGitHubUrlsForSubject(item);
+
+    if (testUrls.length === 0) {
+        showFallbackMessage(qContainer, item);
+        return;
+    }
+
+    function tryFetchUrls(index) {
+        if (index >= testUrls.length) {
+            showFallbackMessage(qContainer, item);
+            return;
+        }
+
+        fetch(testUrls[index])
+            .then(function(res) {
+                if (!res.ok) throw new Error("HTTP error " + res.status);
+                return res.text();
+            })
+            .then(function(htmlText) {
+                var found = extractQuestionsArrayFromText(htmlText);
+                if (found && found.length > 0) {
+                    currentModalQuestions = found.map(function(q) {
+                        var ansIdx = (q.answer !== undefined ? q.answer : (q.ans !== undefined ? q.ans : 0));
+                        return {
+                            q: q.question || q.q || "",
+                            opts: q.options || q.opts || [],
+                            correctAns: ansIdx,
+                            userAns: ansIdx,
+                            exp: q.explanation || q.exp || ""
+                        };
+                    });
+                    filterModalQuestions('all');
+                } else {
+                    tryFetchUrls(index + 1);
+                }
+            })
+            .catch(function() {
+                tryFetchUrls(index + 1);
+            });
+    }
+
+    tryFetchUrls(0);
 }
 
+// 🌐 વિષય અનુસાર સાચા GitHub URLs જનરેટ કરવા
+function buildGitHubUrlsForSubject(item) {
+    var sub = String(item.subject || "").toLowerCase();
+    var repo = item.repoName || "";
+    var file = item.testFileName || "";
+    var urls = [];
+
+    // સ્પેશિયલ મેપિંગ
+    if (sub.indexOf("es-112") !== -1 || sub.indexOf("ગણિત") !== -1 || sub.indexOf("math") !== -1) {
+        urls.push("https://raw.githubusercontent.com/niteshbariya/maths/main/index.html");
+        urls.push("https://niteshbariya.github.io/maths/index.html");
+    } else if (sub.indexOf("1 (અ)") !== -1 || sub.indexOf("1(અ)") !== -1 || sub.indexOf("કોર્ષ-૧(અ)") !== -1) {
+        var f1a = (sub.indexOf("100") !== -1) ? "1anew100question.html" : "1a.html";
+        urls.push("https://raw.githubusercontent.com/niteshbariya/fy/main/" + f1a);
+        urls.push("https://niteshbariya.github.io/fy/" + f1a);
+    } else if (sub.indexOf("1 (બ)") !== -1 || sub.indexOf("1(બ)") !== -1 || sub.indexOf("કોર્ષ-૧(બ)") !== -1) {
+        var f1b = (sub.indexOf("નવું") !== -1 || sub.indexOf("new") !== -1) ? "1bnew.html" : "1b.html";
+        urls.push("https://raw.githubusercontent.com/niteshbariya/fy/main/" + f1b);
+        urls.push("https://niteshbariya.github.io/fy/" + f1b);
+    } else if (sub.indexOf("પર્યાવરણ") !== -1 || sub.indexOf("evs") !== -1) {
+        var fevs = (sub.indexOf("155") !== -1 || sub.indexOf("100") !== -1) ? "5bevspart1q100.html" : "5bevs.html";
+        urls.push("https://raw.githubusercontent.com/niteshbariya/fy/main/" + fevs);
+        urls.push("https://niteshbariya.github.io/fy/" + fevs);
+    } else if (sub.indexOf("nep") !== -1 || sub.indexOf("નીતિ") !== -1) {
+        urls.push("https://raw.githubusercontent.com/niteshbariya/sy/main/nep.html");
+        urls.push("https://niteshbariya.github.io/sy/nep.html");
+    }
+
+    // સામાન્ય રિપોઝિટરી મેપિંગ
+    if (repo && file) {
+        var cleanFile = file.endsWith(".html") ? file : file + ".html";
+        urls.push("https://raw.githubusercontent.com/niteshbariya/" + repo + "/main/" + cleanFile);
+        urls.push("https://niteshbariya.github.io/" + repo + "/" + cleanFile);
+    }
+
+    return urls;
+}
+
+// 🎯 ટેક્સ્ટ કે HTML માંથી સ્માર્ટ રીતે પ્રશ્નોનો એરે બહાર કાઢવો
+function extractQuestionsArrayFromText(text) {
+    if (!text) return null;
+
+    var scriptMatches = text.match(/<script[\s\S]*?>([\s\S]*?)<\/script>/gi);
+    var fullCode = "";
+    if (scriptMatches) {
+        scriptMatches.forEach(function(s) {
+            fullCode += s.replace(/<\/?script[\s\S]*?>/gi, "") + "\n";
+        });
+    } else {
+        fullCode = text;
+    }
+
+    var varKeys = ["questions", "quizData", "myQuestions", "quizQuestions", "testData", "data"];
+    for (var k = 0; k < varKeys.length; k++) {
+        var reg = new RegExp("(?:var|let|const)?\\s*" + varKeys[k] + "\\s*=\\s*(\\[[\\s\\S]*?\\]);", "i");
+        var match = fullCode.match(reg);
+        if (match && match[1]) {
+            try {
+                var parsed = new Function("return " + match[1])();
+                if (Array.isArray(parsed) && parsed.length > 0 && (parsed[0].q || parsed[0].question)) {
+                    return parsed;
+                }
+            } catch(e) {}
+        }
+    }
+
+    // ડીપ સ્કેન
+    var startIdx = fullCode.indexOf("[");
+    while (startIdx !== -1) {
+        var bCount = 0;
+        var inStr = false;
+        var qChar = '';
+        for (var i = startIdx; i < fullCode.length; i++) {
+            var c = fullCode[i];
+            if (inStr) {
+                if (c === '\\') i++;
+                else if (c === qChar) inStr = false;
+            } else {
+                if (c === "'" || c === '"' || c === '`') { inStr = true; qChar = c; }
+                else if (c === '[') bCount++;
+                else if (c === ']') {
+                    bCount--;
+                    if (bCount === 0) {
+                        var chunk = fullCode.substring(startIdx, i + 1);
+                        if (chunk.indexOf("options") !== -1 || chunk.indexOf("opts") !== -1) {
+                            try {
+                                var p = new Function("return " + chunk)();
+                                if (Array.isArray(p) && p.length > 0) return p;
+                            } catch(err) {}
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        startIdx = fullCode.indexOf("[", startIdx + 1);
+    }
+
+    return null;
+}
+
+// 🎯 ટેબ ફિલ્ટર્સ (તમામ / ખોટા / ખાલી પ્રશ્નપત્ર)
 function filterModalQuestions(type) {
     var qContainer = document.getElementById("pdfDocQuestions");
     var btnAll = document.getElementById("btnFilterAll");
     var btnWrong = document.getElementById("btnFilterWrong");
     var btnBlank = document.getElementById("btnFilterBlank");
 
-    // જો JSON ડેટા ઉપલબ્ધ હોય તો તેમાંથી રેન્ડર કરો
     if (currentModalQuestions && currentModalQuestions.length > 0) {
         var html = "";
         var wrongCount = 0;
@@ -570,7 +733,6 @@ function filterModalQuestions(type) {
             var isWrong = (q.userAns !== q.correctAns);
             if (isWrong) wrongCount++;
 
-            // ખોટા પ્રશ્નોના ટેબમાં સાચા પ્રશ્નો ન બતાવવા
             if (type === "wrong" && !isWrong) return;
 
             var userAnsText = (q.userAns !== undefined && q.opts && q.opts[q.userAns]) 
@@ -582,27 +744,21 @@ function filterModalQuestions(type) {
                 : "-";
 
             html += '<div class="pdf-q-item ' + (isWrong && type !== 'blank' ? 'is-wrong-answer' : '') + '" style="margin-bottom:12px; padding:12px; border-radius:8px; border: 1.5px solid ' + (isWrong && type !== 'blank' ? '#ef4444' : '#cbd5e1') + '; background:' + (isWrong && type !== 'blank' ? '#fff5f5' : '#ffffff') + ';">';
-            
-            // પ્રશ્ન
             html += '<div class="pdf-q-title"><strong>પ્રશ્ન ' + (idx + 1) + ':</strong> ' + (q.q || q.question || '') + '</div>';
             
-            // વિકલ્પો
             if (q.opts && q.opts.length > 0) {
                 html += '<div class="pdf-options-list" style="margin: 6px 0 8px 12px;">' + q.opts.map(function(opt, oIdx) {
                     return '<div><strong>(' + optLetters[oIdx] + ')</strong> ' + opt + '</div>';
                 }).join('') + '</div>';
             }
 
-            // જવાબો અને સમજૂતી (ટેબ ૩ "blank" સિવાય)
             if (type !== "blank") {
                 if (isWrong) {
                     html += '<div class="pdf-wrong-user-ans">❌ તમારો ઉત્તર: <strong>' + userAnsText + '</strong></div>';
                 } else {
                     html += '<div class="pdf-ans-box" style="background:#f0fdf4; color:#166534; border-left:4px solid #10b981;">✔️ તમારો ઉત્તર: <strong>' + userAnsText + '</strong></div>';
                 }
-
                 html += '<div class="pdf-ans-box">✅ સાચો ઉત્તર: <strong>' + correctAnsText + '</strong></div>';
-
                 if (q.exp) {
                     html += '<div class="pdf-exp-box">💡 <strong>સમજૂતી:</strong> ' + q.exp + '</div>';
                 }
@@ -616,40 +772,21 @@ function filterModalQuestions(type) {
         }
 
         qContainer.innerHTML = html;
-    } 
-    // જો ડેટા HTML માંથી આવ્યો હોય
-    else {
+    } else {
         var items = document.querySelectorAll("#pdfDocQuestions .pdf-q-item");
-        var hWrongCount = 0;
         items.forEach(function(item) {
             var isW = item.getAttribute("data-wrong") === "true";
-            if (isW) hWrongCount++;
-
             if (type === "blank") {
                 item.style.display = "block";
-                item.style.backgroundColor = "#ffffff";
-                item.style.borderColor = "#cbd5e1";
-                item.querySelectorAll(".ans-correct-section, .ans-user-section, .ans-explanation-section, .pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box, .wrong-tag").forEach(function(el) {
-                    el.style.display = "none";
-                });
+                item.querySelectorAll(".ans-correct-section, .ans-user-section, .ans-explanation-section, .pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box, .wrong-tag").forEach(function(el) { el.style.display = "none"; });
             } else if (type === "wrong") {
-                item.querySelectorAll(".ans-correct-section, .ans-user-section, .ans-explanation-section, .pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box, .wrong-tag").forEach(function(el) {
-                    el.style.display = "";
-                });
+                item.querySelectorAll(".ans-correct-section, .ans-user-section, .ans-explanation-section, .pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box, .wrong-tag").forEach(function(el) { el.style.display = ""; });
                 item.style.display = isW ? "block" : "none";
             } else {
                 item.style.display = "block";
-                item.querySelectorAll(".ans-correct-section, .ans-user-section, .ans-explanation-section, .pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box, .wrong-tag").forEach(function(el) {
-                    el.style.display = "";
-                });
-                item.style.backgroundColor = isW ? "#fff5f5" : "#ffffff";
-                item.style.borderColor = isW ? "#ef4444" : "#cbd5e1";
+                item.querySelectorAll(".ans-correct-section, .ans-user-section, .ans-explanation-section, .pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box, .wrong-tag").forEach(function(el) { el.style.display = ""; });
             }
         });
-
-        if (type === "wrong" && hWrongCount === 0) {
-            alert("અભિનંદન! આ કસોટીમાં એક પણ પ્રશ્ન ખોટો પડ્યો નથી.");
-        }
     }
 
     if (btnAll) btnAll.style.opacity = (type === "all") ? "1" : "0.5";
@@ -695,7 +832,7 @@ function parseAndRenderReviewHtml(rawHtml) {
 function showFallbackMessage(container, item) {
     container.innerHTML = '<div class="pdf-q-item" style="text-align:center; padding:25px; border: 1.5px dashed #cbd5e1;">' +
         '<div class="pdf-q-title" style="color:#2563eb; font-size:16px;">🎯 મેળવેલ ગુણ: ' + (item.score || '-') + ' (' + formatPercentDisplay(item.percentage) + ')</div>' +
-        '<p style="color:var(--text-muted); font-size:12.5px; margin-top:8px;">આ જૂની કસોટી માટે વિગતવાર ઉત્તરવહી ડેટા ઉપલબ્ધ નથી.</p>' +
+        '<p style="color:var(--text-muted); font-size:12.5px; margin-top:8px;">આ જૂની કસોટી માટે પ્રશ્નપત્ર ફાઈલ મળી નથી.</p>' +
         '</div>';
 }
 
@@ -736,6 +873,7 @@ function exportPDF(mode) {
 }
 
 window.addEventListener("DOMContentLoaded", function() {
+    if (localStorage.getItem("portal_theme") === "dark") switchTheme();
     checkSession();
 });
 </script>
