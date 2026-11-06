@@ -1373,63 +1373,61 @@ function filterAndRefreshData() {
 }
 
 function isFileAttemptedByRecord(fileName, repoName, recordsList) {
-    var cleanFileName = fileName.split('/').pop().replace(/\.html$/i, '').toLowerCase().trim();
-    var cleanNoSpace = cleanFileName.replace(/[\s\-_()]+/g, '');
+    var cleanFileName = fileName.split('/').pop().toLowerCase().trim();
+    var cleanRepo = repoName.toLowerCase().trim();
 
     return recordsList.find(function(r) {
+        // ૧. જો ગૂગલ શીટમાં repoName અને testFileName નોંધાયેલા હોય (Col J & K) તો સીધું ૧૦૦% સાચું મેચિંગ
+        if (r.repoName && r.testFileName) {
+            var rRepo = String(r.repoName).toLowerCase().trim();
+            var rFile = String(r.testFileName).toLowerCase().trim();
+            return (rRepo === cleanRepo) && (rFile === cleanFileName || rFile === cleanFileName.replace('.html', ''));
+        }
+
+        // ૨. જૂના આપેલા રેકોર્ડ્સ માટે ચોક્કસ સ્માર્ટ બેકઅપ મેચિંગ
         var subRaw = (r.subject || "").toLowerCase().trim();
         var sub = convertGujaratiDigitsToEnglish(subRaw);
         var subNoSpace = sub.replace(/[\s\-_()]+/g, '');
+        var cleanNoSpace = cleanFileName.replace(/\.html$/i, '').replace(/[\s\-_()]+/g, '');
+        var cleanBase = cleanFileName.replace(/\.html$/i, '');
 
-        if (sub.indexOf(cleanFileName) !== -1 || subNoSpace.indexOf(cleanNoSpace) !== -1) {
+        if (sub.indexOf(cleanBase) !== -1 || subNoSpace.indexOf(cleanNoSpace) !== -1) {
             return true;
         }
 
-        var isPartOr100File = cleanFileName.indexOf("100") !== -1 || cleanFileName.indexOf("part") !== -1;
+        var isPartOr100File = cleanBase.indexOf("100") !== -1 || cleanBase.indexOf("part") !== -1;
         var isPartOr100Sub = sub.indexOf("100") !== -1 || sub.indexOf("part") !== -1;
-        if (isPartOr100File !== isPartOr100Sub) {
-            return false;
-        }
+        if (isPartOr100File !== isPartOr100Sub) return false;
 
-        var isNewFile = cleanFileName.indexOf("new") !== -1;
+        var isNewFile = cleanBase.indexOf("new") !== -1;
         var isNewSub = sub.indexOf("new") !== -1 || sub.indexOf("નવું") !== -1;
-        if (isNewFile !== isNewSub) {
-            return false;
-        }
+        if (isNewFile !== isNewSub) return false;
 
-        if (cleanFileName === "1b") {
+        if (cleanBase === "1b") {
             return (sub.indexOf("1 (બ)") !== -1 || sub.indexOf("1(બ)") !== -1 || sub.indexOf("અધ્યેતા") !== -1) && !isNewSub;
         }
-
-        if (cleanFileName === "1bnew") {
+        if (cleanBase === "1bnew") {
             return (sub.indexOf("1 (બ)") !== -1 || sub.indexOf("1(બ)") !== -1) && isNewSub;
         }
-
-        if (cleanFileName === "5bevs") {
+        if (cleanBase === "5bevs") {
             return (sub.indexOf("5 (બ)") !== -1 || sub.indexOf("5(બ)") !== -1 || sub.indexOf("પર્યાવરણ") !== -1 || sub.indexOf("evs") !== -1) && !isPartOr100Sub;
         }
-
-        if (cleanFileName === "5bevspart1q100") {
+        if (cleanBase === "5bevspart1q100") {
             return (sub.indexOf("5 (બ)") !== -1 || sub.indexOf("5(બ)") !== -1 || sub.indexOf("પર્યાવરણ") !== -1 || sub.indexOf("evs") !== -1) && isPartOr100Sub;
         }
-
-        if (cleanFileName === "1a") {
+        if (cleanBase === "1a") {
             return (sub.indexOf("1 (અ)") !== -1 || sub.indexOf("1(અ)") !== -1 || sub.indexOf("વિકાસ") !== -1) && !isPartOr100Sub;
         }
-
-        if (cleanFileName === "1anew100question") {
+        if (cleanBase === "1anew100question") {
             return (sub.indexOf("1 (અ)") !== -1 || sub.indexOf("1(અ)") !== -1 || sub.indexOf("વિકાસ") !== -1) && isPartOr100Sub;
         }
-
-        if (cleanFileName.indexOf("math") !== -1) {
+        if (cleanBase.indexOf("math") !== -1) {
             return sub.indexOf("ગણિત") !== -1 || sub.indexOf("math") !== -1;
         }
-
-        if (cleanFileName.indexOf("guj") !== -1) {
+        if (cleanBase.indexOf("guj") !== -1) {
             return sub.indexOf("ગુજરાતી") !== -1 || sub.indexOf("guj") !== -1;
         }
-
-        if (cleanFileName.indexOf("sy") !== -1) {
+        if (cleanBase.indexOf("sy") !== -1) {
             return sub.indexOf("દ્વિતીય") !== -1 || sub.indexOf("બોધ") !== -1 || sub.indexOf("sy") !== -1;
         }
 
@@ -1489,13 +1487,19 @@ function openRepoFiles(repoName) {
 
     listGrid.innerHTML = "";
     
+    // વિદ્યાર્થીની ઓળખ મેળવી લિંક સાથે જોડો (જેથી ટેસ્ટમાં વિગત આપોઆપ આવી જાય)
+    var currentStudentEmail = userEmail || "";
+    var currentStudentName = localStorage.getItem("portal_user_name") || "";
+    var userQuery = "?email=" + encodeURIComponent(currentStudentEmail) + 
+                    "&name=" + encodeURIComponent(currentStudentName);
+    
     fileList.forEach(function(fileName) {
         var attemptRecord = isFileAttemptedByRecord(fileName, repoName, filteredRecords);
         var isAttempted = !!attemptRecord;
         
         var testUrl = (fileName === "index.html")
-            ? "https://niteshbariya.github.io/" + repoName + "/"
-            : "https://niteshbariya.github.io/" + repoName + "/" + fileName;
+            ? "https://niteshbariya.github.io/" + repoName + "/" + userQuery
+            : "https://niteshbariya.github.io/" + repoName + "/" + fileName + userQuery;
         var fileCard = document.createElement("div");
         fileCard.className = "file-card";
         fileCard.style.borderLeft = "4.5px solid " + (isAttempted ? '#10b981' : '#f43f5e');
@@ -1505,9 +1509,15 @@ function openRepoFiles(repoName) {
             '<span>🎯 ગુણ: <strong>' + (attemptRecord.score || '-') + '</strong></span>' +
             '<span>ટકા: <strong>' + formatPercentDisplay(attemptRecord.percentage) + '</strong></span>' +
             '</div>' : '';
+
+        // જો શીટમાંથી ટેસ્ટ અપલોડ તારીખ મળે તો તે બતાવો
+        var uploadBadge = "";
+        if (attemptRecord && attemptRecord.testUploadDate) {
+            uploadBadge = '<div style="font-size:10.5px; color:#2563eb; font-weight:700; margin-top:3px;"><i class="fa-regular fa-calendar-check"></i> અપલોડ: ' + attemptRecord.testUploadDate + '</div>';
+        }
             
         var paperButtonHtml = (isAttempted || isAdminUser) ? 
-            '<button class="btn-view-paper" onclick="loadDirectQuestionPaper(\'' + repoName + '\', \'' + fileName + '\', true)">' +
+            '<button class="btn-view-paper" onclick="loadDirectQuestionPaper('' + repoName + '', '' + fileName + '', true)">' +
             '<i class="fa-solid fa-file-pdf"></i> પ્રશ્નપત્ર & PDF' +
             '</button>' : 
             '<button class="btn-locked-paper" title="પહેલાં કસોટી આપો, પછી જ પ્રશ્નપત્ર ખુલશે!">' +
@@ -1521,7 +1531,8 @@ function openRepoFiles(repoName) {
             (isAttempted ? '✅ પૂર્ણ' : '⏳ બાકી') +
             '</span>' +
             '</div>' +
-            '<div style="font-size:11.5px; color:var(--text-muted); font-family:monospace; margin-bottom:6px;">' + repoName + '/' + fileName + '</div>' +
+            '<div style="font-size:11.5px; color:var(--text-muted); font-family:monospace; margin-bottom:4px;">' + repoName + '/' + fileName + '</div>' +
+            uploadBadge +
             scoreHtml +
             '</div>' +
             '<div class="file-action-buttons">' +
