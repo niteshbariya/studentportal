@@ -340,6 +340,7 @@ var filteredRecords = [];
 var isAdminUser = false;
 var selectedStudentEmail = "";
 var currentBaseFilename = "Test_Paper";
+var currentModalQuestions = []; // વર્તમાન ખુલેલી કસોટીના તમામ પ્રશ્નો
 
 function checkSession() {
     var savedEmail = localStorage.getItem("portal_user_email");
@@ -526,33 +527,134 @@ function openTestModal(idx) {
     
     document.getElementById("reviewModal").style.display = "flex";
 
-    if (item.reviewHtml && item.reviewHtml.length > 50) {
+    // ૧. Google Sheet માંથી JSON પ્રશ્નપત્ર ડેટા
+    var rawJson = item.testQuestionsData || "";
+    currentModalQuestions = [];
+    if (rawJson && rawJson.length > 5) {
+        try {
+            currentModalQuestions = (typeof rawJson === "string") ? JSON.parse(rawJson) : rawJson;
+        } catch(e) {
+            currentModalQuestions = [];
+        }
+    }
+
+    if (currentModalQuestions && currentModalQuestions.length > 0) {
+        filterModalQuestions('all');
+        return;
+    }
+
+    // ૨. બેકઅપ: reviewHtml ઉપલબ્ધ હોય તો
+    if (item.reviewHtml && String(item.reviewHtml).trim().length > 50) {
         parseAndRenderReviewHtml(item.reviewHtml);
         filterModalQuestions('all');
-    } else if (item.repoName && item.testFileName) {
-        var cleanFile = String(item.testFileName).toLowerCase().endsWith('.html') ? item.testFileName : item.testFileName + '.html';
-        var testUrl = "https://niteshbariya.github.io/" + item.repoName + "/" + cleanFile;
-        
-        fetch(testUrl)
-            .then(function(res) {
-                if (!res.ok) throw new Error("File not found");
-                return res.text();
-            })
-            .then(function(htmlText) {
-                var found = extractQuestionsArrayFromText(htmlText);
-                if (found && found.length > 0) {
-                    renderArrayQuestions(found);
-                    filterModalQuestions('all');
-                } else {
-                    showFallbackMessage(qContainer, item);
-                }
-            })
-            .catch(function() {
-                showFallbackMessage(qContainer, item);
-            });
-    } else {
-        showFallbackMessage(qContainer, item);
+        return;
     }
+
+    // ૩. બેકઅપ: જો બંને ન હોય તો Fallback મેસેજ
+    showFallbackMessage(qContainer, item);
+}
+
+function filterModalQuestions(type) {
+    var qContainer = document.getElementById("pdfDocQuestions");
+    var btnAll = document.getElementById("btnFilterAll");
+    var btnWrong = document.getElementById("btnFilterWrong");
+    var btnBlank = document.getElementById("btnFilterBlank");
+
+    // જો JSON ડેટા ઉપલબ્ધ હોય તો તેમાંથી રેન્ડર કરો
+    if (currentModalQuestions && currentModalQuestions.length > 0) {
+        var html = "";
+        var wrongCount = 0;
+        var optLetters = ["A", "B", "C", "D"];
+
+        currentModalQuestions.forEach(function(q, idx) {
+            var isWrong = (q.userAns !== q.correctAns);
+            if (isWrong) wrongCount++;
+
+            // ખોટા પ્રશ્નોના ટેબમાં સાચા પ્રશ્નો ન બતાવવા
+            if (type === "wrong" && !isWrong) return;
+
+            var userAnsText = (q.userAns !== undefined && q.opts && q.opts[q.userAns]) 
+                ? "(" + optLetters[q.userAns] + ") " + q.opts[q.userAns] 
+                : "જવાબ આપેલ નથી";
+                
+            var correctAnsText = (q.correctAns !== undefined && q.opts && q.opts[q.correctAns]) 
+                ? "(" + optLetters[q.correctAns] + ") " + q.opts[q.correctAns] 
+                : "-";
+
+            html += '<div class="pdf-q-item ' + (isWrong && type !== 'blank' ? 'is-wrong-answer' : '') + '" style="margin-bottom:12px; padding:12px; border-radius:8px; border: 1.5px solid ' + (isWrong && type !== 'blank' ? '#ef4444' : '#cbd5e1') + '; background:' + (isWrong && type !== 'blank' ? '#fff5f5' : '#ffffff') + ';">';
+            
+            // પ્રશ્ન
+            html += '<div class="pdf-q-title"><strong>પ્રશ્ન ' + (idx + 1) + ':</strong> ' + (q.q || q.question || '') + '</div>';
+            
+            // વિકલ્પો
+            if (q.opts && q.opts.length > 0) {
+                html += '<div class="pdf-options-list" style="margin: 6px 0 8px 12px;">' + q.opts.map(function(opt, oIdx) {
+                    return '<div><strong>(' + optLetters[oIdx] + ')</strong> ' + opt + '</div>';
+                }).join('') + '</div>';
+            }
+
+            // જવાબો અને સમજૂતી (ટેબ ૩ "blank" સિવાય)
+            if (type !== "blank") {
+                if (isWrong) {
+                    html += '<div class="pdf-wrong-user-ans">❌ તમારો ઉત્તર: <strong>' + userAnsText + '</strong></div>';
+                } else {
+                    html += '<div class="pdf-ans-box" style="background:#f0fdf4; color:#166534; border-left:4px solid #10b981;">✔️ તમારો ઉત્તર: <strong>' + userAnsText + '</strong></div>';
+                }
+
+                html += '<div class="pdf-ans-box">✅ સાચો ઉત્તર: <strong>' + correctAnsText + '</strong></div>';
+
+                if (q.exp) {
+                    html += '<div class="pdf-exp-box">💡 <strong>સમજૂતી:</strong> ' + q.exp + '</div>';
+                }
+            }
+
+            html += '</div>';
+        });
+
+        if (type === "wrong" && wrongCount === 0) {
+            html = '<div style="text-align:center; padding:25px; color:#10b981; font-weight:800;">🎉 અભિનંદન! આ કસોટીમાં એક પણ પ્રશ્ન ખોટો પડ્યો નથી.</div>';
+        }
+
+        qContainer.innerHTML = html;
+    } 
+    // જો ડેટા HTML માંથી આવ્યો હોય
+    else {
+        var items = document.querySelectorAll("#pdfDocQuestions .pdf-q-item");
+        var hWrongCount = 0;
+        items.forEach(function(item) {
+            var isW = item.getAttribute("data-wrong") === "true";
+            if (isW) hWrongCount++;
+
+            if (type === "blank") {
+                item.style.display = "block";
+                item.style.backgroundColor = "#ffffff";
+                item.style.borderColor = "#cbd5e1";
+                item.querySelectorAll(".ans-correct-section, .ans-user-section, .ans-explanation-section, .pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box, .wrong-tag").forEach(function(el) {
+                    el.style.display = "none";
+                });
+            } else if (type === "wrong") {
+                item.querySelectorAll(".ans-correct-section, .ans-user-section, .ans-explanation-section, .pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box, .wrong-tag").forEach(function(el) {
+                    el.style.display = "";
+                });
+                item.style.display = isW ? "block" : "none";
+            } else {
+                item.style.display = "block";
+                item.querySelectorAll(".ans-correct-section, .ans-user-section, .ans-explanation-section, .pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box, .wrong-tag").forEach(function(el) {
+                    el.style.display = "";
+                });
+                item.style.backgroundColor = isW ? "#fff5f5" : "#ffffff";
+                item.style.borderColor = isW ? "#ef4444" : "#cbd5e1";
+            }
+        });
+
+        if (type === "wrong" && hWrongCount === 0) {
+            alert("અભિનંદન! આ કસોટીમાં એક પણ પ્રશ્ન ખોટો પડ્યો નથી.");
+        }
+    }
+
+    if (btnAll) btnAll.style.opacity = (type === "all") ? "1" : "0.5";
+    if (btnWrong) btnWrong.style.opacity = (type === "wrong") ? "1" : "0.5";
+    if (btnBlank) btnBlank.style.opacity = (type === "blank") ? "1" : "0.5";
 }
 
 function parseAndRenderReviewHtml(rawHtml) {
@@ -588,126 +690,6 @@ function parseAndRenderReviewHtml(rawHtml) {
             });
         });
     }
-}
-
-function filterModalQuestions(type) {
-    var items = document.querySelectorAll("#pdfDocQuestions .pdf-q-item");
-    var btnAll = document.getElementById("btnFilterAll");
-    var btnWrong = document.getElementById("btnFilterWrong");
-    var btnBlank = document.getElementById("btnFilterBlank");
-    var wrongCount = 0;
-    
-    items.forEach(function(item) {
-        var isWrong = item.getAttribute("data-wrong") === "true";
-        if (isWrong) wrongCount++;
-
-        if (type === "blank") {
-            item.style.display = "block";
-            item.style.backgroundColor = "#ffffff";
-            item.style.borderColor = "#cbd5e1";
-            
-            item.querySelectorAll(".ans-correct-section, .ans-user-section, .ans-explanation-section, .pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box").forEach(function(el) {
-                el.style.display = "none";
-            });
-            item.querySelectorAll(".wrong-tag").forEach(function(el) { el.style.display = "none"; });
-        } 
-        else if (type === "wrong") {
-            item.querySelectorAll(".ans-correct-section, .ans-user-section, .ans-explanation-section, .pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box, .wrong-tag").forEach(function(el) {
-                el.style.display = "";
-            });
-
-            if (isWrong) {
-                item.style.display = "block";
-                item.style.backgroundColor = "#fff5f5";
-                item.style.borderColor = "#ef4444";
-            } else {
-                item.style.display = "none";
-            }
-        } 
-        else {
-            item.style.display = "block";
-            item.querySelectorAll(".ans-correct-section, .ans-user-section, .ans-explanation-section, .pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box, .wrong-tag").forEach(function(el) {
-                el.style.display = "";
-            });
-
-            if (isWrong) {
-                item.style.backgroundColor = "#fff5f5";
-                item.style.borderColor = "#ef4444";
-            } else {
-                item.style.backgroundColor = "#ffffff";
-                item.style.borderColor = "#cbd5e1";
-            }
-        }
-    });
-    
-    if (btnAll) btnAll.style.opacity = (type === "all") ? "1" : "0.5";
-    if (btnWrong) btnWrong.style.opacity = (type === "wrong") ? "1" : "0.5";
-    if (btnBlank) btnBlank.style.opacity = (type === "blank") ? "1" : "0.5";
-    
-    if (type === "wrong" && wrongCount === 0) {
-        alert("અભિનંદન! આ કસોટીમાં એક પણ પ્રશ્ન ખોટો પડ્યો નથી.");
-    }
-}
-
-function renderArrayQuestions(questions) {
-    var qContainer = document.getElementById("pdfDocQuestions");
-    var html = "";
-    questions.forEach(function(q, idx) {
-        var qText = q.question || q.q || ("પ્રશ્ન " + (idx + 1));
-        var opts = q.options || q.opts || [];
-        var ans = q.answer !== undefined ? q.answer : q.ans;
-        var correctText = (typeof ans === 'number' && opts[ans]) ? "(" + String.fromCharCode(65 + ans) + ") " + opts[ans] : ans;
-        var exp = q.explanation || q.exp || "";
-
-        html += '<div class="pdf-q-item is-correct-answer" data-wrong="false">' +
-            '<div class="pdf-q-title"><strong>પ્રશ્ન ' + (idx + 1) + ':</strong> ' + qText + '</div>' +
-            (opts.length > 0 ? '<div class="pdf-options-list">' + opts.map(function(o, oi) {
-                return '<div><strong>(' + String.fromCharCode(65 + oi) + ')</strong> ' + o + '</div>';
-            }).join('') + '</div>' : '') +
-            '<div class="pdf-ans-box ans-correct-section">✅ સાચો ઉત્તર: <strong>' + correctText + '</strong></div>' +
-            (exp ? '<div class="pdf-exp-box ans-explanation-section">💡 <strong>સમજૂતી:</strong> ' + exp + '</div>' : '') +
-            '</div>';
-    });
-    qContainer.innerHTML = html;
-}
-
-function extractQuestionsArrayFromText(text) {
-    var varNames = ["questions", "quizData", "myQuestions", "quizQuestions", "testData"];
-    for (var k = 0; k < varNames.length; k++) {
-        var vName = varNames[k];
-        var idx = text.indexOf(vName);
-        while (idx !== -1) {
-            var start = text.indexOf('[', idx);
-            if (start !== -1 && start - idx < 60) {
-                var bracketCount = 0;
-                var inString = false;
-                var quoteChar = '';
-                for (var i = start; i < text.length; i++) {
-                    var c = text[i];
-                    if (inString) {
-                        if (c === '\\') i++;
-                        else if (c === quoteChar) inString = false;
-                    } else {
-                        if (c === "'" || c === '"' || c === '`') { inString = true; quoteChar = c; }
-                        else if (c === '[') bracketCount++;
-                        else if (c === ']') {
-                            bracketCount--;
-                            if (bracketCount === 0) {
-                                var arrayStr = text.substring(start, i + 1);
-                                try {
-                                    var parsed = new Function("return " + arrayStr)();
-                                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-                                } catch (e) {}
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            idx = text.indexOf(vName, idx + vName.length);
-        }
-    }
-    return null;
 }
 
 function showFallbackMessage(container, item) {
