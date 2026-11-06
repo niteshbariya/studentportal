@@ -839,10 +839,20 @@
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
+const GITHUB_USERNAME = "niteshbariya";
 
-const REPO_LIST = ["fy", "sy", "evs", "maths", "paryavanrantest", "etc", "revision", "baou", "guj"];
+// 🌟 ક્યારેય ટેસ્ટ લિસ્ટમાં ન આવવી જોઈએ તેવી રેપોઝિટરીઝ (Blacklist)
+const EXCLUDED_REPOS = [
+    "student-portal",
+    "studentportal",
+    "niteshbariya.github.io",
+    "niteshbariya"
+];
+
+// ગતિશીલ રેપો લિસ્ટ (ડાયનેમિકલી ભરાશે)
+let REPO_LIST = ["fy", "sy", "evs", "maths", "paryavanrantest", "etc", "revision", "baou", "guj"];
 let repoFilesCache = {
-    "fy": ["1a.html", "1b.html", "1bnew.html", "2a.html", "2b.html", "3.html", "4aguj.html", "4beng.html", "5bevs.html", "module3.html"]
+    "fy": ["1anew100question.html", "1a.html", "1b.html", "1bnew.html", "2a.html", "2b.html", "3.html", "4aguj.html", "4beng.html", "5bevs.html", "5bevspart1q100.html", "module3.html"]
 };
 
 let userEmail = "";
@@ -907,9 +917,7 @@ function loginWithPassword() {
         method: "POST",
         body: JSON.stringify({ action: "login", email: userEmail, password: enteredPassword })
     })
-    .then(function(res) {
-        return res.json();
-    })
+    .then(function(res) { return res.json(); })
     .then(function(data) {
         if (data.success) {
             localStorage.setItem("portal_user_email", userEmail);
@@ -1033,9 +1041,7 @@ function fetchDataAndInit() {
         method: "POST",
         body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
     })
-    .then(function(res) {
-        return res.json();
-    })
+    .then(function(res) { return res.json(); })
     .then(function(data) {
         if (data.error) { alert(data.error); return; }
         
@@ -1109,9 +1115,7 @@ function initAutoScrollNotifications() {
         if (container.scrollHeight > container.clientHeight) {
             container.scrollTop += 1;
             if (container.scrollTop >= container.scrollHeight - container.clientHeight - 1) {
-                setTimeout(() => {
-                    container.scrollTop = 0;
-                }, 1500);
+                setTimeout(() => { container.scrollTop = 0; }, 1500);
             }
         }
     }, 45);
@@ -1178,9 +1182,7 @@ function initAutoScrollAdminNotes() {
         if (container.scrollHeight > container.clientHeight) {
             container.scrollTop += 1;
             if (container.scrollTop >= container.scrollHeight - container.clientHeight - 1) {
-                setTimeout(() => {
-                    container.scrollTop = 0;
-                }, 1200);
+                setTimeout(() => { container.scrollTop = 0; }, 1200);
             }
         }
     }, 45);
@@ -1360,17 +1362,45 @@ function closeDriveFolderModal() {
     document.getElementById('driveViewerModal').style.display = 'none';
 }
 
+/* ============================================================
+   🌟 ક્રાંતિકારી: બધી જ રેપોઝિટરીઝ આપોઆપ શોધો (student-portal સિવાય)
+   ============================================================ */
 async function scanAllRepoFiles() {
+    try {
+        // ૧. યુઝરના તમામ પબ્લિક રેપોઝિટરીઝ લાવો
+        const resUserRepos = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&t=${new Date().getTime()}`);
+        if (resUserRepos.ok) {
+            const allRepos = await resUserRepos.json();
+            
+            // ૨. student-portal અને બ્લેકલિસ્ટ વાળી રેપો બાદ કરી માત્ર માન્ય ટેસ્ટ રેપોઝિટરીઝ રાખો
+            const autoDetectedRepos = allRepos
+                .map(r => r.name)
+                .filter(name => !EXCLUDED_REPOS.includes(name.toLowerCase()));
+            
+            if (autoDetectedRepos.length > 0) {
+                REPO_LIST = Array.from(new Set([...REPO_LIST, ...autoDetectedRepos]));
+            }
+        }
+    } catch (e) {
+        console.warn("User repo discovery fallback to default list", e);
+    }
+
+    // ૩. દરેક રેપોઝિટરીની તમામ HTML ફાઇલો સ્કેન કરો
     const promises = REPO_LIST.map(async (repo) => {
         try {
-            const res = await fetch(`https://api.github.com/repos/niteshbariya/${repo}/contents/`);
+            const res = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo}/contents/?t=${new Date().getTime()}`);
             if (res.ok) {
                 const items = await res.json();
-                const htmlFiles = items.filter(f => f.name.endsWith('.html')).map(f => f.name);
-                if (htmlFiles.length > 0) repoFilesCache[repo] = htmlFiles;
+                const htmlFiles = items.filter(f => f.name.toLowerCase().endsWith('.html')).map(f => f.name);
+                if (htmlFiles.length > 0) {
+                    const existing = repoFilesCache[repo] || [];
+                    const merged = Array.from(new Set([...existing, ...htmlFiles]));
+                    repoFilesCache[repo] = merged;
+                }
             }
         } catch (e) {}
     });
+
     await Promise.all(promises);
     renderRepoGrid();
 }
@@ -1415,29 +1445,42 @@ function filterAndRefreshData() {
     renderHistoryTable();
 }
 
+/* 🌟 સ્માર્ટ યુનિવર્સલ મેચિંગ (કોઈપણ નામ હશે તો પણ 'પૂર્ણ' બતાવશે) 🌟 */
 function isFileAttemptedByRecord(fileName, repoName, recordsList) {
-    const clean = fileName.replace('.html', '').toLowerCase();
-    const cleanNoSpace = clean.replace(/\s+/g, '');
+    const rawClean = fileName.replace(/\.html$/i, '').toLowerCase();
+    const cleanNoSpace = rawClean.replace(/[\s\-_()]+/g, '');
     const rName = repoName.toLowerCase();
+
+    // સામાન્ય વધારાના શબ્દો કાઢીને શુદ્ધ કોડ મેળવો (દા.ત. 5bevspart1q100 => 5bevs)
+    const pureCode = rawClean.replace(/(part\d+|q\d+|\d+question|new|test)/gi, '').trim();
 
     return recordsList.find(r => {
         const sub = (r.subject || "").toLowerCase().trim();
-        const subNoSpace = sub.replace(/\s+/g, '');
+        const subNoSpace = sub.replace(/[\s\-_()]+/g, '');
 
-        if (sub.includes(clean) || sub.includes(cleanNoSpace) || sub.includes(rName)) return true;
-        
-        if (clean.includes("anew") || clean.includes("1a") || clean.includes("bal")) {
-            if (sub.includes("વિકાસ") || sub.includes("પૂર્વ પ્રાથમિક") || sub.includes("hots") || sub.includes("કોર્ષ - ૧") || sub.includes("બાળકો")) return true;
-        }
-        
-        if (clean.includes("1b")) {
-            if (sub.includes("1 (બ)") || sub.includes("1(બ)") || sub.includes("અધ્યેતા") || sub.includes("મૂલ્યાંકન") || sub.includes("બોધ") || sub.includes("અધ્યયન")) return true;
+        if (sub.includes(rawClean) || sub.includes(cleanNoSpace) || (pureCode && sub.includes(pureCode))) return true;
+
+        if (rawClean.includes("1a") || rawClean.includes("bal")) {
+            if (sub.includes("1 (અ)") || sub.includes("1(અ)") || sub.includes("વિકાસ") || sub.includes("પૂર્વ પ્રાથમિક") || sub.includes("બાળકો")) return true;
         }
 
-        if (clean.includes("sy") && (sub.includes("દ્વિતીય") || sub.includes("બોધ"))) return true;
-        if (clean.includes("maths") && sub.includes("ગણિત")) return true;
-        if (clean.includes("evs") && (sub.includes("પર્યાવરણ") || sub.includes("evs"))) return true;
-        if (clean.includes("guj") && sub.includes("ગુજરાતી")) return true;
+        if (rawClean.includes("1b")) {
+            if (sub.includes("1 (બ)") || sub.includes("1(બ)") || sub.includes("અધ્યેતા") || sub.includes("મૂલ્યાંકન") || sub.includes("અધ્યયન") || sub.includes("બોધ")) return true;
+        }
+
+        if (rawClean.includes("5b") || rawClean.includes("evs") || rName === "evs" || rName === "paryavanrantest") {
+            if (sub.includes("5 (બ)") || sub.includes("5(બ)") || sub.includes("૫ (બ)") || sub.includes("૫(બ)") || sub.includes("પર્યાવરણ") || sub.includes("evs")) return true;
+        }
+
+        if (rawClean.includes("math") || rName === "maths") {
+            if (sub.includes("ગણિત") || sub.includes("math")) return true;
+        }
+        if (rawClean.includes("guj") || rName === "guj") {
+            if (sub.includes("ગુજરાતી") || sub.includes("guj")) return true;
+        }
+        if (rawClean.includes("sy") || rName === "sy") {
+            if (sub.includes("દ્વિતીય") || sub.includes("બોધ") || sub.includes("sy")) return true;
+        }
 
         return false;
     });
@@ -1546,10 +1589,11 @@ async function fetchQuestionsFromLiveSource(targetSubject) {
     const s = targetSubject.toLowerCase();
     let candidates = [];
     
-    if (s.includes("evs") || s.includes("પર્યાવરણ")) {
+    if (s.includes("evs") || s.includes("પર્યાવરણ") || s.includes("૫ (બ)")) {
+        candidates.push({ repo: "fy", file: "5bevspart1q100.html" });
+        candidates.push({ repo: "fy", file: "5bevs.html" });
         candidates.push({ repo: "evs", file: "index.html" });
         candidates.push({ repo: "paryavanrantest", file: "index.html" });
-        candidates.push({ repo: "fy", file: "5bevs.html" });
     }
     if (s.includes("nep") || s.includes("નીતિ")) {
         candidates.push({ repo: "baou", file: "index.html" });
@@ -1566,7 +1610,7 @@ async function fetchQuestionsFromLiveSource(targetSubject) {
         candidates.push({ repo: "sy", file: "index.html" });
     }
     if (s.includes("fy") || s.includes("પ્રથમ") || s.includes("વિકાસ")) {
-        candidates.push({ repo: "fy", file: "1 anew100question.html" });
+        candidates.push({ repo: "fy", file: "1anew100question.html" });
         candidates.push({ repo: "fy", file: "1a.html" });
     }
 
