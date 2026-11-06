@@ -841,19 +841,19 @@
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 const GITHUB_USERNAME = "niteshbariya";
 
-// 🌟 ક્યારેય ટેસ્ટ લિસ્ટમાં ન આવવી જોઈએ તેવી રેપોઝિટરીઝ (Blacklist)
+// 🌟 ક્યારેય ટેસ્ટ લિસ્ટમાં ન આવવી જોઈએ તેવી રેપોઝિટરીઝ (સંપૂર્ણ બ્લેકલિસ્ટ)
 const EXCLUDED_REPOS = [
     "student-portal",
     "studentportal",
+    "student_portal",
+    "portal",
     "niteshbariya.github.io",
     "niteshbariya"
 ];
 
-// ગતિશીલ રેપો લિસ્ટ (ડાયનેમિકલી ભરાશે)
+// ગતિશીલ રેપો લિસ્ટ (Default Repos)
 let REPO_LIST = ["fy", "sy", "evs", "maths", "paryavanrantest", "etc", "revision", "baou", "guj"];
-let repoFilesCache = {
-    "fy": ["1anew100question.html", "1a.html", "1b.html", "1bnew.html", "2a.html", "2b.html", "3.html", "4aguj.html", "4beng.html", "5bevs.html", "5bevspart1q100.html", "module3.html"]
-};
+let repoFilesCache = {};
 
 let userEmail = "";
 let allRawRecords = [];
@@ -1363,19 +1363,19 @@ function closeDriveFolderModal() {
 }
 
 /* ============================================================
-   🌟 ક્રાંતિકારી: બધી જ રેપોઝિટરીઝ આપોઆપ શોધો (student-portal સિવાય)
+   🌟 તમામ માન્ય ટેસ્ટ રેપોઝિટરીઝ & તેની બધી ફાઇલો લાવવાનું સચોટ લોજિક
    ============================================================ */
 async function scanAllRepoFiles() {
     try {
-        // ૧. યુઝરના તમામ પબ્લિક રેપોઝિટરીઝ લાવો
-        const resUserRepos = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&t=${new Date().getTime()}`);
+        // ૧. યુઝરની તમામ પબ્લિક રિપોઝિટરીઝ લાવો
+        const resUserRepos = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100`);
         if (resUserRepos.ok) {
             const allRepos = await resUserRepos.json();
             
-            // ૨. student-portal અને બ્લેકલિસ્ટ વાળી રેપો બાદ કરી માત્ર માન્ય ટેસ્ટ રેપોઝિટરીઝ રાખો
+            // ૨. student-portal અને અન્ય બિન-જરૂરી રેપોને ફિલ્ટર કરી ફક્ત સાચી ટેસ્ટ રેપોઝિટરીઝ રાખો
             const autoDetectedRepos = allRepos
                 .map(r => r.name)
-                .filter(name => !EXCLUDED_REPOS.includes(name.toLowerCase()));
+                .filter(name => !EXCLUDED_REPOS.some(ex => name.toLowerCase().includes(ex.toLowerCase())));
             
             if (autoDetectedRepos.length > 0) {
                 REPO_LIST = Array.from(new Set([...REPO_LIST, ...autoDetectedRepos]));
@@ -1385,20 +1385,44 @@ async function scanAllRepoFiles() {
         console.warn("User repo discovery fallback to default list", e);
     }
 
-    // ૩. દરેક રેપોઝિટરીની તમામ HTML ફાઇલો સ્કેન કરો
+    // ૩. Recursive Git Tree API દ્વારા સબ-ફોલ્ડર્સ સહિતની તમામ HTML ફાઇલો સ્કેન કરો
     const promises = REPO_LIST.map(async (repo) => {
         try {
-            const res = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo}/contents/?t=${new Date().getTime()}`);
-            if (res.ok) {
-                const items = await res.json();
-                const htmlFiles = items.filter(f => f.name.toLowerCase().endsWith('.html')).map(f => f.name);
-                if (htmlFiles.length > 0) {
-                    const existing = repoFilesCache[repo] || [];
-                    const merged = Array.from(new Set([...existing, ...htmlFiles]));
-                    repoFilesCache[repo] = merged;
+            let treeRes = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo}/git/trees/main?recursive=1`);
+            if (!treeRes.ok) {
+                treeRes = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo}/git/trees/master?recursive=1`);
+            }
+
+            if (treeRes.ok) {
+                const treeData = await treeRes.json();
+                if (treeData && treeData.tree) {
+                    const htmlFiles = treeData.tree
+                        .filter(item => item.type === "blob" && item.path.toLowerCase().endsWith('.html'))
+                        .map(item => item.path);
+
+                    if (htmlFiles.length > 0) {
+                        repoFilesCache[repo] = htmlFiles;
+                        return;
+                    }
                 }
             }
-        } catch (e) {}
+        } catch (e) {
+            console.warn(`Git Tree API failed for ${repo}`, e);
+        }
+
+        // જો Git Tree API ફેલ થાય તો સામાન્ય contents API વાપરો
+        try {
+            const res = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo}/contents/`);
+            if (res.ok) {
+                const items = await res.json();
+                const htmlFiles = items
+                    .filter(f => f.name && f.name.toLowerCase().endsWith('.html'))
+                    .map(f => f.name);
+                if (htmlFiles.length > 0) {
+                    repoFilesCache[repo] = htmlFiles;
+                }
+            }
+        } catch (err) {}
     });
 
     await Promise.all(promises);
@@ -1456,7 +1480,8 @@ function convertGujaratiDigitsToEnglish(str) {
 }
 
 function isFileAttemptedByRecord(fileName, repoName, recordsList) {
-    const rawClean = fileName.replace(/\.html$/i, '').toLowerCase().trim();
+    const cleanFileName = fileName.split('/').pop();
+    const rawClean = cleanFileName.replace(/\.html$/i, '').toLowerCase().trim();
     const cleanNoSpace = rawClean.replace(/[\s\-_()]+/g, '');
 
     return recordsList.find(r => {
@@ -1464,12 +1489,10 @@ function isFileAttemptedByRecord(fileName, repoName, recordsList) {
         const sub = convertGujaratiDigitsToEnglish(subRaw);
         const subNoSpace = sub.replace(/[\s\-_()]+/g, '');
 
-        // ૧. જો સબ્જેક્ટમાં સીધું જ આખું ફાઇલનું નામ સામેલ હોય
         if (sub.includes(rawClean) || subNoSpace.includes(cleanNoSpace)) {
             return true;
         }
 
-        // ૨. ૧૦૦ પ્રશ્નો કે ભાગ (Part) વાળી ફાઇલો માટે ચોકસાઈ ચકાસો
         const is100File = rawClean.includes("100") || rawClean.includes("part");
         const is100Sub = sub.includes("100") || sub.includes("part");
 
@@ -1477,7 +1500,6 @@ function isFileAttemptedByRecord(fileName, repoName, recordsList) {
             return false;
         }
 
-        // ૩. વિષય કોડ આધારિત ચોક્કસ મેચિંગ
         if (rawClean.includes("5b") || rawClean.includes("evs")) {
             if (sub.includes("5 (બ)") || sub.includes("5(બ)") || sub.includes("પર્યાવરણ") || sub.includes("evs")) {
                 return true;
@@ -1517,6 +1539,7 @@ function isFileAttemptedByRecord(fileName, repoName, recordsList) {
         return false;
     });
 }
+
 function renderRepoGrid() {
     const grid = document.getElementById("repoCardsGrid");
     grid.innerHTML = "";
@@ -1567,8 +1590,10 @@ async function openRepoFiles(repoName) {
         const isAttempted = !!attemptRecord;
         
         const testUrl = (fileName === "index.html")
-            ? `https://niteshbariya.github.io/${repoName}/`
-            : `https://niteshbariya.github.io/${repoName}/${fileName}`;
+            ? `https://${GITHUB_USERNAME}.github.io/${repoName}/`
+            : `https://${GITHUB_USERNAME}.github.io/${repoName}/${fileName}`;
+            
+        const displayName = fileName.split('/').pop();
         const fileCard = document.createElement("div");
         fileCard.className = "file-card";
         fileCard.style.borderLeft = `4.5px solid ${isAttempted ? '#10b981' : '#f43f5e'}`;
@@ -1590,7 +1615,7 @@ async function openRepoFiles(repoName) {
         fileCard.innerHTML = `
             <div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span class="file-exact-name"><i class="fa-regular fa-file-lines"></i> ${fileName}</span>
+                    <span class="file-exact-name"><i class="fa-regular fa-file-lines"></i> ${displayName}</span>
                     <span style="color:${isAttempted ? '#10b981' : '#ef4444'}; background:${isAttempted ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)'}; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:800;">
                         ${isAttempted ? '✅ પૂર્ણ' : '⏳ બાકી'}
                     </span>
@@ -1651,8 +1676,8 @@ async function fetchQuestionsFromLiveSource(targetSubject) {
 
     for (const c of candidates) {
         const testUrl = (c.file === "index.html")
-            ? `https://niteshbariya.github.io/${c.repo}/`
-            : `https://niteshbariya.github.io/${c.repo}/${c.file}`;
+            ? `https://${GITHUB_USERNAME}.github.io/${c.repo}/`
+            : `https://${GITHUB_USERNAME}.github.io/${c.repo}/${c.file}`;
         try {
             const res = await fetch(testUrl);
             if (res.ok) {
@@ -1729,8 +1754,8 @@ async function loadDirectQuestionPaper(repoName, fileName, isAttempted) {
         return;
     }
     const testUrl = (fileName === "index.html")
-        ? `https://niteshbariya.github.io/${repoName}/`
-        : `https://niteshbariya.github.io/${repoName}/${fileName}`;
+        ? `https://${GITHUB_USERNAME}.github.io/${repoName}/`
+        : `https://${GITHUB_USERNAME}.github.io/${repoName}/${fileName}`;
     document.getElementById("modalHeading").innerText = `${repoName}/${fileName} - પ્રશ્નપત્ર & ઉત્તરવહી`;
     document.getElementById("pdfDocSubject").innerText = `${repoName}/${fileName} - મૂલ્યાંકન પ્રશ્નપત્ર`;
     
@@ -1757,7 +1782,8 @@ async function loadDirectQuestionPaper(repoName, fileName, isAttempted) {
     
     document.getElementById("reviewModal").style.display = "flex";
     window.history.pushState({ modalOpen: true }, "");
-    currentBaseFilename = `${repoName}_${fileName.replace('.html','')}`;
+    const safeBaseName = fileName.replace(/[\/\\]/g, '_').replace('.html', '');
+    currentBaseFilename = `${repoName}_${safeBaseName}`;
     
     currentModalRawReviewHtml = (sheetRecord && sheetRecord.reviewHtml) ? sheetRecord.reviewHtml : "";
     currentModalLiveQuestions = null;
