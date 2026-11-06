@@ -90,12 +90,38 @@
             -webkit-text-fill-color: transparent;
         }
         .brand-text p { font-size: 11.5px; color: var(--text-muted); font-weight: 600; }
+        
         .nav-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        
+        /* 🕒 લાઈવ તારીખ, વાર અને ડિજિટલ ઘડિયાળ બેજ */
+        .live-clock-badge {
+            background: var(--inner-box);
+            border: 1.5px solid var(--border-color);
+            padding: 5px 12px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--heading-color);
+        }
+        .live-clock-badge .clock-time {
+            color: #2563eb;
+            font-family: monospace;
+            font-size: 12.5px;
+            font-weight: 800;
+        }
+        body.dark-mode .live-clock-badge .clock-time {
+            color: #38bdf8;
+        }
+
         .badge-role {
             padding: 4px 10px; border-radius: 30px; font-size: 11px; font-weight: 700;
             background: rgba(37, 99, 235, 0.1); color: #2563eb; border: 1.5px solid #60a5fa;
         }
         body.dark-mode .badge-role { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; }
+        
         .theme-toggle-btn, .logout-btn {
             background: var(--inner-box); color: var(--text-color);
             border: 1.5px solid var(--border-color); padding: 5px 12px;
@@ -134,7 +160,7 @@
             font-size: 14px; cursor: pointer; margin-top: 10px;
         }
 
-        /* સ્ટેટ્સ ગ્રીડ */
+        /* ૪ આંકડાકીય કાર્ડ્સ */
         .stats-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;
         }
@@ -150,11 +176,11 @@
         .stat-info h4 { font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
         .stat-info h2 { font-size: 19px; font-weight: 900; color: var(--heading-color); margin-top: 2px; }
 
-        /* કન્ટેન્ટ ગ્રીડ (ચાર્ટ + નોટ્સ) */
+        /* કન્ટેન્ટ ગ્રીડ (સ્પીડોમીટર + બાર ચાર્ટ + સૂચનાઓ) */
         .content-grid {
-            display: grid; grid-template-columns: 2fr 1fr; gap: 14px;
+            display: grid; grid-template-columns: 1.1fr 1.5fr 1.2fr; gap: 14px;
         }
-        @media (max-width: 900px) { .content-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 1024px) { .content-grid { grid-template-columns: 1fr; } }
         
         .dash-card {
             background: var(--card-bg); border: 2px solid var(--border-color);
@@ -164,7 +190,7 @@
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1.5px dashed var(--border-color); padding-bottom: 8px;
         }
-        .dash-card-header h3 { font-size: 14px; font-weight: 800; color: var(--heading-color); }
+        .dash-card-header h3 { font-size: 13.5px; font-weight: 800; color: var(--heading-color); }
 
         .notice-list { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; }
         .notice-item {
@@ -186,7 +212,15 @@
                 <p>Nitesh Baria - Web Developer</p>
             </div>
         </div>
+        
+        <!-- જમણી બાજુ લાઈવ ક્લોક, થીમ, બેજ અને લૉગઆઉટ -->
         <div class="nav-controls" id="navControls" style="display: none;">
+            <div class="live-clock-badge">
+                <i class="fa-regular fa-clock" style="color: #2563eb;"></i>
+                <span id="liveDayText">-</span> |
+                <span id="liveDateText">-</span>
+                <span class="clock-time" id="liveTimeText">00:00:00</span>
+            </div>
             <button id="themeToggleBtn" class="theme-toggle-btn" onclick="switchTheme()">
                 <i class="fa-solid fa-moon" id="themeIcon"></i> <span id="themeText">ડાર્ક મોડ</span>
             </button>
@@ -195,7 +229,7 @@
         </div>
     </header>
 
-    <!-- લૉગિન પેનલ (જો લૉગિન ન હોય તો) -->
+    <!-- લૉગિન પેનલ -->
     <div id="loginView" class="login-container" style="display: none;">
         <h2 style="font-size: 18px; font-weight: 800; color: var(--heading-color); margin-bottom: 6px;">સુરક્ષિત લૉગિન</h2>
         <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">તમારા રજીસ્ટર્ડ ઈમેઈલ અને પાસવર્ડ વડે પ્રવેશ કરો</p>
@@ -214,7 +248,7 @@
             <a href="history.html" class="nav-link-btn"><i class="fa-solid fa-table-list"></i> પરિણામ પત્રક</a>
         </nav>
 
-        <!-- વિગતો / કાર્ડ્સ -->
+        <!-- ૪ આંકડાકીય કાર્ડ્સ -->
         <section class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon" style="background: var(--gradient-emerald);"><i class="fa-solid fa-check-double"></i></div>
@@ -241,22 +275,38 @@
                 <div class="stat-icon" style="background: var(--gradient-rose);"><i class="fa-solid fa-clock-rotate-left"></i></div>
                 <div class="stat-info">
                     <h4>છેલ્લી કસોટી</h4>
-                    <h2 id="statLastTest" style="font-size: 14px; margin-top: 4px;">-</h2>
+                    <h2 id="statLastTest" style="font-size: 13.5px; margin-top: 4px;">-</h2>
                 </div>
             </div>
         </section>
 
-        <!-- ચાર્ટ અને નોટિફિકેશન ગ્રીડ -->
+        <!-- વિઝ્યુઅલ ગ્રીડ: ૧. સ્પીડોમીટર | ૨. બાર ચાર્ટ | ૩. સૂચનાઓ -->
         <div class="content-grid">
+            <!-- ૧. સ્પીડોમીટર ગેજ કાર્ડ -->
+            <div class="dash-card" style="align-items: center; justify-content: center; text-align: center;">
+                <div class="dash-card-header" style="width: 100%;">
+                    <h3><i class="fa-solid fa-gauge-high" style="color: #2563eb;"></i> સરેરાશ પ્રદર્શન</h3>
+                </div>
+                <div style="position: relative; width: 230px; height: 135px; margin: 15px auto 0 auto;">
+                    <canvas id="speedoMeterChart"></canvas>
+                    <div style="position: absolute; bottom: 8px; left: 0; right: 0; text-align: center;">
+                        <span id="speedoMeterText" style="font-size: 24px; font-weight: 900; color: var(--heading-color);">0%</span>
+                    </div>
+                </div>
+                <p style="font-size: 11px; color: var(--text-muted); font-weight: 600;">કુલ પરિણામોનું એકંદર મૂલ્યાંકન</p>
+            </div>
+
+            <!-- ૨. પ્રગતિ આલેખ (Bar Chart) -->
             <div class="dash-card">
                 <div class="dash-card-header">
                     <h3><i class="fa-solid fa-chart-column" style="color: #2563eb;"></i> પ્રગતિ આલેખ (છેલ્લી કસોટીઓ)</h3>
                 </div>
-                <div style="position: relative; height: 260px; width: 100%;">
+                <div style="position: relative; height: 210px; width: 100%;">
                     <canvas id="performanceChart"></canvas>
                 </div>
             </div>
 
+            <!-- ૩. સૂચનાઓ (Notices) -->
             <div class="dash-card">
                 <div class="dash-card-header">
                     <h3><i class="fa-solid fa-bullhorn" style="color: #ea580c;"></i> મહત્વપૂર્ણ સૂચનાઓ</h3>
@@ -276,6 +326,7 @@
 <script>
 var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 var perfChartInstance = null;
+var speedoChartInstance = null;
 
 function checkAuth() {
     var email = localStorage.getItem("portal_user_email");
@@ -294,10 +345,10 @@ function checkAuth() {
     document.getElementById("navControls").style.display = "flex";
     document.getElementById("roleBadge").innerHTML = (role === "Admin" ? "👑 " : "🎓 ") + (name || email);
 
-    // ⚡ પગલું ૧: કેશમાંથી તરત જ ૦-સેકન્ડે ડેટા બતાવો
+    // ⚡ ૧. કેશમાંથી તાત્કાલિક ૦-સેકન્ડે ડેટા દર્શાવો
     loadDashboardFromCache();
 
-    // ⚡ પગલું ૨: પાછળથી (Background) શાંતિથી નવો ડેટા સિન્ક કરો
+    // ⚡ ૨. પાછળથી ગૂગલ શીટમાંથી નવો ડેટા સિન્ક કરો
     fetchFreshDashboardData(email);
 }
 
@@ -306,6 +357,43 @@ function switchTheme() {
     document.getElementById("themeIcon").className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
     document.getElementById("themeText").innerText = isDark ? "લાઈટ મોડ" : "ડાર્ક મોડ";
     localStorage.setItem("portal_theme", isDark ? "dark" : "light");
+    
+    var cached = localStorage.getItem("portal_cached_history");
+    if (cached) renderDashboardStats(JSON.parse(cached));
+}
+
+// 🕒 લાઈવ ડિજિટલ ક્લોક, તારીખ અને વાર
+function startLiveDateTime() {
+    var gujaratiDays = ["રવિવાર", "સોમવાર", "મંગળવાર", "બુધવાર", "ગુરુવાર", "શુક્રવાર", "શનિવાર"];
+
+    function updateClock() {
+        var now = new Date();
+        var dayName = gujaratiDays[now.getDay()];
+        
+        var d = String(now.getDate()).padStart(2, '0');
+        var m = String(now.getMonth() + 1).padStart(2, '0');
+        var y = now.getFullYear();
+        var dateFormatted = d + "/" + m + "/" + y;
+
+        var hours = now.getHours();
+        var minutes = String(now.getMinutes()).padStart(2, '0');
+        var seconds = String(now.getSeconds()).padStart(2, '0');
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        var timeFormatted = String(hours).padStart(2, '0') + ":" + minutes + ":" + seconds + " " + ampm;
+
+        var dayEl = document.getElementById("liveDayText");
+        var dateEl = document.getElementById("liveDateText");
+        var timeEl = document.getElementById("liveTimeText");
+
+        if (dayEl) dayEl.innerText = dayName;
+        if (dateEl) dateEl.innerText = dateFormatted;
+        if (timeEl) timeEl.innerText = timeFormatted;
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
 }
 
 function performLogin() {
@@ -356,24 +444,18 @@ function logoutSession() {
     location.reload();
 }
 
-// ⚡ કેશમાંથી તાત્કાલિક લોડિંગ
 function loadDashboardFromCache() {
     var cachedHistory = localStorage.getItem("portal_cached_history");
     var cachedNotes = localStorage.getItem("portal_cached_notes");
 
     if (cachedHistory) {
-        try {
-            renderDashboardStats(JSON.parse(cachedHistory));
-        } catch(e) {}
+        try { renderDashboardStats(JSON.parse(cachedHistory)); } catch(e) {}
     }
     if (cachedNotes) {
-        try {
-            renderDashboardNotes(JSON.parse(cachedNotes));
-        } catch(e) {}
+        try { renderDashboardNotes(JSON.parse(cachedNotes)); } catch(e) {}
     }
 }
 
-// 🌐 સર્વર પરથી નવો ડેટા મેળવવો
 function fetchFreshDashboardData(email) {
     fetch(SCRIPT_URL, {
         method: "POST",
@@ -386,11 +468,9 @@ function fetchFreshDashboardData(email) {
             var history = data.history || [];
             var notes = data.notes || [];
 
-            // કેશ સાચવી લો જેથી બીજી ટેબ્સ (tests, history) પણ વાપરી શકે
             localStorage.setItem("portal_cached_history", JSON.stringify(history));
             localStorage.setItem("portal_cached_notes", JSON.stringify(notes));
 
-            // સ્ક્રીન પર નવો ડેટા અપડેટ કરો
             renderDashboardStats(history);
             renderDashboardNotes(notes);
         }
@@ -406,6 +486,7 @@ function renderDashboardStats(history) {
         document.getElementById("statAvgScore").innerText = "0%";
         document.getElementById("statHighScore").innerText = "0%";
         document.getElementById("statLastTest").innerText = "કોઈ કસોટી નથી";
+        renderSpeedoMeter(0);
         return;
     }
 
@@ -429,12 +510,50 @@ function renderDashboardStats(history) {
     document.getElementById("statHighScore").innerText = Math.round(maxPct) + "%";
     document.getElementById("statLastTest").innerText = (lastItem.subject || "-").slice(0, 16) + "...";
 
-    renderChart(history);
+    renderSpeedoMeter(avgPct);
+    renderBarChart(history);
 }
 
-function renderChart(history) {
+// 🎯 સ્પીડોમીટર ગેજ રેન્ડરિંગ
+function renderSpeedoMeter(avgPct) {
+    var canvas = document.getElementById("speedoMeterChart");
+    if (!canvas) return;
+    var ctx = canvas.getContext("2d");
+    
+    document.getElementById("speedoMeterText").innerText = avgPct + "%";
+
+    if (speedoChartInstance) speedoChartInstance.destroy();
+
+    var trackColor = document.body.classList.contains("dark-mode") ? '#334155' : '#e2e8f0';
+    var fillColor = avgPct >= 70 ? '#10b981' : (avgPct >= 40 ? '#f59e0b' : '#ef4444');
+
+    speedoChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [avgPct, Math.max(0, 100 - avgPct)],
+                backgroundColor: [fillColor, trackColor],
+                borderWidth: 0,
+                circumference: 180,
+                rotation: 270
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '76%',
+            plugins: {
+                tooltip: { enabled: false },
+                legend: { display: false }
+            }
+        }
+    });
+}
+
+// 📊 બાર ચાર્ટ રેન્ડરિંગ
+function renderBarChart(history) {
     var ctx = document.getElementById("performanceChart").getContext("2d");
-    var sliceItems = history.slice(0, 8).reverse();
+    var sliceItems = history.slice(0, 7).reverse();
 
     var labels = sliceItems.map(function(item) {
         var s = item.subject || "Test";
@@ -498,6 +617,7 @@ function renderDashboardNotes(notes) {
 window.addEventListener("DOMContentLoaded", function() {
     if (localStorage.getItem("portal_theme") === "dark") switchTheme();
     checkAuth();
+    startLiveDateTime();
 });
 </script>
 </body>
