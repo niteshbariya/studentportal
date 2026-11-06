@@ -386,36 +386,18 @@
         }
         .portal-footer { text-align: center; padding: 12px 0 4px 0; font-size: 11.5px; color: var(--text-muted); font-weight: 700; }
 
-        .notification-card-wrapper {
+        .notification-card {
             background: var(--card-bg); border: 2px solid #f59e0b;
-            border-radius: 14px; padding: 12px 14px; margin-top: 6px;
+            border-radius: 14px; padding: 14px; margin-top: 10px;
+            max-height: 250px; overflow-y: auto;
             box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);
         }
-        .notif-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
-            font-size: 13px; font-weight: 800; color: #d97706; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px;
-        }
-        .notification-scroll-container {
-            max-height: 180px;
-            overflow-y: auto;
-            scroll-behavior: smooth;
-            padding-right: 4px;
-        }
-        .notification-scroll-container::-webkit-scrollbar { width: 4px; }
-        .notification-scroll-container::-webkit-scrollbar-thumb { background: #fcd34d; border-radius: 10px; }
-
         .notif-item {
             background: var(--inner-box); border-left: 4px solid #f59e0b;
-            padding: 8px 12px; margin-bottom: 8px; border-radius: 6px;
+            padding: 10px; margin-bottom: 8px; border-radius: 6px;
             display: flex; justify-content: space-between; align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
         }
-        .notif-item:hover {
-            border-left-color: #2563eb;
-            background: rgba(37, 99, 235, 0.05);
-        }
-        .notif-item a { color: #2563eb; font-weight: 800; text-decoration: none; font-size: 11.5px; }
+        .notif-item a { color: #2563eb; font-weight: 800; text-decoration: none; font-size: 12px; }
         .notif-date { font-size: 10px; color: var(--text-muted); font-weight: 700; }
         .new-badge { background: #ef4444; color: white; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; }
 
@@ -492,14 +474,14 @@
             background: #fff5f5 !important;
         }
         .pdf-q-title { font-size: 13.5px; font-weight: 800; color: #1e293b; margin-bottom: 6px; line-height: 1.4; }
-        .pdf-options-list { margin: 6px 0; font-size: 13px; color: #334155; line-height: 1.5; }
+        .pdf-options-list { margin: 4px 0 6px 10px; font-size: 12.5px; color: #475569; line-height: 1.5; }
         .pdf-ans-box {
             background: #ecfdf5; border-left: 4px solid #10b981;
-            padding: 6px 10px; border-radius: 4px; font-size: 12.5px; font-weight: 800; color: #065f46; margin: 6px 0 4px 0;
+            padding: 6px 10px; border-radius: 4px; font-size: 12.5px; font-weight: 800; color: #065f46; margin: 4px 0;
         }
         .pdf-wrong-user-ans {
             background: #fee2e2; border-left: 4px solid #ef4444;
-            padding: 6px 10px; border-radius: 4px; font-size: 12.5px; font-weight: 800; color: #991b1b; margin: 6px 0 4px 0;
+            padding: 6px 10px; border-radius: 4px; font-size: 12.5px; font-weight: 800; color: #991b1b; margin: 4px 0;
         }
         .pdf-exp-box {
             background: #eff6ff; border-left: 4px solid #3b82f6;
@@ -579,13 +561,7 @@
 
     <main id="dashboardScreen">
         <section id="notificationSection" style="display: none;">
-            <div class="notification-card-wrapper">
-                <div class="notif-header">
-                    <span><i class="fa-solid fa-bell"></i> તાજી કસોટી નોટિફિકેશન</span>
-                    <span style="font-size: 10px; color: var(--text-muted);"><i class="fa-solid fa-arrows-up-down"></i> Auto-Scrolling</span>
-                </div>
-                <div class="notification-scroll-container" id="notificationCard"></div>
-            </div>
+            <div class="notification-card" id="notificationCard"></div>
         </section>
 
         <section class="filter-ribbon">
@@ -839,10 +815,9 @@
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
-const GITHUB_USERNAME = "niteshbariya";
 
-// 🌟 ૧. સ્ક્રીનશોટ મુજબની તમામ કસોટી રિપોઝિટરીઝ (studentportal સિવાયની)
-let REPO_LIST = [
+// 🌟 ૧. સ્ક્રીનશોટ મુજબની તમામ કસોટી રિપોઝિટરીઝ (studentportal બાદ કરેલ છે)
+const REPO_LIST = [
     "fy",
     "evs",
     "sy",
@@ -856,7 +831,7 @@ let REPO_LIST = [
     "guj"
 ];
 
-// 🌟 ૨. રિપોઝિટરી વાર ટેસ્ટ ફાઇલોનું ચોક્કસ લિસ્ટ
+// 🌟 ૨. મૂળ કેશ - જેથી નેટવર્ક ધીમું હોય તો પણ fy ની બધી કસોટીઓ તરત દેખાય
 let repoFilesCache = {
     "fy": [
         "1anew100question.html",
@@ -871,17 +846,7 @@ let repoFilesCache = {
         "5bevs.html",
         "5bevspart1q100.html",
         "module3.html"
-    ],
-    "evs": ["index.html"],
-    "sy": ["index.html"],
-    "maths": ["index.html"],
-    "paryavanrantest": ["index.html"],
-    "etc": ["index.html"],
-    "revision": ["index.html"],
-    "baou": ["index.html"],
-    "mocktest": ["index.html"],
-    "mission27": ["index.html"],
-    "guj": ["index.html"]
+    ]
 };
 
 let userEmail = "";
@@ -898,19 +863,6 @@ let currentBaseFilename = "Test_Paper";
 let rawDriveFiles = [];
 let groupedDriveFiles = {};
 let notesScrollInterval = null;
-let notifScrollInterval = null;
-
-let currentModalLiveQuestions = null;
-let currentModalRawReviewHtml = "";
-
-function cleanOptionText(text) {
-    if (!text) return "";
-    var s = String(text).trim();
-    s = s.replace(/^\([A-Za-z0-9]+\)\s*/, "");
-    s = s.replace(/^[A-Za-z0-9]+[.\)]\s*/, "");
-    s = s.replace(/^[•‣◦⁃∙*\-▪▫–—]\s*/, "");
-    return s.trim();
-}
 
 function checkSavedLoginSession() {
     const savedEmail = localStorage.getItem("portal_user_email");
@@ -925,29 +877,21 @@ function checkSavedLoginSession() {
 }
 
 function loginWithPassword() {
-    var emailInput = document.getElementById("loginEmailInput");
-    var passInput = document.getElementById("loginPasswordInput");
-    
-    if (!emailInput || !passInput) return;
-    
-    userEmail = emailInput.value.trim().toLowerCase();
-    var enteredPassword = passInput.value.trim();
+    userEmail = document.getElementById("loginEmailInput").value.trim().toLowerCase();
+    const enteredPassword = document.getElementById("loginPasswordInput").value.trim();
     
     if (!userEmail.includes("@") || !enteredPassword) {
         alert("કૃપા કરીને ઈમેઈલ અને પાસવર્ડ બંને દાખલ કરો.");
         return;
     }
 
-    var btn = document.getElementById("loginSubmitBtn");
+    const btn = document.getElementById("loginSubmitBtn");
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ચેક થઈ રહ્યું છે...';
     btn.disabled = true;
 
     fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "login", email: userEmail, password: enteredPassword })
-    })
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
+        method: "POST", body: JSON.stringify({ action: "login", email: userEmail, password: enteredPassword })
+    }).then(res => res.json()).then(data => {
         if (data.success) {
             localStorage.setItem("portal_user_email", userEmail);
             localStorage.setItem("portal_user_role", data.role); 
@@ -960,10 +904,8 @@ function loginWithPassword() {
             btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
             btn.disabled = false;
         }
-    })
-    .catch(function(err) {
-        console.error("Login Connection Error:", err);
-        alert("સર્વર સાથે કનેક્ટ ન થઈ શક્યું. કૃપા કરીને ફરી પ્રયાસ કરો.");
+    }).catch(() => {
+        alert("સર્વર સાથે કનેક્ટ ન થઈ શક્યું. કૃપા કરીને Apps Script તપાસો.");
         btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
         btn.disabled = false;
     });
@@ -993,7 +935,7 @@ async function setupDashboardEnvironment(role, name) {
     populateSubjectDropdown();
     filterAndRefreshData();
     renderAdminNotes();
-    scanAllRepoFiles();
+    await scanAllRepoFiles();
 }
 
 function switchTheme() {
@@ -1062,21 +1004,18 @@ function formatPercentDisplay(val) {
 }
 
 function escapeRegex(string) {
-    return String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return String(string).replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
 function fetchDataAndInit() {
     fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
-    })
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
+        method: "POST", body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
+    }).then(res => res.json()).then(data => {
         if (data.error) { alert(data.error); return; }
         
         allRawRecords = data.history || [];
         adminNotesData = data.notes || [];
-        var testNotifications = data.notifications || [];
+        const testNotifications = data.notifications || [];
         
         if (isAdminUser) populateStudentDropdown();
         
@@ -1084,28 +1023,22 @@ function fetchDataAndInit() {
         filterAndRefreshData();
         renderAdminNotes();
         renderTestNotifications(testNotifications);
-    })
-    .catch(function(err) {
-        console.error("Data fetch failed", err);
+    }).catch(() => {
+        console.error("Data fetch failed");
     });
 }
 
 function renderTestNotifications(notifications) {
     const section = document.getElementById("notificationSection");
-    const container = document.getElementById("notificationCard");
+    const card = document.getElementById("notificationCard");
     
-    if (notifScrollInterval) {
-        clearInterval(notifScrollInterval);
-        notifScrollInterval = null;
-    }
-
     if (!notifications || notifications.length === 0) {
         section.style.display = "none";
         return;
     }
 
     section.style.display = "block";
-    container.innerHTML = "";
+    card.innerHTML = "";
 
     notifications.forEach((notif, index) => {
         const dateStr = formatShortDateOnly(notif.date);
@@ -1123,31 +1056,8 @@ function renderTestNotifications(notifications) {
             </div>
             ${notif.link ? `<a href="${notif.link}" target="_blank" class="btn-action-sm" style="background: var(--primary-gradient);">ટેસ્ટ આપો <i class="fa-solid fa-arrow-right"></i></a>` : ''}
         `;
-        container.appendChild(div);
+        card.appendChild(div);
     });
-
-    initAutoScrollNotifications();
-}
-
-function initAutoScrollNotifications() {
-    const container = document.getElementById("notificationCard");
-    if (!container) return;
-
-    let isPaused = false;
-    container.onmouseenter = () => { isPaused = true; };
-    container.onmouseleave = () => { isPaused = false; };
-    container.ontouchstart = () => { isPaused = true; };
-    container.ontouchend = () => { setTimeout(() => { isPaused = false; }, 2500); };
-
-    notifScrollInterval = setInterval(() => {
-        if (isPaused) return;
-        if (container.scrollHeight > container.clientHeight) {
-            container.scrollTop += 1;
-            if (container.scrollTop >= container.scrollHeight - container.clientHeight - 1) {
-                setTimeout(() => { container.scrollTop = 0; }, 1500);
-            }
-        }
-    }, 45);
 }
 
 function renderAdminNotes() {
@@ -1324,7 +1234,7 @@ function groupAndRenderDriveFiles() {
 
         files.forEach(f => {
             const safeId = f.id;
-            const safeName = f.name.replace(/'/g, "&#39;").replace(/"/g, '&quot;');
+            const safeName = f.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
             html += `
                 <div class="drive-file-item" id="file-item-${safeId}" onclick="openDriveFile('${safeId}', '${safeName}')">
                     <div style="width: 28px; height: 28px; background: linear-gradient(135deg, #ef4444, #f43f5e); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -1392,9 +1302,25 @@ function closeDriveFolderModal() {
 }
 
 /* ============================================================
-   🌟 સીધું જ કેશમાંથી રિપોઝિટરી લોડ કરવાનું ઝડપી ફંક્શન
+   📚 Repo & Test System (મૂળ કાર્યક્ષમ પદ્ધતિ)
    ============================================================ */
-function scanAllRepoFiles() {
+async function scanAllRepoFiles() {
+    // પહેલાં ઝડપથી કેશ રેન્ડર કરી દો
+    renderRepoGrid();
+
+    const promises = REPO_LIST.map(async (repo) => {
+        try {
+            const res = await fetch(`https://api.github.com/repos/niteshbariya/${repo}/contents/`);
+            if (res.ok) {
+                const items = await res.json();
+                const htmlFiles = items.filter(f => f.name.endsWith('.html')).map(f => f.name);
+                if (htmlFiles.length > 0) {
+                    repoFilesCache[repo] = htmlFiles;
+                }
+            }
+        } catch (e) {}
+    });
+    await Promise.all(promises);
     renderRepoGrid();
 }
 
@@ -1438,72 +1364,23 @@ function filterAndRefreshData() {
     renderHistoryTable();
 }
 
-function convertGujaratiDigitsToEnglish(str) {
-    if (!str) return "";
-    const guj = ["૦", "૧", "૨", "૩", "૪", "૫", "૬", "૭", "૮", "૯"];
-    let res = String(str);
-    for (let i = 0; i < 10; i++) {
-        res = res.split(guj[i]).join(i.toString());
-    }
-    return res;
-}
-
 function isFileAttemptedByRecord(fileName, repoName, recordsList) {
-    const cleanFileName = fileName.split('/').pop();
-    const rawClean = cleanFileName.replace(/\.html$/i, '').toLowerCase().trim();
-    const cleanNoSpace = rawClean.replace(/[\s\-_()]+/g, '');
+    const clean = fileName.replace('.html', '').toLowerCase();
+    const cleanNoSpace = clean.replace(/\s+/g, '');
+    const rName = repoName.toLowerCase();
 
     return recordsList.find(r => {
-        const subRaw = (r.subject || "").toLowerCase().trim();
-        const sub = convertGujaratiDigitsToEnglish(subRaw);
-        const subNoSpace = sub.replace(/[\s\-_()]+/g, '');
+        const sub = (r.subject || "").toLowerCase().trim();
+        const subNoSpace = sub.replace(/\s+/g, '');
 
-        if (sub.includes(rawClean) || subNoSpace.includes(cleanNoSpace)) {
-            return true;
+        if (sub.includes(clean) || sub.includes(cleanNoSpace) || sub.includes(rName)) return true;
+        if (clean.includes("anew") || clean.includes("1a") || clean.includes("bal")) {
+            if (sub.includes("વિકાસ") || sub.includes("પૂર્વ પ્રાથમિક") || sub.includes("hots") || sub.includes("કોર્ષ - ૧") || sub.includes("બાળકો")) return true;
         }
-
-        const is100File = rawClean.includes("100") || rawClean.includes("part");
-        const is100Sub = sub.includes("100") || sub.includes("part");
-
-        if (is100File !== is100Sub) {
-            return false;
-        }
-
-        if (rawClean.includes("5b") || rawClean.includes("evs")) {
-            if (sub.includes("5 (બ)") || sub.includes("5(બ)") || sub.includes("પર્યાવરણ") || sub.includes("evs")) {
-                return true;
-            }
-        }
-
-        if (rawClean.includes("1a")) {
-            if (sub.includes("1 (અ)") || sub.includes("1(અ)") || sub.includes("વિકાસ") || sub.includes("બાળકો")) {
-                return true;
-            }
-        }
-
-        if (rawClean.includes("1b")) {
-            if (sub.includes("1 (બ)") || sub.includes("1(બ)") || sub.includes("અધ્યેતા") || sub.includes("મૂલ્યાંકન")) {
-                return true;
-            }
-        }
-
-        if (rawClean.includes("math")) {
-            if (sub.includes("ગણિત") || sub.includes("math")) {
-                return true;
-            }
-        }
-
-        if (rawClean.includes("guj")) {
-            if (sub.includes("ગુજરાતી") || sub.includes("guj")) {
-                return true;
-            }
-        }
-
-        if (rawClean.includes("sy")) {
-            if (sub.includes("દ્વિતીય") || sub.includes("બોધ") || sub.includes("sy")) {
-                return true;
-            }
-        }
+        if ((clean.includes("1b") || clean.includes("sy")) && (sub.includes("બોધ") || sub.includes("અધ્યયન") || sub.includes("દ્વિતીય"))) return true;
+        if (clean.includes("maths") && sub.includes("ગણિત")) return true;
+        if (clean.includes("evs") && (sub.includes("પર્યાવરણ") || sub.includes("evs"))) return true;
+        if (clean.includes("guj") && sub.includes("ગુજરાતી")) return true;
 
         return false;
     });
@@ -1517,7 +1394,7 @@ function renderRepoGrid() {
     REPO_LIST.forEach(repoName => {
         let files = repoFilesCache[repoName] || ["index.html"];
         
-        // જો રિપોઝિટરીમાં 1 કરતાં વધુ ફાઇલો હોય તો index.html છુપાવી દો
+        // જો અન્ય ફાઇલો હોય તો index.html ને ફિલ્ટર કરી કાઢી નાખો
         if (files.length > 1) {
             files = files.filter(f => f.toLowerCase() !== "index.html");
         }
@@ -1528,7 +1405,6 @@ function renderRepoGrid() {
             if (!attempt) repoPending++;
         });
         totalPendingAll += repoPending;
-
         const card = document.createElement("div");
         card.className = `repo-box ${currentOpenRepo === repoName ? 'active-repo' : ''}`;
         card.onclick = () => openRepoFiles(repoName);
@@ -1570,10 +1446,8 @@ async function openRepoFiles(repoName) {
         const isAttempted = !!attemptRecord;
         
         const testUrl = (fileName === "index.html")
-            ? `https://${GITHUB_USERNAME}.github.io/${repoName}/`
-            : `https://${GITHUB_USERNAME}.github.io/${repoName}/${fileName}`;
-            
-        const displayName = fileName.split('/').pop();
+            ? `https://niteshbariya.github.io/${repoName}/`
+            : `https://niteshbariya.github.io/${repoName}/${fileName}`;
         const fileCard = document.createElement("div");
         fileCard.className = "file-card";
         fileCard.style.borderLeft = `4.5px solid ${isAttempted ? '#10b981' : '#f43f5e'}`;
@@ -1595,7 +1469,7 @@ async function openRepoFiles(repoName) {
         fileCard.innerHTML = `
             <div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span class="file-exact-name"><i class="fa-regular fa-file-lines"></i> ${displayName}</span>
+                    <span class="file-exact-name"><i class="fa-regular fa-file-lines"></i> ${fileName}</span>
                     <span style="color:${isAttempted ? '#10b981' : '#ef4444'}; background:${isAttempted ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)'}; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:800;">
                         ${isAttempted ? '✅ પૂર્ણ' : '⏳ બાકી'}
                     </span>
@@ -1625,11 +1499,10 @@ async function fetchQuestionsFromLiveSource(targetSubject) {
     const s = targetSubject.toLowerCase();
     let candidates = [];
     
-    if (s.includes("evs") || s.includes("પર્યાવરણ") || s.includes("૫ (બ)")) {
-        candidates.push({ repo: "fy", file: "5bevspart1q100.html" });
-        candidates.push({ repo: "fy", file: "5bevs.html" });
+    if (s.includes("evs") || s.includes("પર્યાવરણ")) {
         candidates.push({ repo: "evs", file: "index.html" });
         candidates.push({ repo: "paryavanrantest", file: "index.html" });
+        candidates.push({ repo: "fy", file: "5bevs.html" });
     }
     if (s.includes("nep") || s.includes("નીતિ")) {
         candidates.push({ repo: "baou", file: "index.html" });
@@ -1646,8 +1519,8 @@ async function fetchQuestionsFromLiveSource(targetSubject) {
         candidates.push({ repo: "sy", file: "index.html" });
     }
     if (s.includes("fy") || s.includes("પ્રથમ") || s.includes("વિકાસ")) {
-        candidates.push({ repo: "fy", file: "1anew100question.html" });
         candidates.push({ repo: "fy", file: "1a.html" });
+        candidates.push({ repo: "fy", file: "1anew100question.html" });
     }
 
     REPO_LIST.forEach(r => {
@@ -1656,8 +1529,8 @@ async function fetchQuestionsFromLiveSource(targetSubject) {
 
     for (const c of candidates) {
         const testUrl = (c.file === "index.html")
-            ? `https://${GITHUB_USERNAME}.github.io/${c.repo}/`
-            : `https://${GITHUB_USERNAME}.github.io/${c.repo}/${c.file}`;
+            ? `https://niteshbariya.github.io/${c.repo}/`
+            : `https://niteshbariya.github.io/${c.repo}/${c.file}`;
         try {
             const res = await fetch(testUrl);
             if (res.ok) {
@@ -1692,15 +1565,6 @@ async function openTestModal(idx) {
     document.getElementById("reviewModal").style.display = "flex";
     window.history.pushState({ modalOpen: true }, "");
 
-    currentModalRawReviewHtml = item.reviewHtml || "";
-    currentModalLiveQuestions = null;
-
-    fetchQuestionsFromLiveSource(item.subject).then(liveData => {
-        if (liveData && liveData.questions) {
-            currentModalLiveQuestions = liveData.questions;
-        }
-    });
-
     let loaded = false;
 
     if (item.reviewHtml && item.reviewHtml.length > 50) {
@@ -1710,7 +1574,6 @@ async function openTestModal(idx) {
     if (!loaded) {
         const liveData = await fetchQuestionsFromLiveSource(item.subject);
         if (liveData && liveData.questions && liveData.questions.length > 0) {
-            currentModalLiveQuestions = liveData.questions;
             renderQuestionsToModal(liveData.questions, item);
             loaded = true;
         }
@@ -1729,13 +1592,9 @@ async function openTestModal(idx) {
 }
 
 async function loadDirectQuestionPaper(repoName, fileName, isAttempted) {
-    if (!isAttempted && !isAdminUser) {
-        alert("પહેલાં આ કસોટી આપવી અનિવાર્ય છે. કસોટી આપ્યા પછી જ પ્રશ્નપત્ર અને ઉત્તરવહી જોઈ શકાશે!");
-        return;
-    }
     const testUrl = (fileName === "index.html")
-        ? `https://${GITHUB_USERNAME}.github.io/${repoName}/`
-        : `https://${GITHUB_USERNAME}.github.io/${repoName}/${fileName}`;
+        ? `https://niteshbariya.github.io/${repoName}/`
+        : `https://niteshbariya.github.io/${repoName}/${fileName}`;
     document.getElementById("modalHeading").innerText = `${repoName}/${fileName} - પ્રશ્નપત્ર & ઉત્તરવહી`;
     document.getElementById("pdfDocSubject").innerText = `${repoName}/${fileName} - મૂલ્યાંકન પ્રશ્નપત્ર`;
     
@@ -1762,11 +1621,11 @@ async function loadDirectQuestionPaper(repoName, fileName, isAttempted) {
     
     document.getElementById("reviewModal").style.display = "flex";
     window.history.pushState({ modalOpen: true }, "");
-    const safeBaseName = fileName.replace(/[\/\\]/g, '_').replace('.html', '');
-    currentBaseFilename = `${repoName}_${safeBaseName}`;
+    currentBaseFilename = `${repoName}_${fileName.replace('.html','')}`;
     
-    currentModalRawReviewHtml = (sheetRecord && sheetRecord.reviewHtml) ? sheetRecord.reviewHtml : "";
-    currentModalLiveQuestions = null;
+    if (sheetRecord && sheetRecord.reviewHtml && sheetRecord.reviewHtml.length > 50) {
+        if (parseAndRenderReviewHtml(sheetRecord.reviewHtml)) return;
+    }
 
     try {
         const response = await fetch(testUrl);
@@ -1778,23 +1637,12 @@ async function loadDirectQuestionPaper(repoName, fileName, isAttempted) {
         }
         
         if (foundQuestions && foundQuestions.length > 0) {
-            currentModalLiveQuestions = foundQuestions;
-            if (currentModalRawReviewHtml && currentModalRawReviewHtml.length > 50) {
-                parseAndRenderReviewHtml(currentModalRawReviewHtml);
-            } else {
-                renderQuestionsToModal(foundQuestions, sheetRecord);
-            }
-        } else if (currentModalRawReviewHtml && currentModalRawReviewHtml.length > 50) {
-            parseAndRenderReviewHtml(currentModalRawReviewHtml);
+            renderQuestionsToModal(foundQuestions, sheetRecord);
         } else {
             qContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444;">પ્રશ્નો મળી શક્યા નહીં.</div>`;
         }
     } catch(err) {
-        if (currentModalRawReviewHtml && currentModalRawReviewHtml.length > 50) {
-            parseAndRenderReviewHtml(currentModalRawReviewHtml);
-        } else {
-            qContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444;">પ્રશ્નપત્ર લોડ કરવામાં ક્ષતિ આવી.</div>`;
-        }
+        qContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444;">પ્રશ્નપત્ર લોડ કરવામાં ક્ષતિ આવી.</div>`;
     }
 }
 
@@ -1810,11 +1658,9 @@ function renderQuestionsToModal(questions, sheetRecord) {
         let correctOptText = ans;
         if (opts.length > 0) {
             if (typeof ans === 'number' && opts[ans] !== undefined) {
-                correctOptText = `(${String.fromCharCode(65 + ans)}) ${cleanOptionText(opts[ans])}`;
+                correctOptText = `(${String.fromCharCode(65 + ans)}) ${opts[ans]}`;
             } else if (typeof ans === 'string' && /^[0-3]$/.test(ans)) {
-                correctOptText = `(${String.fromCharCode(65 + parseInt(ans, 10))}) ${cleanOptionText(opts[parseInt(ans, 10)])}`;
-            } else {
-                correctOptText = cleanOptionText(ans);
+                correctOptText = `(${String.fromCharCode(65 + parseInt(ans, 10))}) ${opts[parseInt(ans, 10)]}`;
             }
         }
         
@@ -1838,12 +1684,8 @@ function renderQuestionsToModal(questions, sheetRecord) {
                     ${isWrong ? '<span style="color:#ef4444; font-size:12px; font-weight:800;">(ખોટો પડેલ ❌)</span>' : ''}
                 </div>
                 ${opts.length > 0 ? `
-                    <div class="pdf-options-list" style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
-                        ${opts.map((opt, oIdx) => `
-                            <div style="background:#f8fafc; padding:6px 10px; border-radius:6px; border:1px solid #e2e8f0;">
-                                <strong>(${String.fromCharCode(65 + oIdx)})</strong> ${cleanOptionText(opt)}
-                            </div>
-                        `).join('')}
+                    <div class="pdf-options-list">
+                        ${opts.map((opt, oIdx) => `<div><strong>(${String.fromCharCode(65 + oIdx)})</strong> ${opt}</div>`).join('')}
                     </div>
                 ` : ''}
                 ${isWrong && userWrongAns ? `
@@ -1892,94 +1734,54 @@ function parseAndRenderReviewHtml(rawHtml) {
 }
 
 function filterModalQuestions(type) {
-    const qContainer = document.getElementById("pdfDocQuestions");
+    const items = document.querySelectorAll("#pdfDocQuestions .pdf-q-item");
     const btnAll = document.getElementById("btnFilterAll");
     const btnWrong = document.getElementById("btnFilterWrong");
     const btnBlank = document.getElementById("btnFilterBlank");
-
-    if (type === "blank") {
-        if (currentModalLiveQuestions && currentModalLiveQuestions.length > 0) {
-            let blankHtml = "";
-            currentModalLiveQuestions.forEach((q, idx) => {
-                const qText = q.question || q.q || `પ્રશ્ન ${idx + 1}`;
-                const opts = q.options || q.opts || q.choices || [];
-                blankHtml += `
-                    <div class="pdf-q-item" style="background:#ffffff; border:1.5px solid #cbd5e1; margin-bottom:12px; padding:12px; border-radius:8px;">
-                        <div class="pdf-q-title" style="font-weight:800; font-size:14px; color:#1e293b; margin-bottom:8px;">
-                            ${qText}
-                        </div>
-                        ${opts.length > 0 ? `
-                            <div class="pdf-options-list" style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:13px; color:#334155;">
-                                ${opts.map((opt, oIdx) => `
-                                    <div style="background:#f8fafc; padding:7px 10px; border-radius:6px; border:1px solid #e2e8f0;">
-                                        <strong>(${String.fromCharCode(65 + oIdx)})</strong> ${cleanOptionText(opt)}
-                                    </div>
-                                `).join('')}
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
+    let wrongCount = 0;
+    
+    items.forEach(item => {
+        const isWrong = item.getAttribute("data-wrong") === "true" || item.classList.contains("is-wrong-answer") || item.innerHTML.includes("❌");
+        
+        if (type === "blank") {
+            item.style.display = "block";
+            item.style.backgroundColor = "#ffffff";
+            item.style.borderColor = "#cbd5e1";
+            
+            item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box").forEach(el => el.style.display = "none");
+            item.querySelectorAll("p").forEach(p => {
+                if (p.innerHTML.includes("ઉત્તર") || p.innerHTML.includes("જવાબ") || p.innerHTML.includes("સમજૂતી") || p.innerHTML.includes("✅") || p.innerHTML.includes("❌")) {
+                    p.style.display = "none";
+                }
             });
-            qContainer.innerHTML = blankHtml;
+        } else if (type === "wrong") {
+            item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box, p").forEach(el => el.style.display = "");
+            if (isWrong) { 
+                item.style.display = "block"; 
+                wrongCount++; 
+            } else { 
+                item.style.display = "none"; 
+            }
         } else {
-            const items = qContainer.querySelectorAll(".pdf-q-item, div[style*='border']");
-            items.forEach(item => {
-                item.style.display = "block";
+            item.style.display = "block";
+            item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box, p").forEach(el => el.style.display = "");
+            if (isWrong) {
+                item.style.backgroundColor = "#fff5f5";
+                item.style.borderColor = "#ef4444";
+            } else {
                 item.style.backgroundColor = "#ffffff";
                 item.style.borderColor = "#cbd5e1";
-
-                item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box").forEach(el => el.style.display = "none");
-                item.querySelectorAll("p").forEach(p => {
-                    const txt = p.innerText || "";
-                    if (txt.includes("ઉત્તર:") || txt.includes("જવાબ:") || txt.includes("સમજૂતી:") || txt.includes("✅") || txt.includes("❌")) {
-                        p.style.display = "none";
-                    }
-                });
-            });
-        }
-    } else {
-        if (currentModalRawReviewHtml && currentModalRawReviewHtml.length > 50) {
-            parseAndRenderReviewHtml(currentModalRawReviewHtml);
-        } else if (currentModalLiveQuestions && currentModalLiveQuestions.length > 0) {
-            renderQuestionsToModal(currentModalLiveQuestions, null);
-        }
-
-        const items = qContainer.querySelectorAll(".pdf-q-item, div[style*='border']");
-        let wrongCount = 0;
-
-        items.forEach(item => {
-            const isWrong = item.getAttribute("data-wrong") === "true" || item.classList.contains("is-wrong-answer") || item.innerHTML.includes("❌");
-            item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box, p").forEach(el => el.style.display = "");
-
-            if (type === "wrong") {
-                if (isWrong) {
-                    item.style.display = "block";
-                    item.style.backgroundColor = "#fff5f5";
-                    item.style.borderColor = "#ef4444";
-                    wrongCount++;
-                } else {
-                    item.style.display = "none";
-                }
-            } else {
-                item.style.display = "block";
-                if (isWrong) {
-                    item.style.backgroundColor = "#fff5f5";
-                    item.style.borderColor = "#ef4444";
-                } else {
-                    item.style.backgroundColor = "#ffffff";
-                    item.style.borderColor = "#cbd5e1";
-                }
             }
-        });
-
-        if (type === "wrong" && wrongCount === 0) {
-            alert("અભિનંદન! આ કસોટીમાં કોઈ પ્રશ્ન ખોટો પડ્યો નથી.");
         }
-    }
-
+    });
+    
     if (btnAll) btnAll.style.opacity = (type === "all") ? "1" : "0.6";
     if (btnWrong) btnWrong.style.opacity = (type === "wrong") ? "1" : "0.6";
     if (btnBlank) btnBlank.style.opacity = (type === "blank") ? "1" : "0.6";
+    
+    if (type === "wrong" && wrongCount === 0) {
+        alert("અભિનંદન! આ કસોટીમાં કોઈ પ્રશ્ન ખોટો પડ્યો નથી.");
+    }
 }
 
 function extractQuestionsArrayFromText(text) {
