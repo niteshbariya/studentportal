@@ -841,19 +841,48 @@
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 const GITHUB_USERNAME = "niteshbariya";
 
-// 🌟 ક્યારેય ટેસ્ટ લિસ્ટમાં ન આવવી જોઈએ તેવી રેપોઝિટરીઝ (સંપૂર્ણ બ્લેકલિસ્ટ)
-const EXCLUDED_REPOS = [
-    "student-portal",
-    "studentportal",
-    "student_portal",
-    "portal",
-    "niteshbariya.github.io",
-    "niteshbariya"
+// 🌟 ૧. સ્ક્રીનશોટ મુજબની તમામ કસોટી રિપોઝિટરીઝ (studentportal સિવાયની)
+let REPO_LIST = [
+    "fy",
+    "evs",
+    "sy",
+    "maths",
+    "paryavanrantest",
+    "etc",
+    "revision",
+    "baou",
+    "mocktest",
+    "mission27",
+    "guj"
 ];
 
-// ગતિશીલ રેપો લિસ્ટ (Default Repos)
-let REPO_LIST = ["fy", "sy", "evs", "maths", "paryavanrantest", "etc", "revision", "baou", "guj"];
-let repoFilesCache = {};
+// 🌟 ૨. રિપોઝિટરી વાર ટેસ્ટ ફાઇલોનું ચોક્કસ લિસ્ટ
+let repoFilesCache = {
+    "fy": [
+        "1anew100question.html",
+        "1a.html",
+        "1b.html",
+        "1bnew.html",
+        "2a.html",
+        "2b.html",
+        "3.html",
+        "4aguj.html",
+        "4beng.html",
+        "5bevs.html",
+        "5bevspart1q100.html",
+        "module3.html"
+    ],
+    "evs": ["index.html"],
+    "sy": ["index.html"],
+    "maths": ["index.html"],
+    "paryavanrantest": ["index.html"],
+    "etc": ["index.html"],
+    "revision": ["index.html"],
+    "baou": ["index.html"],
+    "mocktest": ["index.html"],
+    "mission27": ["index.html"],
+    "guj": ["index.html"]
+};
 
 let userEmail = "";
 let allRawRecords = [];
@@ -964,7 +993,7 @@ async function setupDashboardEnvironment(role, name) {
     populateSubjectDropdown();
     filterAndRefreshData();
     renderAdminNotes();
-    await scanAllRepoFiles();
+    scanAllRepoFiles();
 }
 
 function switchTheme() {
@@ -1363,69 +1392,9 @@ function closeDriveFolderModal() {
 }
 
 /* ============================================================
-   🌟 તમામ માન્ય ટેસ્ટ રેપોઝિટરીઝ & તેની બધી ફાઇલો લાવવાનું સચોટ લોજિક
+   🌟 સીધું જ કેશમાંથી રિપોઝિટરી લોડ કરવાનું ઝડપી ફંક્શન
    ============================================================ */
-async function scanAllRepoFiles() {
-    try {
-        // ૧. યુઝરની તમામ પબ્લિક રિપોઝિટરીઝ લાવો
-        const resUserRepos = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100`);
-        if (resUserRepos.ok) {
-            const allRepos = await resUserRepos.json();
-            
-            // ૨. student-portal અને અન્ય બિન-જરૂરી રેપોને ફિલ્ટર કરી ફક્ત સાચી ટેસ્ટ રેપોઝિટરીઝ રાખો
-            const autoDetectedRepos = allRepos
-                .map(r => r.name)
-                .filter(name => !EXCLUDED_REPOS.some(ex => name.toLowerCase().includes(ex.toLowerCase())));
-            
-            if (autoDetectedRepos.length > 0) {
-                REPO_LIST = Array.from(new Set([...REPO_LIST, ...autoDetectedRepos]));
-            }
-        }
-    } catch (e) {
-        console.warn("User repo discovery fallback to default list", e);
-    }
-
-    // ૩. Recursive Git Tree API દ્વારા સબ-ફોલ્ડર્સ સહિતની તમામ HTML ફાઇલો સ્કેન કરો
-    const promises = REPO_LIST.map(async (repo) => {
-        try {
-            let treeRes = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo}/git/trees/main?recursive=1`);
-            if (!treeRes.ok) {
-                treeRes = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo}/git/trees/master?recursive=1`);
-            }
-
-            if (treeRes.ok) {
-                const treeData = await treeRes.json();
-                if (treeData && treeData.tree) {
-                    const htmlFiles = treeData.tree
-                        .filter(item => item.type === "blob" && item.path.toLowerCase().endsWith('.html'))
-                        .map(item => item.path);
-
-                    if (htmlFiles.length > 0) {
-                        repoFilesCache[repo] = htmlFiles;
-                        return;
-                    }
-                }
-            }
-        } catch (e) {
-            console.warn(`Git Tree API failed for ${repo}`, e);
-        }
-
-        // જો Git Tree API ફેલ થાય તો સામાન્ય contents API વાપરો
-        try {
-            const res = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo}/contents/`);
-            if (res.ok) {
-                const items = await res.json();
-                const htmlFiles = items
-                    .filter(f => f.name && f.name.toLowerCase().endsWith('.html'))
-                    .map(f => f.name);
-                if (htmlFiles.length > 0) {
-                    repoFilesCache[repo] = htmlFiles;
-                }
-            }
-        } catch (err) {}
-    });
-
-    await Promise.all(promises);
+function scanAllRepoFiles() {
     renderRepoGrid();
 }
 
@@ -1546,13 +1515,20 @@ function renderRepoGrid() {
     let totalPendingAll = 0;
 
     REPO_LIST.forEach(repoName => {
-        const files = repoFilesCache[repoName] || ["index.html"];
+        let files = repoFilesCache[repoName] || ["index.html"];
+        
+        // જો રિપોઝિટરીમાં 1 કરતાં વધુ ફાઇલો હોય તો index.html છુપાવી દો
+        if (files.length > 1) {
+            files = files.filter(f => f.toLowerCase() !== "index.html");
+        }
+
         let repoPending = 0;
         files.forEach(fileName => {
             const attempt = isFileAttemptedByRecord(fileName, repoName, filteredRecords);
             if (!attempt) repoPending++;
         });
         totalPendingAll += repoPending;
+
         const card = document.createElement("div");
         card.className = `repo-box ${currentOpenRepo === repoName ? 'active-repo' : ''}`;
         card.onclick = () => openRepoFiles(repoName);
@@ -1582,7 +1558,11 @@ async function openRepoFiles(repoName) {
     document.getElementById("activeRepoTitle").innerHTML = `<i class="fa-regular fa-folder-open"></i> ${repoName}`;
     document.getElementById("activeRepoSubtitle").innerText = `કસોટી ફાઈલો:`;
     
-    const fileList = repoFilesCache[repoName] || ["index.html"];
+    let fileList = repoFilesCache[repoName] || ["index.html"];
+    if (fileList.length > 1) {
+        fileList = fileList.filter(f => f.toLowerCase() !== "index.html");
+    }
+
     listGrid.innerHTML = "";
     
     fileList.forEach(fileName => {
