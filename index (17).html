@@ -1,0 +1,2216 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>પર્ફોર્મન્સ & ટેસ્ટ પોર્ટલ - Nitesh Baria Web Developer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #06b6d4 100%);
+            --bg-color: #f8fafc;
+            --container-bg: #ffffff;
+            --card-bg: #ffffff;
+            --inner-box: #f1f5f9;
+            --text-color: #0f172a;
+            --text-muted: #64748b;
+            --heading-color: #1e3a8a;
+            --border-color: #cbd5e1;
+            --table-border: #94a3b8;
+            --table-header: #1e3a8a;
+            --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+            --gradient-violet: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+            --gradient-emerald: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            --gradient-amber: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+            --gradient-rose: linear-gradient(135deg, #e11d48 0%, #f43f5e 100%);
+            --gradient-cyan: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+        }
+        body.dark-mode {
+            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #38bdf8 100%);
+            --bg-color: #030712;
+            --container-bg: #0b1329;
+            --card-bg: #111c44;
+            --inner-box: #1e293b;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --heading-color: #93c5fd;
+            --border-color: #334155;
+            --table-border: #475569;
+            --table-header: #0f172a;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Noto Sans Gujarati', 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 12px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .portal-wrapper {
+            width: 100%;
+            max-width: 1600px;
+            background: var(--container-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--border-color);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        @media (max-width: 768px) {
+            body { padding: 4px; }
+            .portal-wrapper { padding: 8px; border-radius: 12px; gap: 10px; }
+        }
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .portal-brand { display: flex; align-items: center; gap: 10px; }
+        .portal-logo-icon {
+            width: 42px; height: 42px;
+            background: var(--primary-gradient);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 18px;
+            flex-shrink: 0;
+        }
+        .brand-text h1 {
+            font-size: 19px; font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .brand-text p { font-size: 11.5px; color: var(--text-muted); font-weight: 600; }
+        .nav-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .badge-role {
+            padding: 4px 10px; border-radius: 30px; font-size: 11px; font-weight: 700;
+            background: rgba(37, 99, 235, 0.1); color: #2563eb; border: 1.5px solid #60a5fa;
+        }
+        body.dark-mode .badge-role { background: #1e3a8a; color: #93c5fd; border-color: #3b82f6; }
+        .creator-tag {
+            padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 800;
+            background: var(--gradient-violet); color: white; display: inline-flex; align-items: center; gap: 5px;
+        }
+        .theme-toggle-btn {
+            background: var(--inner-box); color: var(--text-color);
+            border: 1.5px solid var(--border-color); padding: 5px 12px;
+            font-size: 11.5px; font-weight: 700; border-radius: 20px; cursor: pointer;
+            display: flex; align-items: center; gap: 5px;
+        }
+
+        #loginScreen {
+            max-width: 420px; margin: 40px auto; text-align: center;
+            padding: 26px 20px; background: var(--card-bg);
+            border-radius: 14px; box-shadow: var(--shadow); border: 2px solid var(--border-color);
+        }
+        .login-title { font-size: 18px; font-weight: 800; color: var(--heading-color); margin-bottom: 14px; }
+        .login-label { display: block; text-align: left; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: var(--heading-color); }
+        .login-input {
+            width: 100%; padding: 9px 12px; border: 1.5px solid var(--border-color);
+            border-radius: 8px; font-size: 13px; margin-bottom: 12px;
+            background: var(--inner-box); color: var(--text-color); outline: none;
+        }
+        .btn-gradient {
+            background: var(--primary-gradient); color: white; border: none;
+            padding: 9px 16px; font-size: 13px; font-weight: 700; border-radius: 8px;
+            cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+
+        #dashboardScreen { display: none; }
+        .filter-ribbon {
+            background: var(--card-bg); border: 2px solid var(--border-color);
+            border-radius: 12px; padding: 10px 14px;
+            display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
+        }
+        .select-styled {
+            padding: 6px 10px; border-radius: 6px; border: 1.5px solid var(--border-color);
+            background: var(--inner-box); color: var(--text-color); font-size: 12.5px; font-weight: 600;
+        }
+        .student-profile-card {
+            background: var(--card-bg); border: 2px solid var(--border-color);
+            border-radius: 14px; padding: 14px; position: relative;
+        }
+        .student-profile-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #f59e0b, #10b981);
+        }
+        .avatar-box {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: var(--gradient-violet); display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 22px; font-weight: 800; flex-shrink: 0;
+        }
+        .contact-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+        .pill-contact {
+            background: var(--inner-box); padding: 3px 8px; border-radius: 6px;
+            font-size: 11px; font-weight: 600; color: var(--text-color); border: 1px solid var(--border-color);
+            display: inline-flex; align-items: center; gap: 4px; text-decoration: none;
+        }
+        .profile-stats-row {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            margin-top: 14px; padding-top: 12px; border-top: 2px dashed var(--border-color);
+        }
+        @media (max-width: 768px) { .profile-stats-row { grid-template-columns: repeat(2, 1fr); } }
+        .mini-stat { padding: 8px; border-radius: 8px; text-align: center; color: white; }
+        .stat-blue { background: var(--gradient-cyan); }
+        .stat-emerald { background: var(--gradient-emerald); }
+        .stat-amber { background: var(--gradient-amber); }
+        .stat-rose { background: var(--gradient-rose); }
+        .mini-stat-title { font-size: 10.5px; font-weight: 700; }
+        .mini-stat-val { font-size: 18px; font-weight: 900; margin-top: 2px; }
+
+        .analytics-two-col { display: grid; grid-template-columns: 1fr 1.3fr; gap: 14px; }
+        @media (max-width: 900px) { .analytics-two-col { grid-template-columns: 1fr; } }
+        .speedometer-card, .chart-box-card {
+            background: var(--card-bg); border: 2px solid var(--border-color);
+            border-radius: 14px; padding: 14px;
+        }
+        .gauge-wrapper {
+            position: relative; width: 220px; height: 110px;
+            display: flex; justify-content: center; align-items: flex-end; margin: 0 auto;
+        }
+        .gauge-value-display { position: absolute; bottom: 4px; text-align: center; }
+        .gauge-percent { font-size: 26px; font-weight: 900; color: var(--heading-color); }
+
+        .study-hub-two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        @media (max-width: 900px) {
+            .study-hub-two-col { grid-template-columns: 1fr; }
+        }
+        .hub-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .hub-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1.5px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+        .hub-header h3 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--heading-color);
+        }
+        .folder-banner-box {
+            background: var(--inner-box);
+            border: 1.5px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .folder-sub-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 8px;
+        }
+        .folder-sub-badge {
+            background: rgba(37, 99, 235, 0.08);
+            border: 1px solid #93c5fd;
+            color: #2563eb;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        #adminNotesList {
+            max-height: 250px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            padding-right: 4px;
+        }
+        #adminNotesList::-webkit-scrollbar { width: 4px; }
+        #adminNotesList::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        .admin-note-item {
+            background: var(--inner-box);
+            border-left: 4px solid #f59e0b;
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            transition: all 0.2s ease;
+        }
+        .admin-note-item:hover {
+            border-left-color: #2563eb;
+            background: rgba(37, 99, 235, 0.04);
+        }
+        .note-inline-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 7px;
+            line-height: 1.45;
+        }
+        .note-tag-badge {
+            background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+            color: white;
+            font-size: 10.5px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+            letter-spacing: 0.3px;
+        }
+        .note-text-inline {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #1e3a8a;
+            flex: 1;
+            min-width: 160px;
+        }
+        body.dark-mode .note-text-inline { color: #93c5fd; }
+        .note-date-pill {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: rgba(148, 163, 184, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+        .note-image-box {
+            margin-top: 6px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1.5px solid var(--border-color);
+            max-height: 180px;
+            cursor: pointer;
+        }
+        .note-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .repo-hub-card {
+            background: var(--card-bg); border: 2px solid var(--border-color);
+            border-radius: 14px; padding: 16px;
+        }
+        .repo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; }
+        .repo-box {
+            background: var(--inner-box); border-radius: 10px; padding: 12px;
+            border: 2px solid var(--border-color); cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .repo-box:hover, .repo-box.active-repo { border-color: #2563eb; transform: translateY(-2px); }
+        .repo-name-tag { font-size: 15px; font-weight: 900; color: var(--heading-color); font-family: monospace; }
+        #repoFilesContainer {
+            margin-top: 14px; background: var(--inner-box); border: 2px solid #2563eb;
+            border-radius: 12px; padding: 14px; display: none;
+        }
+        .files-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .files-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+        .file-card {
+            background: var(--card-bg); border-radius: 10px; padding: 12px;
+            border: 2px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
+        }
+        .file-exact-name { font-size: 13.5px; font-weight: 800; color: var(--heading-color); font-family: monospace; }
+        .test-score-banner {
+            background: rgba(16, 185, 129, 0.12); border: 1px solid #10b981;
+            padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #065f46;
+            display: flex; justify-content: space-between;
+        }
+        .file-action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .btn-take-test {
+            background: var(--primary-gradient); color: white; text-decoration: none;
+            text-align: center; padding: 7px; font-size: 11.5px; font-weight: 700;
+            border-radius: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;
+        }
+        .btn-view-paper {
+            background: #0284c7; color: white; border: none; cursor: pointer;
+            padding: 7px; font-size: 11.5px; font-weight: 700;
+            border-radius: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;
+        }
+        .btn-locked-paper {
+            background: #94a3b8; color: #f1f5f9; border: none; cursor: not-allowed;
+            padding: 7px; font-size: 11px; font-weight: 700; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center; gap: 4px; opacity: 0.75;
+        }
+
+        .history-card {
+            background: var(--card-bg); border: 2px solid var(--border-color);
+            border-radius: 14px; padding: 14px;
+        }
+        .table-wrap { overflow-x: auto; border-radius: 10px; border: 1.5px solid var(--table-border); margin-top: 10px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 12.5px; }
+        th, td { padding: 8px 10px; border-right: 1.5px solid var(--border-color); border-bottom: 1.5px solid var(--border-color); vertical-align: middle; }
+        th:last-child, td:last-child { border-right: none; }
+        tr:last-child td { border-bottom: none; }
+        th { background: var(--table-header); color: #ffffff; font-weight: 700; white-space: nowrap; text-align: center; }
+        tbody tr:nth-child(even) { background-color: rgba(148, 163, 184, 0.08); }
+        
+        .student-stacked-name { font-weight: 800; line-height: 1.2; text-align: center; }
+        .student-stacked-name span { font-weight: 600; color: var(--text-muted); font-size: 11px; display: block; margin-top: 2px; }
+        .time-badge { font-family: monospace; font-size: 12px; font-weight: 700; color: var(--heading-color); text-align: center; display: block; }
+        .date-badge { font-family: monospace; font-size: 12px; font-weight: 700; text-align: center; display: block; }
+        
+        .btn-action-sm {
+            padding: 5px 8px; font-size: 11px; font-weight: 600; border-radius: 6px;
+            border: none; cursor: pointer; color: white; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
+        }
+        .portal-footer { text-align: center; padding: 12px 0 4px 0; font-size: 11.5px; color: var(--text-muted); font-weight: 700; }
+
+        .notification-card-wrapper {
+            background: var(--card-bg); border: 2px solid #f59e0b;
+            border-radius: 14px; padding: 12px 14px; margin-top: 6px;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);
+        }
+        .notif-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+            font-size: 13px; font-weight: 800; color: #d97706; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px;
+        }
+        .notification-scroll-container {
+            max-height: 180px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            padding-right: 4px;
+        }
+        .notification-scroll-container::-webkit-scrollbar { width: 4px; }
+        .notification-scroll-container::-webkit-scrollbar-thumb { background: #fcd34d; border-radius: 10px; }
+
+        .notif-item {
+            background: var(--inner-box); border-left: 4px solid #f59e0b;
+            padding: 8px 12px; margin-bottom: 8px; border-radius: 6px;
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        .notif-item:hover {
+            border-left-color: #2563eb;
+            background: rgba(37, 99, 235, 0.05);
+        }
+        .notif-item a { color: #2563eb; font-weight: 800; text-decoration: none; font-size: 11.5px; }
+        .notif-date { font-size: 10px; color: var(--text-muted); font-weight: 700; }
+        .new-badge { background: #ef4444; color: white; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.78); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 8px;
+            backdrop-filter: blur(3px);
+        }
+        .modal-box {
+            background: var(--card-bg); border-radius: 14px; width: 100%; max-width: 980px; 
+            height: 92vh; max-height: 92vh;
+            display: flex; flex-direction: column; overflow: hidden; border: 2px solid var(--border-color);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+        .modal-header { 
+            padding: 10px 16px; border-bottom: 2px solid var(--border-color); 
+            display: flex; justify-content: space-between; align-items: center; 
+            position: sticky; top: 0; background: var(--card-bg); z-index: 20;
+        }
+        .modal-close-icon-btn {
+            background: #ef4444; color: white; border: none; font-size: 13.5px; font-weight: 800;
+            padding: 5px 12px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
+            transition: all 0.2s;
+        }
+        .modal-close-icon-btn:hover { background: #dc2626; transform: scale(1.05); }
+
+        .modal-filter-row {
+            padding: 8px 16px; background: var(--inner-box); border-bottom: 1px solid var(--border-color);
+            display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: space-between;
+        }
+        .modal-body { padding: 14px; overflow-y: auto; flex: 1; }
+        .modal-footer { 
+            padding: 10px 16px; border-top: 2px solid var(--border-color); 
+            display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; 
+            position: sticky; bottom: 0; background: var(--card-bg); z-index: 20;
+        }
+        
+        #pdfPrintArea {
+            background: #ffffff !important;
+            color: #0f172a !important;
+            padding: 14px;
+            font-family: 'Noto Sans Gujarati', sans-serif;
+        }
+        .pdf-page-container {
+            border: 2px solid #1e3a8a;
+            border-radius: 6px;
+            padding: 14px;
+            background: #ffffff;
+        }
+        .pdf-header-banner {
+            border-bottom: 2px solid #1e3a8a;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .pdf-developer-badge { font-size: 10.5px; font-weight: 800; color: #2563eb; letter-spacing: 1px; text-transform: uppercase; }
+        .pdf-main-title { font-size: 17px; font-weight: 900; color: #1e3a8a; margin: 2px 0; }
+        .pdf-info-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+            background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px;
+            border-radius: 6px; font-size: 12px; margin-bottom: 12px;
+        }
+        .pdf-q-item {
+            border: 1.5px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            background: #ffffff;
+        }
+        .pdf-q-item.is-wrong-answer {
+            border: 2px solid #ef4444 !important;
+            background: #fff5f5 !important;
+        }
+        .pdf-q-title { font-size: 13.5px; font-weight: 800; color: #1e293b; margin-bottom: 6px; line-height: 1.4; }
+        .pdf-options-list { margin: 6px 0; font-size: 13px; color: #334155; line-height: 1.5; }
+        .pdf-ans-box {
+            background: #ecfdf5; border-left: 4px solid #10b981;
+            padding: 6px 10px; border-radius: 4px; font-size: 12.5px; font-weight: 800; color: #065f46; margin: 6px 0 4px 0;
+        }
+        .pdf-wrong-user-ans {
+            background: #fee2e2; border-left: 4px solid #ef4444;
+            padding: 6px 10px; border-radius: 4px; font-size: 12.5px; font-weight: 800; color: #991b1b; margin: 6px 0 4px 0;
+        }
+        .pdf-exp-box {
+            background: #eff6ff; border-left: 4px solid #3b82f6;
+            padding: 6px 10px; border-radius: 4px; font-size: 12px; color: #1e40af; font-weight: 600; margin-top: 6px;
+        }
+
+        .folder-accordion { border-bottom: 1px solid var(--border-color); }
+        .folder-accordion-header {
+            padding: 10px 14px; background: var(--card-bg); cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 800; font-size: 12.5px; color: var(--heading-color);
+            user-select: none; position: sticky; top: 0; z-index: 5; border-bottom: 1px solid var(--border-color);
+        }
+        .folder-accordion-header:hover { background: rgba(37, 99, 235, 0.05); }
+        .folder-accordion-content {
+            display: none; background: linear-gradient(180deg, rgba(37,99,235,0.05) 0%, rgba(37,99,235,0.12) 100%);
+            padding: 6px; border-radius: 0 0 10px 10px;
+        }
+        .folder-accordion.open .folder-accordion-content { display: block; }
+        .folder-accordion.open .folder-accordion-header { border-bottom: 2px solid #2563eb; }
+        .folder-accordion.open .folder-icon-toggle { transform: rotate(90deg); }
+        .folder-icon-toggle { transition: transform 0.2s; font-size: 10px; margin-right: 6px; }
+
+        .drive-file-item {
+            padding: 10px 12px; margin: 6px 4px; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; gap: 10px; transition: all 0.2s ease;
+            background: #ffffff; border: 1.5px solid transparent; box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+        }
+        body.dark-mode .drive-file-item { background: #1e293b; border-color: #334155; }
+        .drive-file-item:hover { transform: translateX(3px); border-color: #3b82f6 !important; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15); }
+        .drive-file-item.active-file {
+            background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(6,182,212,0.15)) !important;
+            border: 1.5px solid #2563eb !important; border-left: 4px solid #2563eb !important;
+        }
+
+        @media (max-width: 768px) {
+            #driveViewerModal .modal-box { height: 95vh !important; }
+            #driveViewerModal > .modal-box > div:nth-child(2) { flex-direction: column !important; }
+            #driveFileList { width: 100% !important; max-height: 35vh !important; border-right: none !important; border-bottom: 2px solid var(--border-color) !important; }
+            #driveViewerFrame { min-height: 55vh; }
+        }
+    </style>
+</head>
+<body>
+<div class="portal-wrapper">
+    <header class="top-navbar">
+        <div class="portal-brand">
+            <div class="portal-logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div class="brand-text">
+                <h1>સ્માર્ટ પર્ફોર્મન્સ & ટેસ્ટ પોર્ટલ</h1>
+                <p>Nitesh Baria - Web Developer</p>
+            </div>
+        </div>
+        <div class="nav-controls">
+            <span class="creator-tag"><i class="fa-solid fa-code"></i> Nitesh Baria Web Developer</span>
+            <button id="themeToggleBtn" class="theme-toggle-btn" onclick="switchTheme()">
+                <i class="fa-solid fa-moon" id="themeIcon"></i> <span id="themeText">ડાર્ક મોડ</span>
+            </button>
+            <span id="roleBadge" class="badge-role"><i class="fa-solid fa-user-graduate"></i> વિદ્યાર્થી પેનલ</span>
+            <button id="logoutBtn" style="display:none; background:var(--gradient-rose);" onclick="performLogout()" class="btn-action-sm">
+                <i class="fa-solid fa-right-from-bracket"></i> લૉગ આઉટ
+            </button>
+        </div>
+    </header>
+
+    <div id="loginScreen">
+        <div style="font-size: 32px; color: #3b82f6; margin-bottom: 8px;"><i class="fa-solid fa-shield-halved"></i></div>
+        <h2 class="login-title">સુરક્ષિત લૉગિન</h2>
+        <label class="login-label">📧 તમારું ઈમેઈલ આઈડી:</label>
+        <input type="email" id="loginEmailInput" class="login-input" placeholder="તમારું ઈમેઈલ અહીં લખો...">
+        <label class="login-label">🔑 પોર્ટલ પાસવર્ડ:</label>
+        <input type="password" id="loginPasswordInput" class="login-input" placeholder="પાસવર્ડ દાખલ કરો...">
+        <button id="loginSubmitBtn" class="btn-gradient" onclick="loginWithPassword()">
+            <i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો
+        </button>
+    </div>
+
+    <main id="dashboardScreen">
+        <section id="notificationSection" style="display: none;">
+            <div class="notification-card-wrapper">
+                <div class="notif-header">
+                    <span><i class="fa-solid fa-bell"></i> તાજી કસોટી નોટિફિકેશન</span>
+                    <span style="font-size: 10px; color: var(--text-muted);"><i class="fa-solid fa-arrows-up-down"></i> Auto-Scrolling</span>
+                </div>
+                <div class="notification-scroll-container" id="notificationCard"></div>
+            </div>
+        </section>
+
+        <section class="filter-ribbon">
+            <div class="filter-group" id="studentSelectWrapper" style="display: none;">
+                <span style="font-size: 12px; font-weight: 700; color: #a855f7;"><i class="fa-solid fa-users"></i> વિદ્યાર્થી:</span>
+                <select id="studentDropdown" class="select-styled" onchange="onStudentSelectChange()"></select>
+            </div>
+            <div class="filter-group">
+                <span style="font-size: 12px; font-weight: 700; color: #2563eb;"><i class="fa-solid fa-book-open"></i> વિષય ફિલ્ટર:</span>
+                <select id="subjectDropdown" class="select-styled" onchange="onSubjectFilterChange()">
+                    <option value="ALL">📋 તમામ કસોટીઓ</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="student-profile-card">
+            <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+                <div class="avatar-box" id="avatarInitial">ન</div>
+                <div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <h2 id="profName" style="font-size: 18px; font-weight: 800; color: var(--heading-color);">વિદ્યાર્થીનું નામ</h2>
+                        <span id="rankBadge" class="badge-role" style="background:#fef3c7; color:#b45309;">🌟 A+ ગ્રેડ</span>
+                    </div>
+                    <div class="contact-pills">
+                        <a id="phoneLink" href="#" class="pill-contact"><i class="fa-solid fa-phone" style="color: #2563eb;"></i> <span id="profPhone">-</span></a>
+                        <a id="whatsappLink" href="#" target="_blank" class="pill-contact" style="background:rgba(16, 185, 129, 0.1); color:#10b981;"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+                        <span class="pill-contact"><i class="fa-solid fa-envelope" style="color: var(--text-muted);"></i> <span id="profEmail">-</span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-stats-row">
+                <div class="mini-stat stat-blue">
+                    <div class="mini-stat-title"><i class="fa-solid fa-list-check"></i> કુલ કસોટી</div>
+                    <div class="mini-stat-val" id="statTests">0</div>
+                </div>
+                <div class="mini-stat stat-emerald">
+                    <div class="mini-stat-title"><i class="fa-solid fa-trophy"></i> સર્વોચ્ચ %</div>
+                    <div class="mini-stat-val" id="statHighest">0%</div>
+                </div>
+                <div class="mini-stat stat-amber">
+                    <div class="mini-stat-title"><i class="fa-solid fa-chart-line"></i> સરેરાશ %</div>
+                    <div class="mini-stat-val" id="statAvg">0%</div>
+                </div>
+                <div class="mini-stat stat-rose">
+                    <div class="mini-stat-title"><i class="fa-solid fa-clock-rotate-left"></i> બાકી કસોટી</div>
+                    <div class="mini-stat-val" id="statPendingTests">0</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="analytics-two-col">
+            <div class="speedometer-card">
+                <h4 style="font-size:14px; color:var(--heading-color); font-weight:700; margin-bottom:8px; text-align:center;">
+                    <i class="fa-solid fa-gauge-high" style="color:#2563eb;"></i> ઓવરઓલ પર્ફોર્મન્સ સ્પીડોમીટર
+                </h4>
+                <div class="gauge-wrapper">
+                    <canvas id="gaugeCanvas" width="220" height="110"></canvas>
+                    <div class="gauge-value-display">
+                        <div class="gauge-percent" id="gaugeDisplayValue">0%</div>
+                        <div style="font-size:11px; font-weight:700; color:var(--text-muted);" id="gaugeStatusText">સરેરાશ સ્કોર</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-box-card">
+                <h3 style="font-size:14px; font-weight:700; color:var(--heading-color); margin-bottom:8px;">
+                    <i class="fa-solid fa-chart-column" style="color:#2563eb;"></i> કસોટીવાર ટકાવારી પ્રગતિ
+                </h3>
+                <div style="height: 220px; width: 100%;">
+                    <canvas id="verticalProgressChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="study-hub-two-col">
+            <div class="hub-card">
+                <div>
+                    <div class="hub-header">
+                        <h3><i class="fa-solid fa-book-bookmark" style="color: #2563eb;"></i> ડિજિટલ પુસ્તકાલય - મિશન 27</h3>
+                        <span class="badge-role" style="background: rgba(37, 99, 235, 0.1); color: #2563eb; border-color: #60a5fa;">
+                            સાહિત્ય કેન્દ્ર
+                        </span>
+                    </div>
+                    <p style="font-size: 11.5px; color: var(--text-muted); margin: 6px 0;">
+                        તમામ સબ-કેટેગરીના પુસ્તકો અને ઉપયોગી PDF સીધા પોપ-અપમાં સુંદર રીતે વાંચી શકાશે:
+                    </p>
+                    <div class="folder-banner-box">
+                        <i class="fa-solid fa-folder-open fa-2x" style="color: #2563eb; margin-bottom: 6px;"></i>
+                        <h4 style="font-size: 14.5px; font-weight: 800; color: var(--heading-color);">મિશન 27 સાહિત્ય ભંડાર</h4>
+                        <div class="folder-sub-tags">
+                            <span class="folder-sub-badge"><i class="fa-regular fa-folder"></i> ૫ સબ-કેટેગરી</span>
+                            <span class="folder-sub-badge"><i class="fa-regular fa-file-pdf"></i> વાંચન PDF</span>
+                            <span class="folder-sub-badge"><i class="fa-solid fa-eye"></i> ડાયરેક્ટ રીડર</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-gradient" onclick="openDriveFolderModal()" style="padding: 9px; font-size: 12.5px;">
+                        <i class="fa-solid fa-book-open"></i> 📚 પુસ્તકાલય ખોલો અને વાંચો
+                    </button>
+                </div>
+            </div>
+
+            <div class="hub-card">
+                <div>
+                    <div class="hub-header">
+                        <h3><i class="fa-solid fa-bullhorn" style="color: #f59e0b;"></i> એડમિન નોટ્સ & અગત્યની સૂચનાઓ</h3>
+                        <span class="badge-role" style="background: rgba(245, 158, 11, 0.1); color: #d97706; border-color: #fbbf24;">
+                            Live Updates
+                        </span>
+                    </div>
+                    <p style="font-size: 11.5px; color: var(--text-muted); margin: 6px 0 8px 0;">
+                        શિક્ષક / એડમિન તરફથી અગત્યનું માર્ગદર્શન:
+                    </p>
+                    <div id="adminNotesList">
+                        <div style="text-align: center; color: var(--text-muted); padding: 25px; font-size: 12px;">
+                            <i class="fa-solid fa-spinner fa-spin"></i> નોટ્સ લોડ થઈ રહી છે...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="repo-hub-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                <div>
+                    <h3 style="font-size:16px; font-weight:800; color:var(--heading-color);">
+                        <i class="fa-solid fa-folder-tree" style="color:#2563eb;"></i> કસોટી રિપોઝિટરી કેન્દ્ર
+                    </h3>
+                </div>
+            </div>
+            <div class="repo-grid" id="repoCardsGrid"></div>
+            <div id="repoFilesContainer">
+                <div class="files-header">
+                    <div>
+                        <h4 id="activeRepoTitle" style="font-size: 16px; color: var(--heading-color); font-weight: 800; font-family: monospace;"></h4>
+                        <span id="activeRepoSubtitle" style="font-size: 11.5px; color: var(--text-muted);"></span>
+                    </div>
+                    <button onclick="closeRepoFiles()" class="btn-action-sm" style="background:#64748b;">✕ બંધ કરો</button>
+                </div>
+                <div class="files-grid" id="filesListGrid"></div>
+            </div>
+        </section>
+
+        <section class="history-card">
+            <h3 style="font-size:15.5px; font-weight:700; color:var(--heading-color); margin-bottom:8px;">
+                <i class="fa-solid fa-table-list" style="color:#2563eb;"></i> આપેલી કસોટીઓનું વિગતવાર પત્રક
+            </h3>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 85px;">તારીખ</th>
+                            <th style="width: 100px;">વિદ્યાર્થી</th>
+                            <th>વિષય / કસોટી</th>
+                            <th style="width: 75px;">ગુણ</th>
+                            <th style="width: 75px;">ટકા</th>
+                            <th style="width: 80px;">લીધેલ સમય</th>
+                            <th style="width: 90px;">ઍક્શન</th>
+                        </tr>
+                    </thead>
+                    <tbody id="testTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer class="portal-footer">
+            Design & Development: <strong>Nitesh Baria Web Developer</strong> | All Rights Reserved
+        </footer>
+    </main>
+</div>
+
+<div id="driveViewerModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 1250px; height: 92vh;">
+        <div class="modal-header">
+            <h3 style="font-size: 15px; font-weight: 800; color: var(--heading-color);">
+                📚 મિશન 27 - સાહિત્ય ભંડાર
+            </h3>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span id="currentPdfName" style="font-size: 11.5px; font-weight: 700; color: #2563eb; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: none;"></span>
+                <button class="modal-close-icon-btn" onclick="closeDriveFolderModal()"><i class="fa-solid fa-xmark"></i> બંધ કરો</button>
+            </div>
+        </div>
+        <div style="flex: 1; display: flex; overflow: hidden; min-height: 0;">
+            <div id="driveFileList" style="width: 320px; border-right: 2px solid var(--border-color); overflow-y: auto; background: var(--inner-box); flex-shrink: 0;"></div>
+            
+            <div style="flex: 1; position: relative; background: #0f172a; min-width: 0; padding: 6px;">
+                <div id="driveViewerPlaceholder" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #94a3b8; text-align: center; flex-direction: column; gap: 12px; padding: 20px;">
+                    <i class="fa-solid fa-book-open-reader fa-4x" style="color: #3b82f6; opacity: 0.6;"></i>
+                    <div>
+                        <h4 style="font-size: 16px; color: #cbd5e1; margin-bottom: 6px;">📖 વાંચવા માટે PDF પસંદ કરો</h4>
+                        <p style="font-size: 12px; color: #94a3b8;">ડાબી બાજુની યાદીમાંથી કોઈપણ પુસ્તક / સાહિત્ય પર ક્લિક કરો</p>
+                    </div>
+                </div>
+                <iframe id="driveViewerFrame" src="" style="width: 100%; height: 100%; border: none; display: none; background: #ffffff; border-radius: 6px;" allow="autoplay"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="imagePreviewModal" class="modal-overlay" onclick="closeImagePreview()">
+    <div style="max-width: 90%; max-height: 90%; position: relative;">
+        <img id="previewModalImg" src="" style="width: auto; height: auto; max-width: 100%; max-height: 85vh; border-radius: 8px; border: 2px solid white;">
+    </div>
+</div>
+
+<div id="reviewModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="modalHeading" style="font-size: 15px; font-weight: 800; color: var(--heading-color);">વિગતવાર પ્રશ્નપત્ર & ઉત્તરવહી</h3>
+            <button class="modal-close-icon-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i> બંધ કરો</button>
+        </div>
+        <div class="modal-filter-row">
+            <div style="font-size: 12.5px; font-weight: 700; color: var(--heading-color);">
+                <i class="fa-solid fa-filter"></i> રિપોર્ટ વ્યુ ફિલ્ટર:
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap: wrap;">
+                <button class="btn-action-sm" id="btnFilterAll" onclick="filterModalQuestions('all')" style="background:#2563eb;">
+                    📋 તમામ પ્રશ્નો
+                </button>
+                <button class="btn-action-sm" id="btnFilterWrong" onclick="filterModalQuestions('wrong')" style="background:#ef4444;">
+                    ❌ માત્ર ખોટા પ્રશ્નો (ભૂલ બુકલેટ)
+                </button>
+                <button class="btn-action-sm" id="btnFilterBlank" onclick="filterModalQuestions('blank')" style="background:#059669;">
+                    📝 જવાબ વગરનું પ્રશ્નપત્ર
+                </button>
+            </div>
+        </div>
+        <div class="modal-body" id="modalScrollBody">
+            <div id="pdfPrintArea">
+                <div class="pdf-page-container">
+                    <div class="pdf-header-banner">
+                        <div class="pdf-developer-badge">Nitesh Baria Web Developer - Official Evaluation</div>
+                        <h2 class="pdf-main-title" id="pdfDocSubject">કસોટી પ્રશ્નપત્ર & ઉત્તરવહી</h2>
+                    </div>
+                    <div class="pdf-info-grid" id="pdfDocMeta"></div>
+                    <div id="pdfDocQuestions"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-action-sm" onclick="exportPDF('all')" style="background:var(--gradient-emerald); padding: 7px 14px;">
+                <i class="fa-solid fa-file-pdf"></i> 📥 સંપૂર્ણ પ્રશ્નપત્ર PDF
+            </button>
+            <button class="btn-action-sm" onclick="exportPDF('wrong')" style="background:var(--gradient-rose); padding: 7px 14px;">
+                <i class="fa-solid fa-triangle-exclamation"></i> ❌ માત્ર ખોટા પ્રશ્નો PDF
+            </button>
+            <button class="btn-action-sm" onclick="closeModal()" style="background:#64748b; padding: 7px 14px;"><i class="fa-solid fa-xmark"></i> વિન્ડો બંધ કરો</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
+const GITHUB_USERNAME = "niteshbariya";
+
+// 🌟 ક્યારેય ટેસ્ટ લિસ્ટમાં ન આવવી જોઈએ તેવી રેપોઝિટરીઝ (Blacklist)
+const EXCLUDED_REPOS = [
+    "student-portal",
+    "studentportal",
+    "niteshbariya.github.io",
+    "niteshbariya"
+];
+
+// ગતિશીલ રેપો લિસ્ટ (ડાયનેમિકલી ભરાશે)
+let REPO_LIST = ["fy", "sy", "evs", "maths", "paryavanrantest", "etc", "revision", "baou", "guj"];
+let repoFilesCache = {
+    "fy": ["1anew100question.html", "1a.html", "1b.html", "1bnew.html", "2a.html", "2b.html", "3.html", "4aguj.html", "4beng.html", "5bevs.html", "5bevspart1q100.html", "module3.html"]
+};
+
+let userEmail = "";
+let allRawRecords = [];
+let filteredRecords = [];
+let adminNotesData = [];
+let isAdminUser = false;
+let selectedStudentEmail = "";
+let gaugeChart = null;
+let progressChart = null;
+let currentOpenRepo = "";
+let currentBaseFilename = "Test_Paper";
+
+let rawDriveFiles = [];
+let groupedDriveFiles = {};
+let notesScrollInterval = null;
+let notifScrollInterval = null;
+
+let currentModalLiveQuestions = null;
+let currentModalRawReviewHtml = "";
+
+function cleanOptionText(text) {
+    if (!text) return "";
+    var s = String(text).trim();
+    s = s.replace(/^\([A-Za-z0-9]+\)\s*/, "");
+    s = s.replace(/^[A-Za-z0-9]+[.\)]\s*/, "");
+    s = s.replace(/^[•‣◦⁃∙*\-▪▫–—]\s*/, "");
+    return s.trim();
+}
+
+function checkSavedLoginSession() {
+    const savedEmail = localStorage.getItem("portal_user_email");
+    const savedRole = localStorage.getItem("portal_user_role");
+    const savedName = localStorage.getItem("portal_user_name");
+
+    if (savedEmail && savedRole) {
+        userEmail = savedEmail.toLowerCase().trim();
+        setupDashboardEnvironment(savedRole, savedName || savedEmail);
+        fetchDataAndInit();
+    }
+}
+
+function loginWithPassword() {
+    var emailInput = document.getElementById("loginEmailInput");
+    var passInput = document.getElementById("loginPasswordInput");
+    
+    if (!emailInput || !passInput) return;
+    
+    userEmail = emailInput.value.trim().toLowerCase();
+    var enteredPassword = passInput.value.trim();
+    
+    if (!userEmail.includes("@") || !enteredPassword) {
+        alert("કૃપા કરીને ઈમેઈલ અને પાસવર્ડ બંને દાખલ કરો.");
+        return;
+    }
+
+    var btn = document.getElementById("loginSubmitBtn");
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ચેક થઈ રહ્યું છે...';
+    btn.disabled = true;
+
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "login", email: userEmail, password: enteredPassword })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data.success) {
+            localStorage.setItem("portal_user_email", userEmail);
+            localStorage.setItem("portal_user_role", data.role); 
+            localStorage.setItem("portal_user_name", data.name);
+            
+            setupDashboardEnvironment(data.role, data.name);
+            fetchDataAndInit();
+        } else {
+            alert(data.message || "લોગિન નિષ્ફળ!");
+            btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
+            btn.disabled = false;
+        }
+    })
+    .catch(function(err) {
+        console.error("Login Connection Error:", err);
+        alert("સર્વર સાથે કનેક્ટ ન થઈ શક્યું. કૃપા કરીને ફરી પ્રયાસ કરો.");
+        btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
+        btn.disabled = false;
+    });
+}
+
+function performLogout() {
+    localStorage.removeItem("portal_user_email");
+    localStorage.removeItem("portal_user_role");
+    localStorage.removeItem("portal_user_name");
+    location.reload();
+}
+
+async function setupDashboardEnvironment(role, name) {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("dashboardScreen").style.display = "block";
+    document.getElementById("logoutBtn").style.display = "inline-flex";
+    
+    isAdminUser = (role === "Admin");
+    if (isAdminUser) {
+        document.getElementById("roleBadge").innerHTML = `👑 ${name} (Admin)`;
+        document.getElementById("studentSelectWrapper").style.display = "flex";
+    } else {
+        document.getElementById("roleBadge").innerHTML = `🎓 ${name} (Student)`;
+        selectedStudentEmail = userEmail;
+    }
+    
+    populateSubjectDropdown();
+    filterAndRefreshData();
+    renderAdminNotes();
+    await scanAllRepoFiles();
+}
+
+function switchTheme() {
+    const isDark = document.body.classList.toggle("dark-mode");
+    document.getElementById("themeIcon").className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
+    document.getElementById("themeText").innerText = isDark ? "લાઈટ મોડ" : "ડાર્ક મોડ";
+    renderAllVisuals();
+}
+
+function formatShortDateOnly(dtStr) {
+    if (!dtStr) return "-";
+    let s = String(dtStr).trim();
+    if (s.includes(' ')) s = s.split(' ')[0];
+    const parts = s.split(/[-/]/);
+    if (parts.length === 3) {
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1], 10);
+        let year = parts[2];
+        if (year.length === 4) year = year.slice(-2);
+        return `${day}/${month}/${year}`;
+    }
+    return s;
+}
+
+function formatDurationTime(timeStr) {
+    if (!timeStr) return "-";
+    let s = String(timeStr).trim();
+    if (s.includes(':')) return s;
+    let hr = 0, min = 0, sec = 0;
+    const hrMatch = s.match(/(\d+)\s*(કલાક|hr|hour)/i);
+    const minMatch = s.match(/(\d+)\s*(મિનિટ|min)/i);
+    const secMatch = s.match(/(\d+)\s*(સેકન્ડ|sec)/i);
+    if (hrMatch) hr = parseInt(hrMatch[1], 10);
+    if (minMatch) min = parseInt(minMatch[1], 10);
+    if (secMatch) sec = parseInt(secMatch[1], 10);
+    if (hrMatch || minMatch || secMatch) {
+        const pMin = String(min).padStart(2, '0');
+        const pSec = String(sec).padStart(2, '0');
+        if (hr > 0) return `${String(hr).padStart(2, '0')}:${pMin}:${pSec}`;
+        return `${pMin}:${pSec}`;
+    }
+    return s;
+}
+
+function formatStackedName(fullName) {
+    if (!fullName) return "-";
+    const parts = fullName.trim().split(/\s+/);
+    if (parts.length === 1) return `<div class="student-stacked-name">${parts[0]}</div>`;
+    const firstName = parts[0];
+    const lastName = parts.slice(1).join(' ');
+    return `<div class="student-stacked-name">${firstName}<span>${lastName}</span></div>`;
+}
+
+function parsePercentValue(val) {
+    if (!val && val !== 0) return 0;
+    let s = String(val).replace('%', '').trim();
+    let num = parseFloat(s);
+    if (isNaN(num)) return 0;
+    if (num > 0 && num <= 1 && !String(val).includes('%')) num = num * 100;
+    return Math.round(num * 100) / 100;
+}
+
+function formatPercentDisplay(val) {
+    if (!val && val !== 0) return "-";
+    return `${parsePercentValue(val)}%`;
+}
+
+function escapeRegex(string) {
+    return String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function fetchDataAndInit() {
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data.error) { alert(data.error); return; }
+        
+        allRawRecords = data.history || [];
+        adminNotesData = data.notes || [];
+        var testNotifications = data.notifications || [];
+        
+        if (isAdminUser) populateStudentDropdown();
+        
+        populateSubjectDropdown();
+        filterAndRefreshData();
+        renderAdminNotes();
+        renderTestNotifications(testNotifications);
+    })
+    .catch(function(err) {
+        console.error("Data fetch failed", err);
+    });
+}
+
+function renderTestNotifications(notifications) {
+    const section = document.getElementById("notificationSection");
+    const container = document.getElementById("notificationCard");
+    
+    if (notifScrollInterval) {
+        clearInterval(notifScrollInterval);
+        notifScrollInterval = null;
+    }
+
+    if (!notifications || notifications.length === 0) {
+        section.style.display = "none";
+        return;
+    }
+
+    section.style.display = "block";
+    container.innerHTML = "";
+
+    notifications.forEach((notif, index) => {
+        const dateStr = formatShortDateOnly(notif.date);
+        const isNew = index === 0;
+        
+        const div = document.createElement("div");
+        div.className = "notif-item";
+        div.innerHTML = `
+            <div style="flex: 1;">
+                <div style="font-size: 12.5px; font-weight: 800; color: var(--heading-color);">
+                    📢 ${notif.title} 
+                    ${isNew ? '<span class="new-badge">નવું (NEW)</span>' : ''}
+                </div>
+                <div class="notif-date"><i class="fa-regular fa-clock"></i> ${dateStr} એ ઉમેરાયું</div>
+            </div>
+            ${notif.link ? `<a href="${notif.link}" target="_blank" class="btn-action-sm" style="background: var(--primary-gradient);">ટેસ્ટ આપો <i class="fa-solid fa-arrow-right"></i></a>` : ''}
+        `;
+        container.appendChild(div);
+    });
+
+    initAutoScrollNotifications();
+}
+
+function initAutoScrollNotifications() {
+    const container = document.getElementById("notificationCard");
+    if (!container) return;
+
+    let isPaused = false;
+    container.onmouseenter = () => { isPaused = true; };
+    container.onmouseleave = () => { isPaused = false; };
+    container.ontouchstart = () => { isPaused = true; };
+    container.ontouchend = () => { setTimeout(() => { isPaused = false; }, 2500); };
+
+    notifScrollInterval = setInterval(() => {
+        if (isPaused) return;
+        if (container.scrollHeight > container.clientHeight) {
+            container.scrollTop += 1;
+            if (container.scrollTop >= container.scrollHeight - container.clientHeight - 1) {
+                setTimeout(() => { container.scrollTop = 0; }, 1500);
+            }
+        }
+    }, 45);
+}
+
+function renderAdminNotes() {
+    const notesContainer = document.getElementById("adminNotesList");
+    if (!notesContainer) return;
+    
+    if (notesScrollInterval) {
+        clearInterval(notesScrollInterval);
+        notesScrollInterval = null;
+    }
+
+    if (adminNotesData && adminNotesData.length > 0) {
+        notesContainer.innerHTML = adminNotesData.map(note => {
+            let imageHtml = "";
+            let imgUrl = note.imageUrl || note.image || "";
+            if (imgUrl.includes("drive.google.com")) {
+                const matchId = imgUrl.match(/[-\w]{25,}/);
+                if (matchId) imgUrl = `https://drive.google.com/uc?export=view&id=${matchId[0]}`;
+            }
+            if (imgUrl && imgUrl.trim().length > 5) {
+                imageHtml = `<div class="note-image-box" onclick="showImagePreview('${imgUrl}')"><img src="${imgUrl}" loading="lazy" onerror="this.style.display='none'"></div>`;
+            }
+            return `
+                <div class="admin-note-item">
+                    <div class="note-inline-row">
+                        <span class="note-tag-badge"><i class="fa-solid fa-bullhorn"></i> ${note.tag || 'સૂચના'}</span>
+                        <span class="note-text-inline">${note.message || note.text || ''}</span>
+                        <span class="note-date-pill"><i class="fa-regular fa-clock"></i> ${formatShortDateOnly(note.date)}</span>
+                    </div>
+                    ${imageHtml}
+                </div>
+            `;
+        }).join('');
+    } else {
+        notesContainer.innerHTML = `
+            <div class="admin-note-item">
+                <div class="note-inline-row">
+                    <span class="note-tag-badge"><i class="fa-solid fa-bullhorn"></i> સૂચના</span>
+                    <span class="note-text-inline">સતત પરિશ્રમ એ જ સફળતાની સાચી ચાવી છે.</span>
+                    <span class="note-date-pill"><i class="fa-regular fa-clock"></i> ${formatShortDateOnly(new Date())}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    initAutoScrollAdminNotes();
+}
+
+function initAutoScrollAdminNotes() {
+    const container = document.getElementById("adminNotesList");
+    if (!container) return;
+
+    let isPaused = false;
+    container.onmouseenter = () => { isPaused = true; };
+    container.onmouseleave = () => { isPaused = false; };
+    container.ontouchstart = () => { isPaused = true; };
+    container.ontouchend = () => { setTimeout(() => { isPaused = false; }, 2500); };
+
+    notesScrollInterval = setInterval(() => {
+        if (isPaused) return;
+        if (container.scrollHeight > container.clientHeight) {
+            container.scrollTop += 1;
+            if (container.scrollTop >= container.scrollHeight - container.clientHeight - 1) {
+                setTimeout(() => { container.scrollTop = 0; }, 1200);
+            }
+        }
+    }, 45);
+}
+
+function showImagePreview(url) {
+    document.getElementById("previewModalImg").src = url;
+    document.getElementById("imagePreviewModal").style.display = "flex";
+}
+
+function closeImagePreview() {
+    document.getElementById("imagePreviewModal").style.display = "none";
+}
+
+async function loadDriveFiles() {
+    const listEl = document.getElementById('driveFileList');
+    if (!listEl) return;
+
+    listEl.innerHTML = `
+        <div style="padding: 35px 20px; text-align: center; color: var(--text-muted); font-size: 12px;">
+            <i class="fa-solid fa-spinner fa-spin fa-2x" style="color: #2563eb; margin-bottom: 10px;"></i>
+            <p style="font-weight:700;">પુસ્તકાલય લોડ થઈ રહ્યું છે...</p>
+        </div>
+    `;
+
+    try {
+        const response = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "getDriveFolderFiles" })
+        });
+        const resData = await response.json();
+
+        if (resData.status === "success" && resData.data) {
+            rawDriveFiles = [];
+            groupedDriveFiles = {};
+
+            resData.data.forEach(group => {
+                const folderName = group.folderName || "સામાન્ય સાહિત્ય";
+                if (!groupedDriveFiles[folderName]) groupedDriveFiles[folderName] = [];
+
+                group.files.forEach(f => {
+                    const fileObj = {
+                        id: f.id,
+                        name: f.name,
+                        parentFolder: folderName
+                    };
+                    groupedDriveFiles[folderName].push(fileObj);
+                    rawDriveFiles.push(fileObj);
+                });
+            });
+
+            groupAndRenderDriveFiles();
+        } else {
+            throw new Error(resData.message || "PDF મળી શકી નથી");
+        }
+    } catch (e) {
+        listEl.innerHTML = `
+            <div style="padding: 20px; text-align: center; color: #ef4444; font-size: 12px;">
+                <i class="fa-solid fa-triangle-exclamation fa-2x" style="margin-bottom: 10px;"></i>
+                <p style="font-weight: 700; margin-bottom: 8px;">PDF લોડ કરવામાં ભૂલ આવી</p>
+                <p style="font-size: 11px; color: var(--text-muted);">${e.message}</p>
+                <button onclick="loadDriveFiles()" class="btn-action-sm" style="background: #2563eb; margin-top: 10px;">
+                    <i class="fa-solid fa-rotate"></i> ફરી પ્રયાસ કરો
+                </button>
+            </div>
+        `;
+    }
+}
+
+function groupAndRenderDriveFiles() {
+    const listEl = document.getElementById('driveFileList');
+    let html = `
+        <div style="padding: 10px 14px; background: var(--card-bg); border-bottom: 1.5px solid var(--border-color); position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 11.5px; font-weight: 800; color: var(--heading-color);">
+                <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> ${rawDriveFiles.length} PDF સાહિત્ય
+            </span>
+            <button onclick="loadDriveFiles()" style="background: none; border: none; color: #2563eb; cursor: pointer; font-size: 13px;" title="રિફ્રેશ">
+                <i class="fa-solid fa-rotate"></i>
+            </button>
+        </div>
+    `;
+
+    if (rawDriveFiles.length === 0) {
+        html += `
+            <div style="padding: 30px 20px; text-align: center; color: var(--text-muted); font-size: 12px;">
+                <i class="fa-regular fa-folder-open fa-3x" style="color: #94a3b8; margin-bottom: 12px;"></i>
+                <p style="font-weight: 700;">આ ફોલ્ડરમાં કોઈ PDF મળી નથી</p>
+            </div>
+        `;
+        listEl.innerHTML = html;
+        return;
+    }
+
+    Object.keys(groupedDriveFiles).sort().forEach(folderName => {
+        const files = groupedDriveFiles[folderName];
+        const safeFolderId = 'folder-' + btoa(unescape(encodeURIComponent(folderName))).replace(/=/g, '');
+        
+        html += `
+            <div class="folder-accordion" id="${safeFolderId}">
+                <div class="folder-accordion-header" onclick="toggleAccordion('${safeFolderId}')">
+                    <div style="display: flex; align-items: center; gap: 6px; overflow: hidden;">
+                        <i class="fa-solid fa-chevron-right folder-icon-toggle" style="color: #2563eb;"></i>
+                        <i class="fa-solid fa-folder" style="color: #f59e0b;"></i>
+                        <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${folderName}">${folderName}</span>
+                    </div>
+                    <span style="font-size: 10px; background: rgba(37,99,235,0.1); color: #2563eb; padding: 2px 6px; border-radius: 10px;">${files.length}</span>
+                </div>
+                <div class="folder-accordion-content">
+        `;
+
+        files.forEach(f => {
+            const safeId = f.id;
+            const safeName = f.name.replace(/'/g, "&#39;").replace(/"/g, '&quot;');
+            html += `
+                <div class="drive-file-item" id="file-item-${safeId}" onclick="openDriveFile('${safeId}', '${safeName}')">
+                    <div style="width: 28px; height: 28px; background: linear-gradient(135deg, #ef4444, #f43f5e); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fa-solid fa-file-pdf" style="color: white; font-size: 13px;"></i>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-size: 12px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-color);" title="${f.name}">${f.name}</div>
+                    </div>
+                    <i class="fa-solid fa-eye" style="color: #2563eb; font-size: 13px; opacity: 0.8;"></i>
+                </div>
+            `;
+        });
+
+        html += `</div></div>`;
+    });
+
+    listEl.innerHTML = html;
+    
+    const firstFolder = Object.keys(groupedDriveFiles).sort()[0];
+    if (firstFolder) {
+        const safeFolderId = 'folder-' + btoa(unescape(encodeURIComponent(firstFolder))).replace(/=/g, '');
+        toggleAccordion(safeFolderId);
+    }
+}
+
+function toggleAccordion(elementId) {
+    const el = document.getElementById(elementId);
+    if (el) el.classList.toggle('open');
+}
+
+function openDriveFile(fileId, fileName) {
+    const frame = document.getElementById('driveViewerFrame');
+    const placeholder = document.getElementById('driveViewerPlaceholder');
+    const nameEl = document.getElementById('currentPdfName');
+
+    if (placeholder) placeholder.style.display = 'none';
+    if (nameEl) {
+        nameEl.innerText = fileName;
+        nameEl.style.display = 'inline-block';
+    }
+
+    frame.style.display = 'block';
+    frame.src = `https://drive.google.com/file/d/${fileId}/preview`;
+
+    document.querySelectorAll('.drive-file-item').forEach(el => {
+        el.classList.remove('active-file');
+    });
+    const activeItem = document.getElementById('file-item-' + fileId);
+    if (activeItem) activeItem.classList.add('active-file');
+}
+
+function openDriveFolderModal() {
+    document.getElementById('driveViewerModal').style.display = 'flex';
+    if (rawDriveFiles.length === 0) {
+        loadDriveFiles();
+    }
+}
+
+function closeDriveFolderModal() {
+    const frame = document.getElementById('driveViewerFrame');
+    if (frame) frame.src = '';
+    const nameEl = document.getElementById('currentPdfName');
+    if (nameEl) nameEl.style.display = 'none';
+    document.getElementById('driveViewerModal').style.display = 'none';
+}
+
+/* ============================================================
+   🌟 ક્રાંતિકારી: બધી જ રેપોઝિટરીઝ આપોઆપ શોધો (student-portal સિવાય)
+   ============================================================ */
+async function scanAllRepoFiles() {
+    try {
+        // ૧. યુઝરના તમામ પબ્લિક રેપોઝિટરીઝ લાવો
+        const resUserRepos = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&t=${new Date().getTime()}`);
+        if (resUserRepos.ok) {
+            const allRepos = await resUserRepos.json();
+            
+            // ૨. student-portal અને બ્લેકલિસ્ટ વાળી રેપો બાદ કરી માત્ર માન્ય ટેસ્ટ રેપોઝિટરીઝ રાખો
+            const autoDetectedRepos = allRepos
+                .map(r => r.name)
+                .filter(name => !EXCLUDED_REPOS.includes(name.toLowerCase()));
+            
+            if (autoDetectedRepos.length > 0) {
+                REPO_LIST = Array.from(new Set([...REPO_LIST, ...autoDetectedRepos]));
+            }
+        }
+    } catch (e) {
+        console.warn("User repo discovery fallback to default list", e);
+    }
+
+    // ૩. દરેક રેપોઝિટરીની તમામ HTML ફાઇલો સ્કેન કરો
+    const promises = REPO_LIST.map(async (repo) => {
+        try {
+            const res = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo}/contents/?t=${new Date().getTime()}`);
+            if (res.ok) {
+                const items = await res.json();
+                const htmlFiles = items.filter(f => f.name.toLowerCase().endsWith('.html')).map(f => f.name);
+                if (htmlFiles.length > 0) {
+                    const existing = repoFilesCache[repo] || [];
+                    const merged = Array.from(new Set([...existing, ...htmlFiles]));
+                    repoFilesCache[repo] = merged;
+                }
+            }
+        } catch (e) {}
+    });
+
+    await Promise.all(promises);
+    renderRepoGrid();
+}
+
+function populateStudentDropdown() {
+    const sMap = {};
+    allRawRecords.forEach(r => { if (r.email) sMap[r.email.toLowerCase()] = r.name || r.email; });
+    const sSelect = document.getElementById("studentDropdown");
+    sSelect.innerHTML = `<option value="ALL">👥 તમામ વિદ્યાર્થીઓ</option>`;
+    Object.keys(sMap).forEach(m => {
+        sSelect.innerHTML += `<option value="${m}">👤 ${sMap[m]}</option>`;
+    });
+    selectedStudentEmail = "ALL";
+}
+
+function populateSubjectDropdown() {
+    const sSet = new Set();
+    allRawRecords.forEach(r => { if (r.subject) sSet.add(r.subject.trim()); });
+    const subSelect = document.getElementById("subjectDropdown");
+    subSelect.innerHTML = `<option value="ALL">📋 તમામ કસોટીઓ</option>`;
+    sSet.forEach(s => subSelect.innerHTML += `<option value="${s}">${s}</option>`);
+}
+
+function onStudentSelectChange() {
+    selectedStudentEmail = document.getElementById("studentDropdown").value;
+    filterAndRefreshData();
+}
+
+function onSubjectFilterChange() { filterAndRefreshData(); }
+
+function filterAndRefreshData() {
+    const targetSub = document.getElementById("subjectDropdown").value;
+    filteredRecords = allRawRecords.filter(r => {
+        if (selectedStudentEmail !== "ALL" && (r.email || "").toLowerCase().trim() !== selectedStudentEmail) return false;
+        if (targetSub !== "ALL" && r.subject !== targetSub) return false;
+        return true;
+    });
+    updateProfileCard();
+    renderAllVisuals();
+    renderRepoGrid();
+    if (currentOpenRepo) openRepoFiles(currentOpenRepo);
+    renderHistoryTable();
+}
+
+function convertGujaratiDigitsToEnglish(str) {
+    if (!str) return "";
+    const guj = ["૦", "૧", "૨", "૩", "૪", "૫", "૬", "૭", "૮", "૯"];
+    let res = String(str);
+    for (let i = 0; i < 10; i++) {
+        res = res.split(guj[i]).join(i.toString());
+    }
+    return res;
+}
+
+function isFileAttemptedByRecord(fileName, repoName, recordsList) {
+    const rawClean = fileName.replace(/\.html$/i, '').toLowerCase().trim();
+    const cleanNoSpace = rawClean.replace(/[\s\-_()]+/g, '');
+
+    return recordsList.find(r => {
+        const subRaw = (r.subject || "").toLowerCase().trim();
+        const sub = convertGujaratiDigitsToEnglish(subRaw);
+        const subNoSpace = sub.replace(/[\s\-_()]+/g, '');
+
+        // ૧. જો સબ્જેક્ટમાં સીધું જ આખું ફાઇલનું નામ સામેલ હોય
+        if (sub.includes(rawClean) || subNoSpace.includes(cleanNoSpace)) {
+            return true;
+        }
+
+        // ૨. ૧૦૦ પ્રશ્નો કે ભાગ (Part) વાળી ફાઇલો માટે ચોકસાઈ ચકાસો
+        const is100File = rawClean.includes("100") || rawClean.includes("part");
+        const is100Sub = sub.includes("100") || sub.includes("part");
+
+        if (is100File !== is100Sub) {
+            return false;
+        }
+
+        // ૩. વિષય કોડ આધારિત ચોક્કસ મેચિંગ
+        if (rawClean.includes("5b") || rawClean.includes("evs")) {
+            if (sub.includes("5 (બ)") || sub.includes("5(બ)") || sub.includes("પર્યાવરણ") || sub.includes("evs")) {
+                return true;
+            }
+        }
+
+        if (rawClean.includes("1a")) {
+            if (sub.includes("1 (અ)") || sub.includes("1(અ)") || sub.includes("વિકાસ") || sub.includes("બાળકો")) {
+                return true;
+            }
+        }
+
+        if (rawClean.includes("1b")) {
+            if (sub.includes("1 (બ)") || sub.includes("1(બ)") || sub.includes("અધ્યેતા") || sub.includes("મૂલ્યાંકન")) {
+                return true;
+            }
+        }
+
+        if (rawClean.includes("math")) {
+            if (sub.includes("ગણિત") || sub.includes("math")) {
+                return true;
+            }
+        }
+
+        if (rawClean.includes("guj")) {
+            if (sub.includes("ગુજરાતી") || sub.includes("guj")) {
+                return true;
+            }
+        }
+
+        if (rawClean.includes("sy")) {
+            if (sub.includes("દ્વિતીય") || sub.includes("બોધ") || sub.includes("sy")) {
+                return true;
+            }
+        }
+
+        return false;
+    });
+}
+function renderRepoGrid() {
+    const grid = document.getElementById("repoCardsGrid");
+    grid.innerHTML = "";
+    let totalPendingAll = 0;
+
+    REPO_LIST.forEach(repoName => {
+        const files = repoFilesCache[repoName] || ["index.html"];
+        let repoPending = 0;
+        files.forEach(fileName => {
+            const attempt = isFileAttemptedByRecord(fileName, repoName, filteredRecords);
+            if (!attempt) repoPending++;
+        });
+        totalPendingAll += repoPending;
+        const card = document.createElement("div");
+        card.className = `repo-box ${currentOpenRepo === repoName ? 'active-repo' : ''}`;
+        card.onclick = () => openRepoFiles(repoName);
+        card.innerHTML = `
+            <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span class="repo-name-tag"><i class="fa-regular fa-folder" style="color:#2563eb;"></i> ${repoName}</span>
+                    <span style="font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:12px; background:${repoPending > 0 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)'}; color:${repoPending > 0 ? '#ef4444' : '#10b981'};">
+                        ${repoPending > 0 ? `⏳ ${repoPending} બાકી` : '✅ પૂર્ણ'}
+                    </span>
+                </div>
+                <div style="font-size:12px; color:var(--text-muted); font-weight:700;">કુલ ટેસ્ટ: ${files.length}</div>
+            </div>
+            <div style="margin-top:8px; font-size:11.5px; color:#2563eb; font-weight:700;">ટેસ્ટ ખોલો <i class="fa-solid fa-chevron-right"></i></div>
+        `;
+        grid.appendChild(card);
+    });
+    document.getElementById("statPendingTests").innerText = totalPendingAll;
+}
+
+async function openRepoFiles(repoName) {
+    currentOpenRepo = repoName;
+    renderRepoGrid();
+    const container = document.getElementById("repoFilesContainer");
+    const listGrid = document.getElementById("filesListGrid");
+    container.style.display = "block";
+    document.getElementById("activeRepoTitle").innerHTML = `<i class="fa-regular fa-folder-open"></i> ${repoName}`;
+    document.getElementById("activeRepoSubtitle").innerText = `કસોટી ફાઈલો:`;
+    
+    const fileList = repoFilesCache[repoName] || ["index.html"];
+    listGrid.innerHTML = "";
+    
+    fileList.forEach(fileName => {
+        const attemptRecord = isFileAttemptedByRecord(fileName, repoName, filteredRecords);
+        const isAttempted = !!attemptRecord;
+        
+        const testUrl = (fileName === "index.html")
+            ? `https://niteshbariya.github.io/${repoName}/`
+            : `https://niteshbariya.github.io/${repoName}/${fileName}`;
+        const fileCard = document.createElement("div");
+        fileCard.className = "file-card";
+        fileCard.style.borderLeft = `4.5px solid ${isAttempted ? '#10b981' : '#f43f5e'}`;
+        
+        let scoreHtml = isAttempted ? `
+            <div class="test-score-banner">
+                <span>🎯 ગુણ: <strong>${attemptRecord.score || '-'}</strong></span>
+                <span>ટકા: <strong>${formatPercentDisplay(attemptRecord.percentage)}</strong></span>
+            </div>` : '';
+            
+        let paperButtonHtml = (isAttempted || isAdminUser) ? `
+            <button class="btn-view-paper" onclick="loadDirectQuestionPaper('${repoName}', '${fileName}', true)">
+                <i class="fa-solid fa-file-pdf"></i> પ્રશ્નપત્ર & PDF
+            </button>` : `
+            <button class="btn-locked-paper" title="પહેલાં કસોટી આપો, પછી જ પ્રશ્નપત્ર ખુલશે!">
+                <i class="fa-solid fa-lock"></i> પ્રશ્નપત્ર લૉક છે
+            </button>`;
+
+        fileCard.innerHTML = `
+            <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span class="file-exact-name"><i class="fa-regular fa-file-lines"></i> ${fileName}</span>
+                    <span style="color:${isAttempted ? '#10b981' : '#ef4444'}; background:${isAttempted ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)'}; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:800;">
+                        ${isAttempted ? '✅ પૂર્ણ' : '⏳ બાકી'}
+                    </span>
+                </div>
+                <div style="font-size:11.5px; color:var(--text-muted); font-family:monospace; margin-bottom:6px;">${repoName}/${fileName}</div>
+                ${scoreHtml}
+            </div>
+            <div class="file-action-buttons">
+                <a href="${testUrl}" target="_blank" class="btn-take-test">
+                    <i class="fa-solid ${isAttempted ? 'fa-rotate-right' : 'fa-play'}"></i> ${isAttempted ? 'ફરી આપો' : 'કસોટી આપો'}
+                </a>
+                ${paperButtonHtml}
+            </div>
+        `;
+        listGrid.appendChild(fileCard);
+    });
+}
+
+function closeRepoFiles() {
+    currentOpenRepo = "";
+    document.getElementById("repoFilesContainer").style.display = "none";
+    renderRepoGrid();
+}
+
+async function fetchQuestionsFromLiveSource(targetSubject) {
+    if (!targetSubject) return null;
+    const s = targetSubject.toLowerCase();
+    let candidates = [];
+    
+    if (s.includes("evs") || s.includes("પર્યાવરણ") || s.includes("૫ (બ)")) {
+        candidates.push({ repo: "fy", file: "5bevspart1q100.html" });
+        candidates.push({ repo: "fy", file: "5bevs.html" });
+        candidates.push({ repo: "evs", file: "index.html" });
+        candidates.push({ repo: "paryavanrantest", file: "index.html" });
+    }
+    if (s.includes("nep") || s.includes("નીતિ")) {
+        candidates.push({ repo: "baou", file: "index.html" });
+        candidates.push({ repo: "revision", file: "index.html" });
+    }
+    if (s.includes("guj") || s.includes("ગુજરાતી")) {
+        candidates.push({ repo: "guj", file: "index.html" });
+        candidates.push({ repo: "fy", file: "4aguj.html" });
+    }
+    if (s.includes("maths") || s.includes("ગણિત")) {
+        candidates.push({ repo: "maths", file: "index.html" });
+    }
+    if (s.includes("sy") || s.includes("દ્વિતીય")) {
+        candidates.push({ repo: "sy", file: "index.html" });
+    }
+    if (s.includes("fy") || s.includes("પ્રથમ") || s.includes("વિકાસ")) {
+        candidates.push({ repo: "fy", file: "1anew100question.html" });
+        candidates.push({ repo: "fy", file: "1a.html" });
+    }
+
+    REPO_LIST.forEach(r => {
+        candidates.push({ repo: r, file: "index.html" });
+    });
+
+    for (const c of candidates) {
+        const testUrl = (c.file === "index.html")
+            ? `https://niteshbariya.github.io/${c.repo}/`
+            : `https://niteshbariya.github.io/${c.repo}/${c.file}`;
+        try {
+            const res = await fetch(testUrl);
+            if (res.ok) {
+                const txt = await res.text();
+                const qs = extractQuestionsArrayFromText(txt);
+                if (qs && qs.length > 0) return { questions: qs, repo: c.repo, file: c.file, url: testUrl };
+            }
+        } catch(e) {}
+    }
+    return null;
+}
+
+async function openTestModal(idx) {
+    const item = filteredRecords[idx];
+    currentBaseFilename = `${item.name || 'Student'}_${item.subject || 'Test'}`;
+    document.getElementById("modalHeading").innerText = `${item.subject || 'કસોટી'} - પરિણામ & પ્રશ્નપત્ર`;
+    document.getElementById("pdfDocSubject").innerText = `${item.subject || 'કસોટી મૂલ્યાંકન પત્રક'}`;
+    
+    document.getElementById("pdfDocMeta").innerHTML = `
+        <div><strong>વિદ્યાર્થી:</strong> ${item.name || '-'}</div>
+        <div><strong>તારીખ:</strong> ${formatShortDateOnly(item.dateTime)}</div>
+        <div><strong>મેળવેલ ગુણ:</strong> <span style="color:#10b981; font-weight:bold;">${item.score || '-'} (${formatPercentDisplay(item.percentage)})</span></div>
+        <div><strong>લીધેલ સમય:</strong> ${formatDurationTime(item.timeTaken)}</div>
+    `;
+    
+    const qContainer = document.getElementById("pdfDocQuestions");
+    qContainer.innerHTML = `<div style="text-align:center; padding:35px; color:#2563eb;">
+        <i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>
+        <strong>પરીક્ષાર્થીનું પરિણામ પત્રક લોડ થઈ રહ્યું છે...</strong>
+    </div>`;
+    
+    document.getElementById("reviewModal").style.display = "flex";
+    window.history.pushState({ modalOpen: true }, "");
+
+    currentModalRawReviewHtml = item.reviewHtml || "";
+    currentModalLiveQuestions = null;
+
+    fetchQuestionsFromLiveSource(item.subject).then(liveData => {
+        if (liveData && liveData.questions) {
+            currentModalLiveQuestions = liveData.questions;
+        }
+    });
+
+    let loaded = false;
+
+    if (item.reviewHtml && item.reviewHtml.length > 50) {
+        loaded = parseAndRenderReviewHtml(item.reviewHtml);
+    }
+    
+    if (!loaded) {
+        const liveData = await fetchQuestionsFromLiveSource(item.subject);
+        if (liveData && liveData.questions && liveData.questions.length > 0) {
+            currentModalLiveQuestions = liveData.questions;
+            renderQuestionsToModal(liveData.questions, item);
+            loaded = true;
+        }
+    }
+    
+    if (!loaded) {
+        qContainer.innerHTML = `
+            <div class="pdf-q-item" style="text-align:center; padding:25px;">
+                <div class="pdf-q-title">મેળવેલ ગુણ: ${item.score || '-'} (${formatPercentDisplay(item.percentage)})</div>
+                <p style="color:var(--text-muted); font-size:12px; margin-top:8px;">
+                    વિગતવાર ઉત્તરવહી ડેટા મળ્યો નથી.
+                </p>
+            </div>
+        `;
+    }
+}
+
+async function loadDirectQuestionPaper(repoName, fileName, isAttempted) {
+    if (!isAttempted && !isAdminUser) {
+        alert("પહેલાં આ કસોટી આપવી અનિવાર્ય છે. કસોટી આપ્યા પછી જ પ્રશ્નપત્ર અને ઉત્તરવહી જોઈ શકાશે!");
+        return;
+    }
+    const testUrl = (fileName === "index.html")
+        ? `https://niteshbariya.github.io/${repoName}/`
+        : `https://niteshbariya.github.io/${repoName}/${fileName}`;
+    document.getElementById("modalHeading").innerText = `${repoName}/${fileName} - પ્રશ્નપત્ર & ઉત્તરવહી`;
+    document.getElementById("pdfDocSubject").innerText = `${repoName}/${fileName} - મૂલ્યાંકન પ્રશ્નપત્ર`;
+    
+    const sheetRecord = isFileAttemptedByRecord(fileName, repoName, filteredRecords);
+    
+    let metaHtml = `
+        <div><strong>રિપોઝિટરી:</strong> ${repoName}</div>
+        <div><strong>ફાઈલ:</strong> ${fileName}</div>
+        <div><strong>તારીખ:</strong> ${sheetRecord ? formatShortDateOnly(sheetRecord.dateTime) : formatShortDateOnly(new Date())}</div>
+    `;
+    if (sheetRecord) {
+        metaHtml += `
+            <div style="grid-column: 1/-1; background:#ecfdf5; padding:6px 10px; border-radius:6px; color:#065f46; font-weight:800;">
+                🎯 મેળવેલ ગુણ: ${sheetRecord.score || '-'} (${formatPercentDisplay(sheetRecord.percentage)}) | વિદ્યાર્થી: ${sheetRecord.name || '-'}
+            </div>
+        `;
+    }
+    document.getElementById("pdfDocMeta").innerHTML = metaHtml;
+    const qContainer = document.getElementById("pdfDocQuestions");
+    qContainer.innerHTML = `<div style="text-align:center; padding:35px; color:#2563eb;">
+        <i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>
+        <strong>સંપૂર્ણ પ્રશ્નપત્ર લોડ થઈ રહ્યું છે...</strong>
+    </div>`;
+    
+    document.getElementById("reviewModal").style.display = "flex";
+    window.history.pushState({ modalOpen: true }, "");
+    currentBaseFilename = `${repoName}_${fileName.replace('.html','')}`;
+    
+    currentModalRawReviewHtml = (sheetRecord && sheetRecord.reviewHtml) ? sheetRecord.reviewHtml : "";
+    currentModalLiveQuestions = null;
+
+    try {
+        const response = await fetch(testUrl);
+        if (!response.ok) throw new Error("File fetch failed");
+        const htmlText = await response.text();
+        let foundQuestions = extractQuestionsArrayFromText(htmlText);
+        if (!foundQuestions || foundQuestions.length === 0) {
+            foundQuestions = await loadQuestionsViaIframe(testUrl);
+        }
+        
+        if (foundQuestions && foundQuestions.length > 0) {
+            currentModalLiveQuestions = foundQuestions;
+            if (currentModalRawReviewHtml && currentModalRawReviewHtml.length > 50) {
+                parseAndRenderReviewHtml(currentModalRawReviewHtml);
+            } else {
+                renderQuestionsToModal(foundQuestions, sheetRecord);
+            }
+        } else if (currentModalRawReviewHtml && currentModalRawReviewHtml.length > 50) {
+            parseAndRenderReviewHtml(currentModalRawReviewHtml);
+        } else {
+            qContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444;">પ્રશ્નો મળી શક્યા નહીં.</div>`;
+        }
+    } catch(err) {
+        if (currentModalRawReviewHtml && currentModalRawReviewHtml.length > 50) {
+            parseAndRenderReviewHtml(currentModalRawReviewHtml);
+        } else {
+            qContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444;">પ્રશ્નપત્ર લોડ કરવામાં ક્ષતિ આવી.</div>`;
+        }
+    }
+}
+
+function renderQuestionsToModal(questions, sheetRecord) {
+    const qContainer = document.getElementById("pdfDocQuestions");
+    let questionsHtml = "";
+    
+    questions.forEach((q, idx) => {
+        const qText = q.question || q.q || `પ્રશ્ન ${idx + 1}`;
+        const opts = q.options || q.opts || q.choices || [];
+        const ans = q.answer !== undefined ? q.answer : q.ans;
+        
+        let correctOptText = ans;
+        if (opts.length > 0) {
+            if (typeof ans === 'number' && opts[ans] !== undefined) {
+                correctOptText = `(${String.fromCharCode(65 + ans)}) ${cleanOptionText(opts[ans])}`;
+            } else if (typeof ans === 'string' && /^[0-3]$/.test(ans)) {
+                correctOptText = `(${String.fromCharCode(65 + parseInt(ans, 10))}) ${cleanOptionText(opts[parseInt(ans, 10)])}`;
+            } else {
+                correctOptText = cleanOptionText(ans);
+            }
+        }
+        
+        let isWrong = false;
+        let userWrongAns = "";
+        if (sheetRecord && sheetRecord.reviewHtml) {
+            const rHtml = sheetRecord.reviewHtml;
+            if (rHtml.includes(qText) && (rHtml.includes("❌") || rHtml.includes("ખોટો") || rHtml.includes("Wrong"))) {
+                isWrong = true;
+            }
+            const matchWrong = rHtml.match(new RegExp(`${escapeRegex(qText)}.*?તમારો જવાબ:?\\s*([^<\\n]+)`, 'i'));
+            if (matchWrong) userWrongAns = matchWrong[1];
+        }
+        
+        const explanation = q.explanation || q.exp || q.detail || q.reason || "";
+        
+        questionsHtml += `
+            <div class="pdf-q-item ${isWrong ? 'is-wrong-answer' : ''}" data-wrong="${isWrong ? 'true' : 'false'}">
+                <div class="pdf-q-title">
+                    પ્રશ્ન ${idx + 1}: ${qText} 
+                    ${isWrong ? '<span style="color:#ef4444; font-size:12px; font-weight:800;">(ખોટો પડેલ ❌)</span>' : ''}
+                </div>
+                ${opts.length > 0 ? `
+                    <div class="pdf-options-list" style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                        ${opts.map((opt, oIdx) => `
+                            <div style="background:#f8fafc; padding:6px 10px; border-radius:6px; border:1px solid #e2e8f0;">
+                                <strong>(${String.fromCharCode(65 + oIdx)})</strong> ${cleanOptionText(opt)}
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+                ${isWrong && userWrongAns ? `
+                    <div class="pdf-wrong-user-ans">
+                        ❌ પરીક્ષાર્થીએ આપેલો જવાબ: <strong>${userWrongAns}</strong>
+                    </div>` : ''}
+                <div class="pdf-ans-box">
+                    ✅ સાચો જવાબ: <strong>${correctOptText}</strong>
+                </div>
+                ${explanation ? `
+                    <div class="pdf-exp-box">
+                        💡 <strong>વિગતવાર સમજૂતી:</strong> ${explanation}
+                    </div>` : ''}
+            </div>
+        `;
+    });
+    qContainer.innerHTML = questionsHtml;
+}
+
+function parseAndRenderReviewHtml(rawHtml) {
+    const qContainer = document.getElementById("pdfDocQuestions");
+    qContainer.innerHTML = rawHtml;
+    
+    const potentialBoxes = qContainer.querySelectorAll("div[style*='border'], .review-item, .question-card");
+    if (potentialBoxes.length > 0) {
+        potentialBoxes.forEach(box => {
+            const isWrong = box.innerHTML.includes("❌") || box.innerHTML.includes("ખોટો") || box.innerHTML.includes("is-wrong");
+            box.className = `pdf-q-item ${isWrong ? 'is-wrong-answer' : ''}`;
+            box.setAttribute("data-wrong", isWrong ? "true" : "false");
+            
+            box.style.borderRadius = "8px";
+            box.style.padding = "12px";
+            box.style.marginBottom = "12px";
+            
+            if (isWrong) {
+                box.style.border = "2px solid #ef4444";
+                box.style.backgroundColor = "#fff5f5";
+            } else {
+                box.style.border = "1.5px solid #cbd5e1";
+                box.style.backgroundColor = "#ffffff";
+            }
+        });
+        return true;
+    }
+    return false;
+}
+
+function filterModalQuestions(type) {
+    const qContainer = document.getElementById("pdfDocQuestions");
+    const btnAll = document.getElementById("btnFilterAll");
+    const btnWrong = document.getElementById("btnFilterWrong");
+    const btnBlank = document.getElementById("btnFilterBlank");
+
+    if (type === "blank") {
+        if (currentModalLiveQuestions && currentModalLiveQuestions.length > 0) {
+            let blankHtml = "";
+            currentModalLiveQuestions.forEach((q, idx) => {
+                const qText = q.question || q.q || `પ્રશ્ન ${idx + 1}`;
+                const opts = q.options || q.opts || q.choices || [];
+                blankHtml += `
+                    <div class="pdf-q-item" style="background:#ffffff; border:1.5px solid #cbd5e1; margin-bottom:12px; padding:12px; border-radius:8px;">
+                        <div class="pdf-q-title" style="font-weight:800; font-size:14px; color:#1e293b; margin-bottom:8px;">
+                            ${qText}
+                        </div>
+                        ${opts.length > 0 ? `
+                            <div class="pdf-options-list" style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:13px; color:#334155;">
+                                ${opts.map((opt, oIdx) => `
+                                    <div style="background:#f8fafc; padding:7px 10px; border-radius:6px; border:1px solid #e2e8f0;">
+                                        <strong>(${String.fromCharCode(65 + oIdx)})</strong> ${cleanOptionText(opt)}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            qContainer.innerHTML = blankHtml;
+        } else {
+            const items = qContainer.querySelectorAll(".pdf-q-item, div[style*='border']");
+            items.forEach(item => {
+                item.style.display = "block";
+                item.style.backgroundColor = "#ffffff";
+                item.style.borderColor = "#cbd5e1";
+
+                item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box").forEach(el => el.style.display = "none");
+                item.querySelectorAll("p").forEach(p => {
+                    const txt = p.innerText || "";
+                    if (txt.includes("ઉત્તર:") || txt.includes("જવાબ:") || txt.includes("સમજૂતી:") || txt.includes("✅") || txt.includes("❌")) {
+                        p.style.display = "none";
+                    }
+                });
+            });
+        }
+    } else {
+        if (currentModalRawReviewHtml && currentModalRawReviewHtml.length > 50) {
+            parseAndRenderReviewHtml(currentModalRawReviewHtml);
+        } else if (currentModalLiveQuestions && currentModalLiveQuestions.length > 0) {
+            renderQuestionsToModal(currentModalLiveQuestions, null);
+        }
+
+        const items = qContainer.querySelectorAll(".pdf-q-item, div[style*='border']");
+        let wrongCount = 0;
+
+        items.forEach(item => {
+            const isWrong = item.getAttribute("data-wrong") === "true" || item.classList.contains("is-wrong-answer") || item.innerHTML.includes("❌");
+            item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box, p").forEach(el => el.style.display = "");
+
+            if (type === "wrong") {
+                if (isWrong) {
+                    item.style.display = "block";
+                    item.style.backgroundColor = "#fff5f5";
+                    item.style.borderColor = "#ef4444";
+                    wrongCount++;
+                } else {
+                    item.style.display = "none";
+                }
+            } else {
+                item.style.display = "block";
+                if (isWrong) {
+                    item.style.backgroundColor = "#fff5f5";
+                    item.style.borderColor = "#ef4444";
+                } else {
+                    item.style.backgroundColor = "#ffffff";
+                    item.style.borderColor = "#cbd5e1";
+                }
+            }
+        });
+
+        if (type === "wrong" && wrongCount === 0) {
+            alert("અભિનંદન! આ કસોટીમાં કોઈ પ્રશ્ન ખોટો પડ્યો નથી.");
+        }
+    }
+
+    if (btnAll) btnAll.style.opacity = (type === "all") ? "1" : "0.6";
+    if (btnWrong) btnWrong.style.opacity = (type === "wrong") ? "1" : "0.6";
+    if (btnBlank) btnBlank.style.opacity = (type === "blank") ? "1" : "0.6";
+}
+
+function extractQuestionsArrayFromText(text) {
+    const varNames = ["questions", "quizData", "myQuestions", "quizQuestions", "testData"];
+    for (const vName of varNames) {
+        let idx = text.indexOf(vName);
+        while (idx !== -1) {
+            const start = text.indexOf('[', idx);
+            if (start !== -1 && start - idx < 60) {
+                let bracketCount = 0;
+                let inString = false;
+                let quoteChar = '';
+                for (let i = start; i < text.length; i++) {
+                    const c = text[i];
+                    if (inString) {
+                        if (c === '\\') i++;
+                        else if (c === quoteChar) inString = false;
+                    } else {
+                        if (c === "'" || c === '"' || c === '`') { inString = true; quoteChar = c; }
+                        else if (c === '[') bracketCount++;
+                        else if (c === ']') {
+                            bracketCount--;
+                            if (bracketCount === 0) {
+                                const arrayStr = text.substring(start, i + 1);
+                                try {
+                                    const parsed = new Function(`return ${arrayStr}`)();
+                                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                                } catch (e) {}
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            idx = text.indexOf(vName, idx + vName.length);
+        }
+    }
+    return null;
+}
+
+function loadQuestionsViaIframe(url) {
+    return new Promise((resolve) => {
+        const ifr = document.createElement("iframe");
+        ifr.style.display = "none";
+        ifr.src = url;
+        document.body.appendChild(ifr);
+        const timeout = setTimeout(() => {
+            try { document.body.removeChild(ifr); } catch(e){}
+            resolve(null);
+        }, 4000);
+        ifr.onload = () => {
+            clearTimeout(timeout);
+            try {
+                const win = ifr.contentWindow;
+                const qs = win.questions || win.quizData || win.myQuestions || win.quizQuestions;
+                document.body.removeChild(ifr);
+                resolve(Array.isArray(qs) && qs.length > 0 ? qs : null);
+            } catch (e) {
+                try { document.body.removeChild(ifr); } catch(err){}
+                resolve(null);
+            }
+        };
+    });
+}
+
+function updateProfileCard() {
+    const isSingle = (selectedStudentEmail !== "ALL");
+    let repRecord = isSingle 
+        ? allRawRecords.find(r => (r.email || "").toLowerCase().trim() === selectedStudentEmail) || {}
+        : { name: "સમગ્ર મૂલ્યાંકન અહેવાલ", email: "તમામ વિદ્યાર્થીઓ", phone: "-" };
+        
+    const name = repRecord.name || "વિદ્યાર્થી";
+    document.getElementById("profName").innerText = name;
+    document.getElementById("avatarInitial").innerText = name.charAt(0);
+    document.getElementById("profEmail").innerText = repRecord.email || "-";
+    document.getElementById("profPhone").innerText = repRecord.phone || "-";
+    
+    const phoneLink = document.getElementById("phoneLink");
+    const waLink = document.getElementById("whatsappLink");
+    if (repRecord.phone && repRecord.phone.length >= 10) {
+        phoneLink.href = `tel:${repRecord.phone}`;
+        const cleanPhone = repRecord.phone.replace(/[^0-9]/g, '');
+        waLink.href = `https://wa.me/91${cleanPhone.slice(-10)}?text=નમસ્તે%20${encodeURIComponent(name)}`;
+        phoneLink.style.display = "inline-flex";
+        waLink.style.display = "inline-flex";
+    } else {
+        phoneLink.style.display = "none";
+        waLink.style.display = "none";
+    }
+    
+    const totalCount = filteredRecords.length;
+    document.getElementById("statTests").innerText = totalCount;
+    let maxPct = 0; let totalP = 0;
+    filteredRecords.forEach(r => {
+        const p = parsePercentValue(r.percentage);
+        totalP += p;
+        if (p > maxPct) maxPct = p;
+    });
+    document.getElementById("statHighest").innerText = `${maxPct}%`;
+    document.getElementById("statAvg").innerText = `${totalCount ? (totalP / totalCount).toFixed(1) : 0}%`;
+}
+
+function renderAllVisuals() {
+    const isDark = document.body.classList.contains("dark-mode");
+    const textColor = isDark ? "#94a3b8" : "#475569";
+    const gridColor = isDark ? "#334155" : "#e2e8f0";
+    let totalP = 0;
+    filteredRecords.forEach(r => totalP += parsePercentValue(r.percentage));
+    const avgPct = filteredRecords.length ? (totalP / filteredRecords.length).toFixed(1) : 0;
+    updateSpeedometer(avgPct);
+    
+    const progLabels = filteredRecords.map((r, idx) => r.subject ? (r.subject.length > 15 ? r.subject.substring(0, 15) + '..' : r.subject) : `ટેસ્ટ ${idx+1}`);
+    const progData = filteredRecords.map(r => parsePercentValue(r.percentage));
+    
+    if (progressChart) progressChart.destroy();
+    progressChart = new Chart(document.getElementById("verticalProgressChart"), {
+        type: 'bar',
+        data: {
+            labels: progLabels,
+            datasets: [{
+                label: 'ટકાવારી (%)',
+                data: progData,
+                backgroundColor: progData.map(v => v >= 75 ? '#10b981' : (v >= 40 ? '#3b82f6' : '#ef4444')),
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, max: 100, ticks: { color: textColor }, grid: { color: gridColor } },
+                x: { ticks: { color: textColor, maxRotation: 45, minRotation: 20 }, grid: { display: false } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+}
+
+function updateSpeedometer(score) {
+    const val = parseFloat(score) || 0;
+    document.getElementById("gaugeDisplayValue").innerText = `${val}%`;
+    let statusColor = val >= 75 ? "#10b981" : (val < 40 ? "#ef4444" : "#3b82f6");
+    document.getElementById("gaugeStatusText").style.color = statusColor;
+    if (gaugeChart) gaugeChart.destroy();
+    const isDark = document.body.classList.contains("dark-mode");
+    gaugeChart = new Chart(document.getElementById("gaugeCanvas"), {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [val, 100 - val],
+                backgroundColor: [statusColor, isDark ? '#334155' : '#e2e8f0'],
+                borderWidth: 0, circumference: 180, rotation: 270
+            }]
+        },
+        options: { responsive: true, cutout: '75%', plugins: { tooltip: { enabled: false } } }
+    });
+}
+
+function renderHistoryTable() {
+    const tbody = document.getElementById("testTableBody");
+    tbody.innerHTML = "";
+    if (filteredRecords.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:25px; color:var(--text-muted);">કોઈ રેકોર્ડ મળ્યો નથી.</td></tr>`;
+        return;
+    }
+    
+    filteredRecords.forEach((item, idx) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><span class="date-badge">${formatShortDateOnly(item.dateTime)}</span></td>
+            <td>${formatStackedName(item.name)}</td>
+            <td><strong style="color:#2563eb;">${item.subject || "-"}</strong></td>
+            <td style="text-align:center;"><span style="background:rgba(37, 99, 235, 0.1); color:#2563eb; padding:2px 6px; border-radius:6px; font-weight:700;">${item.score || "-"}</span></td>
+            <td style="text-align:center;"><strong style="color:#10b981; font-size:13px;">${formatPercentDisplay(item.percentage)}</strong></td>
+            <td><span class="time-badge">${formatDurationTime(item.timeTaken)}</span></td>
+            <td style="text-align:center;"><button class="btn-action-sm" onclick="openTestModal(${idx})" style="background:var(--primary-gradient);"><i class="fa-solid fa-file-lines"></i> પરિણામ PDF</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function closeModal() { 
+    document.getElementById("reviewModal").style.display = "none"; 
+}
+
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById("reviewModal");
+    if (event.target === modal) {
+        closeModal();
+    }
+});
+
+window.addEventListener('keydown', function(event) {
+    if (event.key === "Escape" || event.key === "Esc") {
+        closeModal();
+        closeDriveFolderModal();
+        closeImagePreview();
+    }
+});
+
+window.addEventListener('popstate', function(e) {
+    const modal = document.getElementById("reviewModal");
+    const driveModal = document.getElementById("driveViewerModal");
+    if (modal && modal.style.display === "flex") {
+        modal.style.display = "none";
+    }
+    if (driveModal && driveModal.style.display === "flex") {
+        driveModal.style.display = "none";
+    }
+});
+
+function exportPDF(mode) {
+    const element = document.getElementById("pdfPrintArea");
+    filterModalQuestions(mode);
+    
+    const scrollBody = document.getElementById("modalScrollBody");
+    if (scrollBody) scrollBody.scrollTop = 0;
+    
+    const suffix = (mode === "wrong") ? "_માત્ર_ખોટા_પ્રશ્નો" : (mode === "blank" ? "_મૂળ_પ્રશ્નપત્ર" : "_સંપૂર્ણ_પ્રશ્નપત્ર");
+    const filename = `${currentBaseFilename}${suffix}.pdf`;
+    
+    const opt = {
+        margin: [8, 8, 8, 8],
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollY: 0 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+    
+    html2pdf().set(opt).from(element).save().then(() => {
+        filterModalQuestions('all');
+    });
+}
+
+window.addEventListener("DOMContentLoaded", function() {
+    checkSavedLoginSession();
+});
+</script>
+</body>
+</html>
