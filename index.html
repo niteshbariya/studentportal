@@ -240,20 +240,15 @@
             border-radius: 6px;
         }
 
-        /* 🌟 એડમિન નોટ્સ સ્ટાઇલ 🌟 */
         #adminNotesList {
             max-height: 250px;
             overflow-y: auto;
             scroll-behavior: smooth;
             padding-right: 4px;
         }
-        #adminNotesList::-webkit-scrollbar {
-            width: 4px;
-        }
-        #adminNotesList::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
+        #adminNotesList::-webkit-scrollbar { width: 4px; }
+        #adminNotesList::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
         .admin-note-item {
             background: var(--inner-box);
             border-left: 4px solid #f59e0b;
@@ -294,9 +289,7 @@
             flex: 1;
             min-width: 160px;
         }
-        body.dark-mode .note-text-inline {
-            color: #93c5fd;
-        }
+        body.dark-mode .note-text-inline { color: #93c5fd; }
         .note-date-pill {
             font-size: 10px;
             font-weight: 700;
@@ -393,7 +386,39 @@
         }
         .portal-footer { text-align: center; padding: 12px 0 4px 0; font-size: 11.5px; color: var(--text-muted); font-weight: 700; }
 
-        /* મોડલ પોપ-અપ CSS */
+        .notification-card-wrapper {
+            background: var(--card-bg); border: 2px solid #f59e0b;
+            border-radius: 14px; padding: 12px 14px; margin-top: 6px;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);
+        }
+        .notif-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+            font-size: 13px; font-weight: 800; color: #d97706; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px;
+        }
+        .notification-scroll-container {
+            max-height: 180px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            padding-right: 4px;
+        }
+        .notification-scroll-container::-webkit-scrollbar { width: 4px; }
+        .notification-scroll-container::-webkit-scrollbar-thumb { background: #fcd34d; border-radius: 10px; }
+
+        .notif-item {
+            background: var(--inner-box); border-left: 4px solid #f59e0b;
+            padding: 8px 12px; margin-bottom: 8px; border-radius: 6px;
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        .notif-item:hover {
+            border-left-color: #2563eb;
+            background: rgba(37, 99, 235, 0.05);
+        }
+        .notif-item a { color: #2563eb; font-weight: 800; text-decoration: none; font-size: 11.5px; }
+        .notif-date { font-size: 10px; color: var(--text-muted); font-weight: 700; }
+        .new-badge { background: #ef4444; color: white; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; }
+
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.78); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 8px;
@@ -481,24 +506,6 @@
             padding: 6px 10px; border-radius: 4px; font-size: 12px; color: #1e40af; font-weight: 600; margin-top: 6px;
         }
 
-        /* Notification Section */
-        .notification-card {
-            background: var(--card-bg); border: 2px solid #f59e0b;
-            border-radius: 14px; padding: 14px; margin-top: 10px;
-            max-height: 250px; overflow-y: auto;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);
-        }
-        .notif-item {
-            background: var(--inner-box); border-left: 4px solid #f59e0b;
-            padding: 10px; margin-bottom: 8px; border-radius: 6px;
-            display: flex; justify-content: space-between; align-items: center;
-            animation: slideIn 0.3s ease-out;
-        }
-        .notif-item a { color: #2563eb; font-weight: 800; text-decoration: none; font-size: 12px; }
-        .notif-date { font-size: 10px; color: var(--text-muted); font-weight: 700; }
-        .new-badge { background: #ef4444; color: white; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; }
-
-        /* Folder Accordion CSS */
         .folder-accordion { border-bottom: 1px solid var(--border-color); }
         .folder-accordion-header {
             padding: 10px 14px; background: var(--card-bg); cursor: pointer;
@@ -516,7 +523,6 @@
         .folder-accordion.open .folder-icon-toggle { transform: rotate(90deg); }
         .folder-icon-toggle { transition: transform 0.2s; font-size: 10px; margin-right: 6px; }
 
-        /* PDF Card Colors */
         .drive-file-item {
             padding: 10px 12px; margin: 6px 4px; border-radius: 8px; cursor: pointer;
             display: flex; align-items: center; gap: 10px; transition: all 0.2s ease;
@@ -553,7 +559,7 @@
                 <i class="fa-solid fa-moon" id="themeIcon"></i> <span id="themeText">ડાર્ક મોડ</span>
             </button>
             <span id="roleBadge" class="badge-role"><i class="fa-solid fa-user-graduate"></i> વિદ્યાર્થી પેનલ</span>
-            <button id="logoutBtn" style="display:none; background:var(--gradient-rose);" onclick="location.reload()" class="btn-action-sm">
+            <button id="logoutBtn" style="display:none; background:var(--gradient-rose);" onclick="performLogout()" class="btn-action-sm">
                 <i class="fa-solid fa-right-from-bracket"></i> લૉગ આઉટ
             </button>
         </div>
@@ -573,7 +579,13 @@
 
     <main id="dashboardScreen">
         <section id="notificationSection" style="display: none;">
-            <div class="notification-card" id="notificationCard"></div>
+            <div class="notification-card-wrapper">
+                <div class="notif-header">
+                    <span><i class="fa-solid fa-bell"></i> તાજી કસોટી નોટિફિકેશન</span>
+                    <span style="font-size: 10px; color: var(--text-muted);"><i class="fa-solid fa-arrows-up-down"></i> Auto-Scrolling</span>
+                </div>
+                <div class="notification-scroll-container" id="notificationCard"></div>
+            </div>
         </section>
 
         <section class="filter-ribbon">
@@ -745,7 +757,6 @@
     </main>
 </div>
 
-<!-- 🌟 મિશન 27 - ડિજિટલ પુસ્તકાલય PDF Reader 🌟 -->
 <div id="driveViewerModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 1250px; height: 92vh;">
         <div class="modal-header">
@@ -780,7 +791,6 @@
     </div>
 </div>
 
-<!-- 🌟 Review Modal: ૩ ફિલ્ટર્સ (તમામ / માત્ર ખોટા / જવાબ વગરનું પ્રશ્નપત્ર) 🌟 -->
 <div id="reviewModal" class="modal-overlay">
     <div class="modal-box">
         <div class="modal-header">
@@ -849,11 +859,11 @@ let currentBaseFilename = "Test_Paper";
 let rawDriveFiles = [];
 let groupedDriveFiles = {};
 let notesScrollInterval = null;
+let notifScrollInterval = null;
 
 let currentModalLiveQuestions = null;
 let currentModalRawReviewHtml = "";
 
-/* 🌟 સ્માર્ટ ઓપ્શન ક્લીનર: (A), 1., • કે - જેવા ચિહ્નો સાફ કરવા જેથી બેવડાય નહીં 🌟 */
 function cleanOptionText(text) {
     if (!text) return "";
     var s = String(text).trim();
@@ -863,9 +873,18 @@ function cleanOptionText(text) {
     return s.trim();
 }
 
-/* ============================================================
-   🚀 લોગિન સિસ્ટમ (કોઈપણ CORS સમસ્યા વગર મૂળ સ્ટાન્ડર્ડ કૉલ)
-   ============================================================ */
+function checkSavedLoginSession() {
+    const savedEmail = localStorage.getItem("portal_user_email");
+    const savedRole = localStorage.getItem("portal_user_role");
+    const savedName = localStorage.getItem("portal_user_name");
+
+    if (savedEmail && savedRole) {
+        userEmail = savedEmail.toLowerCase().trim();
+        setupDashboardEnvironment(savedRole, savedName || savedEmail);
+        fetchDataAndInit();
+    }
+}
+
 function loginWithPassword() {
     var emailInput = document.getElementById("loginEmailInput");
     var passInput = document.getElementById("loginPasswordInput");
@@ -911,6 +930,13 @@ function loginWithPassword() {
         btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole"></i> પ્રવેશ કરો';
         btn.disabled = false;
     });
+}
+
+function performLogout() {
+    localStorage.removeItem("portal_user_email");
+    localStorage.removeItem("portal_user_role");
+    localStorage.removeItem("portal_user_name");
+    location.reload();
 }
 
 async function setupDashboardEnvironment(role, name) {
@@ -998,14 +1024,10 @@ function formatPercentDisplay(val) {
     return `${parsePercentValue(val)}%`;
 }
 
-/* 🌟 સચોટ Regex Helper 🌟 */
 function escapeRegex(string) {
     return String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-/* ============================================================
-   📊 ડેટા ફેચ & રેન્ડર
-   ============================================================ */
 function fetchDataAndInit() {
     fetch(SCRIPT_URL, {
         method: "POST",
@@ -1035,15 +1057,20 @@ function fetchDataAndInit() {
 
 function renderTestNotifications(notifications) {
     const section = document.getElementById("notificationSection");
-    const card = document.getElementById("notificationCard");
+    const container = document.getElementById("notificationCard");
     
+    if (notifScrollInterval) {
+        clearInterval(notifScrollInterval);
+        notifScrollInterval = null;
+    }
+
     if (!notifications || notifications.length === 0) {
         section.style.display = "none";
         return;
     }
 
     section.style.display = "block";
-    card.innerHTML = "";
+    container.innerHTML = "";
 
     notifications.forEach((notif, index) => {
         const dateStr = formatShortDateOnly(notif.date);
@@ -1061,11 +1088,35 @@ function renderTestNotifications(notifications) {
             </div>
             ${notif.link ? `<a href="${notif.link}" target="_blank" class="btn-action-sm" style="background: var(--primary-gradient);">ટેસ્ટ આપો <i class="fa-solid fa-arrow-right"></i></a>` : ''}
         `;
-        card.appendChild(div);
+        container.appendChild(div);
     });
+
+    initAutoScrollNotifications();
 }
 
-/* 🌟 એડમિન નોટ્સ રેન્ડર અને ઓટો-સ્ક્રોલ 🌟 */
+function initAutoScrollNotifications() {
+    const container = document.getElementById("notificationCard");
+    if (!container) return;
+
+    let isPaused = false;
+    container.onmouseenter = () => { isPaused = true; };
+    container.onmouseleave = () => { isPaused = false; };
+    container.ontouchstart = () => { isPaused = true; };
+    container.ontouchend = () => { setTimeout(() => { isPaused = false; }, 2500); };
+
+    notifScrollInterval = setInterval(() => {
+        if (isPaused) return;
+        if (container.scrollHeight > container.clientHeight) {
+            container.scrollTop += 1;
+            if (container.scrollTop >= container.scrollHeight - container.clientHeight - 1) {
+                setTimeout(() => {
+                    container.scrollTop = 0;
+                }, 1500);
+            }
+        }
+    }, 45);
+}
+
 function renderAdminNotes() {
     const notesContainer = document.getElementById("adminNotesList");
     if (!notesContainer) return;
@@ -1144,9 +1195,6 @@ function closeImagePreview() {
     document.getElementById("imagePreviewModal").style.display = "none";
 }
 
-/* ============================================================
-   🌟 Google Drive PDF Reader
-   ============================================================ */
 async function loadDriveFiles() {
     const listEl = document.getElementById('driveFileList');
     if (!listEl) return;
@@ -1312,9 +1360,6 @@ function closeDriveFolderModal() {
     document.getElementById('driveViewerModal').style.display = 'none';
 }
 
-/* ============================================================
-   📚 Repo & Test System (🌟 સાર્વત્રિક સ્માર્ટ મેચિંગ લૉજિક 🌟)
-   ============================================================ */
 async function scanAllRepoFiles() {
     const promises = REPO_LIST.map(async (repo) => {
         try {
@@ -1370,7 +1415,6 @@ function filterAndRefreshData() {
     renderHistoryTable();
 }
 
-/* 🌟 ફાઇલ અને ટેસ્ટ મેચિંગ (બધા જ ટેસ્ટ માટે એકસાથે) 🌟 */
 function isFileAttemptedByRecord(fileName, repoName, recordsList) {
     const clean = fileName.replace('.html', '').toLowerCase();
     const cleanNoSpace = clean.replace(/\s+/g, '');
@@ -1381,10 +1425,16 @@ function isFileAttemptedByRecord(fileName, repoName, recordsList) {
         const subNoSpace = sub.replace(/\s+/g, '');
 
         if (sub.includes(clean) || sub.includes(cleanNoSpace) || sub.includes(rName)) return true;
+        
         if (clean.includes("anew") || clean.includes("1a") || clean.includes("bal")) {
             if (sub.includes("વિકાસ") || sub.includes("પૂર્વ પ્રાથમિક") || sub.includes("hots") || sub.includes("કોર્ષ - ૧") || sub.includes("બાળકો")) return true;
         }
-        if ((clean.includes("1b") || clean.includes("sy")) && (sub.includes("બોધ") || sub.includes("અધ્યયન") || sub.includes("દ્વિતીય"))) return true;
+        
+        if (clean.includes("1b")) {
+            if (sub.includes("1 (બ)") || sub.includes("1(બ)") || sub.includes("અધ્યેતા") || sub.includes("મૂલ્યાંકન") || sub.includes("બોધ") || sub.includes("અધ્યયન")) return true;
+        }
+
+        if (clean.includes("sy") && (sub.includes("દ્વિતીય") || sub.includes("બોધ"))) return true;
         if (clean.includes("maths") && sub.includes("ગણિત")) return true;
         if (clean.includes("evs") && (sub.includes("પર્યાવરણ") || sub.includes("evs"))) return true;
         if (clean.includes("guj") && sub.includes("ગુજરાતી")) return true;
@@ -1540,7 +1590,6 @@ async function fetchQuestionsFromLiveSource(targetSubject) {
     return null;
 }
 
-/* 🌟 openTestModal 🌟 */
 async function openTestModal(idx) {
     const item = filteredRecords[idx];
     currentBaseFilename = `${item.name || 'Student'}_${item.subject || 'Test'}`;
@@ -1729,7 +1778,6 @@ function renderQuestionsToModal(questions, sheetRecord) {
     qContainer.innerHTML = questionsHtml;
 }
 
-/* 🌟 parseAndRenderReviewHtml 🌟 */
 function parseAndRenderReviewHtml(rawHtml) {
     const qContainer = document.getElementById("pdfDocQuestions");
     qContainer.innerHTML = rawHtml;
@@ -1758,7 +1806,6 @@ function parseAndRenderReviewHtml(rawHtml) {
     return false;
 }
 
-/* 🌟 ૩-ઇન-૧ ફિલ્ટર સિસ્ટમ 🌟 */
 function filterModalQuestions(type) {
     const qContainer = document.getElementById("pdfDocQuestions");
     const btnAll = document.getElementById("btnFilterAll");
@@ -1817,7 +1864,6 @@ function filterModalQuestions(type) {
 
         items.forEach(item => {
             const isWrong = item.getAttribute("data-wrong") === "true" || item.classList.contains("is-wrong-answer") || item.innerHTML.includes("❌");
-            
             item.querySelectorAll(".pdf-ans-box, .pdf-wrong-user-ans, .exp-box, .pdf-exp-box, p").forEach(el => el.style.display = "");
 
             if (type === "wrong") {
@@ -2029,7 +2075,6 @@ function renderHistoryTable() {
     });
 }
 
-/* 🌟 મોડલ બંધ કરવા માટેના ફંક્શન્સ 🌟 */
 function closeModal() { 
     document.getElementById("reviewModal").style.display = "none"; 
 }
@@ -2083,6 +2128,10 @@ function exportPDF(mode) {
         filterModalQuestions('all');
     });
 }
+
+window.addEventListener("DOMContentLoaded", function() {
+    checkSavedLoginSession();
+});
 </script>
 </body>
 </html>
