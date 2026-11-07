@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>માસ્ટર કસોટી પત્રક - Nitesh Baria Web Developer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
+            --bg-color: #f1f5f9;
+            --container-bg: #ffffff;
+            --card-bg: #ffffff;
+            --inner-box: #f8fafc;
+            --text-color: #0f172a;
+            --text-muted: #64748b;
+            --heading-color: #1e3a8a;
+            --border-color: #e2e8f0;
+            --table-border: #cbd5e1;
+            --shadow-md: 0 10px 20px -3px rgba(37, 99, 235, 0.1);
+        }
+
+        body.dark-mode {
+            --bg-color: #060913;
+            --container-bg: #0b1120;
+            --card-bg: #111a2e;
+            --inner-box: #17223b;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --heading-color: #93c5fd;
+            --border-color: #1e293b;
+            --table-border: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Noto Sans Gujarati', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 14px;
+        }
+
+        .portal-wrapper {
+            width: 100%;
+            max-width: 1300px;
+            background: var(--container-bg);
+            border-radius: 20px;
+            border: 2px solid var(--border-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .portal-brand { display: flex; align-items: center; gap: 10px; }
+        .portal-logo-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 18px;
+        }
+        .brand-text h1 {
+            font-size: 20px; font-weight: 900;
+            color: var(--heading-color);
+        }
+
+        .portal-nav-bar {
+            display: flex; gap: 8px; flex-wrap: wrap; padding-bottom: 8px;
+            border-bottom: 1.5px dashed var(--border-color);
+        }
+        .nav-link-btn {
+            padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700;
+            color: var(--text-muted); background: var(--inner-box); border: 1.5px solid var(--border-color);
+            text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+        }
+        .nav-link-btn.active {
+            background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+            color: #ffffff; border-color: transparent;
+        }
+
+        /* કોઠાની સ્ટાઇલ */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 2px solid var(--table-border);
+            margin-top: 8px;
+        }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+        th, td { padding: 12px 14px; border-right: 1.5px solid var(--border-color); border-bottom: 1.5px solid var(--border-color); vertical-align: middle; }
+        th:last-child, td:last-child { border-right: none; }
+        tr:last-child td { border-bottom: none; }
+
+        th {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: #ffffff; font-weight: 800; font-size: 12.5px;
+            white-space: nowrap; text-align: center;
+        }
+        tbody tr:nth-child(even) { background-color: rgba(241, 245, 249, 0.6); }
+        body.dark-mode tbody tr:nth-child(even) { background-color: rgba(30, 41, 59, 0.4); }
+
+        .repo-badge {
+            font-family: monospace; font-size: 12px; font-weight: 800;
+            background: rgba(37, 99, 235, 0.1); color: #2563eb;
+            padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(37, 99, 235, 0.25);
+            display: inline-block;
+        }
+        .file-badge {
+            font-family: monospace; font-size: 12px; font-weight: 700; color: #475569;
+            background: var(--inner-box); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border-color);
+            display: inline-block;
+        }
+
+        .btn-take-now {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white !important; font-size: 11.5px; font-weight: 800;
+            padding: 6px 12px; border-radius: 8px; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+        }
+        .btn-retake {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white !important; font-size: 11.5px; font-weight: 800;
+            padding: 6px 12px; border-radius: 8px; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+        }
+        .score-pill {
+            background: rgba(16, 185, 129, 0.12); color: #047857;
+            padding: 4px 8px; border-radius: 6px; font-weight: 800; font-family: monospace;
+            border: 1px solid #10b981; display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<div class="portal-wrapper">
+    <header class="top-navbar">
+        <div class="portal-brand">
+            <div class="portal-logo-icon"><i class="fa-solid fa-table-list"></i></div>
+            <div class="brand-text">
+                <h1>માસ્ટર કસોટી પત્રક (Google Sheet Live)</h1>
+            </div>
+        </div>
+        <div id="userInfoBadge" style="font-size: 12.5px; font-weight: 800; color: #2563eb;">
+            <i class="fa-solid fa-user-graduate"></i> લોડ થઈ રહ્યું છે...
+        </div>
+    </header>
+
+    <nav class="portal-nav-bar">
+        <a href="index.html" class="nav-link-btn"><i class="fa-solid fa-chart-line"></i> ડેશબોર્ડ</a>
+        <a href="tests.html" class="nav-link-btn"><i class="fa-solid fa-folder-tree"></i> કસોટી કેન્દ્ર</a>
+        <a href="alltests.html" class="nav-link-btn active"><i class="fa-solid fa-table"></i> માસ્ટર ટેસ્ટ લિસ્ટ</a>
+        <a href="history.html" class="nav-link-btn"><i class="fa-solid fa-clock-rotate-left"></i> પરિણામ પત્રક</a>
+    </nav>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 50px;">ક્રમ</th>
+                    <th style="width: 100px;">રિપોઝિટરી</th>
+                    <th style="width: 160px;">ફાઇલ નામ</th>
+                    <th>કસોટી / વિષયનું નામ</th>
+                    <th style="width: 110px;">અપલોડ તારીખ</th>
+                    <th style="width: 110px;">મેળવેલ ગુણ</th>
+                    <th style="width: 130px;">સ્થિતિ / એક્શન</th>
+                </tr>
+            </thead>
+            <tbody id="masterTableBody">
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 25px; color: var(--text-muted); font-weight: 700;">
+                        <i class="fa-solid fa-spinner fa-spin"></i> ગૂગલ શીટમાંથી માસ્ટર કસોટીઓ લોડ થઈ રહી છે...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
+
+var userEmail = localStorage.getItem("portal_user_email") || "";
+var userName = localStorage.getItem("portal_user_name") || userEmail;
+
+if (!userEmail) {
+    window.location.href = "index.html";
+} else {
+    document.getElementById("userInfoBadge").innerHTML = "🎓 " + userName;
+}
+
+function loadMasterSheetTests() {
+    var tbody = document.getElementById("masterTableBody");
+    var userQuery = "?email=" + encodeURIComponent(userEmail) + "&name=" + encodeURIComponent(userName);
+
+    // ૧. માસ્ટર લિસ્ટ (TestsList) અને ૨. વિદ્યાર્થીનો સ્કોર બંને એકસાથે લાવશે
+    Promise.all([
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "getAllAvailableTests" })
+        }).then(function(res) { return res.json(); }),
+        
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
+        }).then(function(res) { return res.json(); })
+    ])
+    .then(function(results) {
+        var masterData = results[0].tests || [];
+        var historyRecords = results[1].history || [];
+
+        if (masterData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#ef4444;">ગૂગલ શીટમાં કસોટીઓ મળી નહીં.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = "";
+        var serial = 1;
+
+        masterData.forEach(function(item) {
+            var rRepo = (item.repoName || "").toLowerCase().trim();
+            var rFile = (item.testFileName || "").trim();
+            var rSub = item.subject || "-";
+            var rDate = item.testUploadDate ? String(item.testUploadDate).split("T")[0] : "-";
+
+            // ચોક્કસ ૧-ટુ-૧ મેચિંગ (વિદ્યાર્થીએ આ ચોક્કસ ફાઈલ આપી છે કે નહીં?)
+            var attempt = historyRecords.find(function(h) {
+                if (!h.score || h.score.trim() === "" || h.score.trim() === "-") return false;
+                if (h.testStatus && h.testStatus.toLowerCase().trim() === "pending") return false;
+
+                if (h.testFileName && h.testFileName.trim() !== "") {
+                    return String(h.testFileName).toLowerCase().trim() === rFile.toLowerCase() &&
+                           String(h.repoName || "").toLowerCase().trim() === rRepo;
+                }
+                return false;
+            });
+
+            var isAttempted = !!attempt;
+            var testUrl = "https://niteshbariya.github.io/" + rRepo + "/" + rFile + userQuery;
+
+            var scoreDisplay = isAttempted 
+                ? '<span class="score-pill">' + attempt.score + ' (' + (attempt.percentage || '') + ')</span>' 
+                : '<span style="color:var(--text-muted);">-</span>';
+
+            var actionBtn = isAttempted 
+                ? '<a href="' + testUrl + '" target="_blank" class="btn-retake"><i class="fa-solid fa-rotate-right"></i> ફરી આપો</a>'
+                : '<a href="' + testUrl + '" target="_blank" class="btn-take-now"><i class="fa-solid fa-play"></i> કસોટી આપો</a>';
+
+            var tr = document.createElement("tr");
+            tr.innerHTML = 
+                '<td style="text-align:center; font-weight:800;">' + (serial++) + '</td>' +
+                '<td style="text-align:center;"><span class="repo-badge">' + rRepo + '</span></td>' +
+                '<td><span class="file-badge">' + rFile + '</span></td>' +
+                '<td><strong>' + rSub + '</strong></td>' +
+                '<td style="text-align:center; color:var(--text-muted);">' + rDate + '</td>' +
+                '<td style="text-align:center;">' + scoreDisplay + '</td>' +
+                '<td style="text-align:center;">' + actionBtn + '</td>';
+
+            tbody.appendChild(tr);
+        });
+    })
+    .catch(function(err) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#ef4444;">ડેટા લોડ કરવામાં ક્ષતિ આવી.</td></tr>';
+    });
+}
+
+window.addEventListener("DOMContentLoaded", loadMasterSheetTests);
+</script>
+</body>
+</html>
