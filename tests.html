@@ -376,86 +376,106 @@ function formatPercentDisplay(val) {
     return parsePercentValue(val) + "%";
 }
 
+var sheetTestMeta = {};
+
 function fetchRecordsAndInit() {
+    // ૧. ગૂગલ શીટની માસ્ટર લિસ્ટ (TestsList) માંથી બધી જ કસોટીઓ આપોઆપ લાવો
     fetch(SCRIPT_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
+        body: JSON.stringify({ action: "getAllAvailableTests" })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data && data.tests && data.tests.length > 0) {
+            repoFilesCache = {};
+            sheetTestMeta = {};
+            data.tests.forEach(function(t) {
+                var r = (t.repoName || "").toLowerCase().trim();
+                var f = (t.testFileName || "").trim();
+                if (r && f && f.toLowerCase() !== "index.html") {
+                    if (!repoFilesCache[r]) repoFilesCache[r] = [];
+                    if (repoFilesCache[r].indexOf(f) === -1) {
+                        repoFilesCache[r].push(f);
+                    }
+                    var key = r + "/" + f.toLowerCase();
+                    sheetTestMeta[key] = {
+                        subject: t.subject || "",
+                        uploadDate: t.testUploadDate || ""
+                    };
+                }
+            });
+        }
+        
+        // ૨. વિદ્યાર્થીનો સબમિશન ઇતિહાસ લાવો
+        return fetch(SCRIPT_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
+        });
     })
     .then(function(res) { return res.json(); })
     .then(function(data) {
         allRawRecords = data.history || [];
-        scanAllRepoFiles();
+        renderRepoGrid();
     })
     .catch(function(err) {
         console.error("Fetch failed", err);
-        scanAllRepoFiles();
-    });
-}
-
-function scanAllRepoFiles() {
-    renderRepoGrid();
-
-    var promises = REPO_LIST.map(function(repo) {
-        return fetch("https://api.github.com/repos/niteshbariya/" + repo + "/contents/")
-            .then(function(res) {
-                if (res.ok) return res.json();
-                return [];
-            })
-            .then(function(items) {
-                if (Array.isArray(items)) {
-                    var htmlFiles = items
-                        .filter(function(f) { return f.name && f.name.toLowerCase().endsWith('.html'); })
-                        .map(function(f) { return f.name; });
-                    if (htmlFiles.length > 0) {
-                        repoFilesCache[repo] = htmlFiles;
-                    }
-                }
-            })
-            .catch(function() {});
-    });
-
-    Promise.all(promises).then(function() {
         renderRepoGrid();
     });
 }
 
+// 🎯 ૧૦૦% ચોક્કસ મેચિંગ - sy1apart1 અને sy1apart2 ક્યારેય મિક્સ નહીં થાય
 function isFileAttemptedByRecord(fileName, repoName, recordsList) {
     var cleanFileName = fileName.split('/').pop().toLowerCase().trim();
     var cleanRepo = repoName.toLowerCase().trim();
+    var cleanBase = cleanFileName.replace(/\.html$/i, '').trim();
 
     return recordsList.find(function(r) {
-        if (r.repoName && r.testFileName) {
-            var rRepo = String(r.repoName).toLowerCase().trim();
+        // ૧. જો સ્કોર ન હોય અથવા સ્ટેટસ પેન્ડિંગ હોય તો ટેસ્ટ આપેલો નથી
+        if (!r.score || r.score.trim() === "" || r.score.trim() === "-") return false;
+        if (r.testStatus && r.testStatus.toLowerCase().trim() === "pending") return false;
+
+        // ૨. શીટમાં રહેલા testFileName સાથે ૧૦૦% અક્ષરેઅક્ષર સરખાવો
+        if (r.testFileName && r.testFileName.trim() !== "") {
             var rFile = String(r.testFileName).toLowerCase().trim();
-            return (rRepo === cleanRepo) && (rFile === cleanFileName || rFile === cleanFileName.replace('.html', ''));
+            var rBase = rFile.replace(/\.html$/i, '').trim();
+            var rRepo = r.repoName ? String(r.repoName).toLowerCase().trim() : "";
+
+            var isSameFile = (rFile === cleanFileName || rBase === cleanBase);
+            if (isSameFile) {
+                if (rRepo && cleanRepo) {
+                    return rRepo === cleanRepo;
+                }
+                return true;
+            }
+            return false;
         }
 
+        // ૩. જૂના રેકોર્ડ્સ માટે (જ્યાં શીટમાં testFileName ખાલી હોય)
         var subRaw = (r.subject || "").toLowerCase().trim();
         var sub = convertGujaratiDigitsToEnglish(subRaw);
         var subNoSpace = sub.replace(/[\s\-_()]+/g, '');
-        var cleanNoSpace = cleanFileName.replace(/\.html$/i, '').replace(/[\s\-_()]+/g, '');
-        var cleanBase = cleanFileName.replace(/\.html$/i, '');
+        var cleanNoSpace = cleanBase.replace(/[\s\-_()]+/g, '');
 
-        if (sub.indexOf(cleanBase) !== -1 || subNoSpace.indexOf(cleanNoSpace) !== -1) return true;
+        var isPart2 = sub.indexOf("ભાગ-૨") !== -1 || sub.indexOf("ભાગ 2") !== -1 || sub.indexOf("ભાગ-2") !== -1 || sub.indexOf("part2") !== -1;
+        var isPart1 = (sub.indexOf("part1") !== -1 || sub.indexOf("૧૦૦ hots") !== -1 || sub.indexOf("100 hots") !== -1) && !isPart2;
 
-        var isPartOr100File = cleanBase.indexOf("100") !== -1 || cleanBase.indexOf("part") !== -1;
-        var isPartOr100Sub = sub.indexOf("100") !== -1 || sub.indexOf("part") !== -1;
-        if (isPartOr100File !== isPartOr100Sub) return false;
+        if (cleanBase === "sy1apart2") {
+            return isPart2 || sub.indexOf("sy1apart2") !== -1;
+        }
+        if (cleanBase === "sy1apart1") {
+            return !isPart2 && (isPart1 || sub.indexOf("sy1apart1") !== -1 || (sub.indexOf("1 (અ)") !== -1 && sub.indexOf("100") !== -1));
+        }
 
-        var isNewFile = cleanBase.indexOf("new") !== -1;
-        var isNewSub = sub.indexOf("new") !== -1 || sub.indexOf("નવું") !== -1;
-        if (isNewFile !== isNewSub) return false;
+        if (cleanBase === "1a") return (sub.indexOf("1 (અ)") !== -1 || sub.indexOf("1(અ)") !== -1) && !isPart1 && !isPart2 && sub.indexOf("100") === -1;
+        if (cleanBase === "1b") return (sub.indexOf("1 (બ)") !== -1 || sub.indexOf("1(બ)") !== -1) && sub.indexOf("new") === -1;
+        if (cleanBase === "2a") return (sub.indexOf("2 (અ)") !== -1 || sub.indexOf("2(અ)") !== -1);
+        if (cleanBase === "2b") return (sub.indexOf("2 (બ)") !== -1 || sub.indexOf("2(બ)") !== -1);
 
-        if (cleanBase === "1b") return (sub.indexOf("1 (બ)") !== -1 || sub.indexOf("1(બ)") !== -1 || sub.indexOf("અધ્યેતા") !== -1) && !isNewSub;
-        if (cleanBase === "1bnew") return (sub.indexOf("1 (બ)") !== -1 || sub.indexOf("1(બ)") !== -1) && isNewSub;
-        if (cleanBase === "5bevs") return (sub.indexOf("5 (બ)") !== -1 || sub.indexOf("5(બ)") !== -1 || sub.indexOf("પર્યાવરણ") !== -1 || sub.indexOf("evs") !== -1) && !isPartOr100Sub;
-        if (cleanBase === "5bevspart1q100") return (sub.indexOf("5 (બ)") !== -1 || sub.indexOf("5(બ)") !== -1 || sub.indexOf("પર્યાવરણ") !== -1 || sub.indexOf("evs") !== -1) && isPartOr100Sub;
-        if (cleanBase === "1a") return (sub.indexOf("1 (અ)") !== -1 || sub.indexOf("1(અ)") !== -1 || sub.indexOf("વિકાસ") !== -1) && !isPartOr100Sub;
-        if (cleanBase === "1anew100question") return (sub.indexOf("1 (અ)") !== -1 || sub.indexOf("1(અ)") !== -1 || sub.indexOf("વિકાસ") !== -1) && isPartOr100Sub;
-        if (cleanBase.indexOf("math") !== -1) return sub.indexOf("ગણિત") !== -1 || sub.indexOf("math") !== -1;
-        if (cleanBase.indexOf("guj") !== -1) return sub.indexOf("ગુજરાતી") !== -1 || sub.indexOf("guj") !== -1;
-        if (cleanBase.indexOf("sy") !== -1) return sub.indexOf("દ્વિતીય") !== -1 || sub.indexOf("બોધ") !== -1 || sub.indexOf("sy") !== -1;
+        if (cleanBase.length >= 4 && (sub.indexOf(cleanBase) !== -1 || subNoSpace.indexOf(cleanNoSpace) !== -1)) {
+            return true;
+        }
 
         return false;
     });
@@ -466,7 +486,10 @@ function renderRepoGrid() {
     grid.innerHTML = "";
     var totalPendingAll = 0;
 
-    REPO_LIST.forEach(function(repoName) {
+    var activeRepos = Object.keys(repoFilesCache);
+    if (activeRepos.length === 0) activeRepos = REPO_LIST;
+
+    activeRepos.forEach(function(repoName) {
         var files = repoFilesCache[repoName] || ["index.html"];
         if (files.length > 1) {
             files = files.filter(function(f) { return f.toLowerCase() !== "index.html"; });
