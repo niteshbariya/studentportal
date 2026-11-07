@@ -781,11 +781,43 @@ function convertGujaratiDigitsToEnglish(str) {
     return res;
 }
 
+var sheetTestMeta = {};
+
 function fetchDataAndInit() {
+    // ૧. ગૂગલ શીટની માસ્ટર લિસ્ટ (TestsList) માંથી તમામ કસોટીઓ આપોઆપ લાવો
     fetch(SCRIPT_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
+        body: JSON.stringify({ action: "getAllAvailableTests" })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data && data.tests && data.tests.length > 0) {
+            repoFilesCache = {};
+            sheetTestMeta = {};
+            data.tests.forEach(function(t) {
+                var r = (t.repoName || "").toLowerCase().trim();
+                var f = (t.testFileName || "").trim();
+                if (r && f && f.toLowerCase() !== "index.html") {
+                    if (!repoFilesCache[r]) repoFilesCache[r] = [];
+                    if (repoFilesCache[r].indexOf(f) === -1) {
+                        repoFilesCache[r].push(f);
+                    }
+                    var key = r + "/" + f.toLowerCase();
+                    sheetTestMeta[key] = {
+                        subject: t.subject || "",
+                        uploadDate: t.testUploadDate || ""
+                    };
+                }
+            });
+        }
+        
+        // ૨. વિદ્યાર્થીનો અગાઉનો હિસ્ટ્રી/પરિણામ ડેટા લાવો
+        return fetch(SCRIPT_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
+        });
     })
     .then(function(res) { return res.json(); })
     .then(function(data) {
@@ -801,6 +833,8 @@ function fetchDataAndInit() {
         filterAndRefreshData();
     });
 }
+
+
 
 function populateStudentDropdown() {
     var sMap = {};
@@ -1056,7 +1090,9 @@ function renderHistoryTable() {
             var dateDisplay = isAttempted 
                 ? formatShortDateWithDay(attempt.dateTime) 
                 : '<span style="color:var(--text-muted);">-</span>';
-            var testTitle = isAttempted && attempt.subject ? attempt.subject : (repoName.toUpperCase() + " : " + fileName.replace('.html', ''));
+            var metaKey = repoName.toLowerCase() + "/" + fileName.toLowerCase();
+            var metaSub = (sheetTestMeta[metaKey] && sheetTestMeta[metaKey].subject) ? sheetTestMeta[metaKey].subject : "";
+            var testTitle = isAttempted && attempt.subject ? attempt.subject : (metaSub || (repoName.toUpperCase() + " : " + fileName.replace('.html', '')));
             var scoreDisplay = isAttempted ? '<span class="score-badge">' + (attempt.score || "-") + '</span>' : '<span style="color:var(--text-muted);">-</span>';
             
             var pctNum = isAttempted ? parsePercentValue(attempt.percentage) : 0;
