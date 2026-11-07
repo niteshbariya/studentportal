@@ -546,7 +546,7 @@ function openTestModal(idx) {
     document.getElementById("reviewModal").style.display = "flex";
 
     // ૧. ગૂગલ શીટમાં રહેલા JSON પ્રશ્નો તપાસવા
-    var rawJson = item.testQuestionsData || "";
+    var rawJson = item.questionsJson || item.testQuestionsData || "";
     currentModalQuestions = [];
     if (rawJson && rawJson.length > 5) {
         try {
@@ -561,8 +561,8 @@ function openTestModal(idx) {
         return;
     }
 
-    // ૨. સીધો reviewHtml તપાસવો (જો તેમાં પ્યોર HTML હોય)
-    var rHtml = item.reviewHtml || item.reviewStorage || item.reviewStorageDriveId || "";
+    // ૨. સીધો reviewHtml તપાસવો (જો તેમાં સાચો HTML હોય)
+    var rHtml = item.reviewHtml || item.reviewLink || item.reviewStorage || "";
     if (rHtml && String(rHtml).trim().length > 50 && rHtml.indexOf("DRIVE_ID:") === -1 && rHtml.indexOf("drive.google.com") === -1) {
         currentModalQuestions = [];
         parseAndRenderReviewHtml(rHtml);
@@ -630,7 +630,7 @@ function fetchFallbackFromGitHub(item, qContainer) {
                             q: q.question || q.q || "",
                             opts: q.options || q.opts || [],
                             correctAns: ansIdx,
-                            userAns: undefined, // સાચો જવાબ સીધો યુઝરનો ન ગણવો
+                            userAns: undefined,
                             exp: q.explanation || q.exp || ""
                         };
                     });
@@ -647,7 +647,7 @@ function fetchFallbackFromGitHub(item, qContainer) {
     tryFetchUrls(0);
 }
 
-// 🌐 વિષય અનુસાર সাચા GitHub URLs જનરેટ કરવા
+// 🌐 વિષય અનુસાર સાચા GitHub URLs જનરેટ કરવા
 function buildGitHubUrlsForSubject(item) {
     var sub = String(item.subject || "").toLowerCase();
     var repo = item.repoName || "";
@@ -751,6 +751,7 @@ function filterModalQuestions(type) {
     var btnWrong = document.getElementById("btnFilterWrong");
     var btnBlank = document.getElementById("btnFilterBlank");
 
+    // ૧. જો JSON ફોર્મેટમાં પ્રશ્નો હોય
     if (currentModalQuestions && currentModalQuestions.length > 0) {
         var html = "";
         var wrongCount = 0;
@@ -799,23 +800,71 @@ function filterModalQuestions(type) {
         }
 
         qContainer.innerHTML = html;
-    } else {
-        var items = document.querySelectorAll("#pdfDocQuestions .pdf-q-item");
+    } 
+    // ૨. જો ડ્રાઇવમાંથી આવેલો સીધો HTML ડેટા હોય
+    else {
+        var items = qContainer.querySelectorAll(".pdf-q-item, div[data-wrong]");
         var visibleCount = 0;
-        
+
         items.forEach(function(item) {
             var isW = item.getAttribute("data-wrong") === "true";
+
+            // જવાબો અને સમજૂતી દર્શાવતા તમામ બોક્સ શોધો
+            var answerElements = item.querySelectorAll(
+                ".ans-correct-section, .ans-user-section, .ans-explanation-section, " +
+                ".pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box, .wrong-tag, " +
+                "div[style*='background-color: #ecfdf5'], div[style*='background-color: #fee2e2'], " +
+                "div[style*='background-color: #f0fdf4'], div[style*='background: #ecfdf5'], " +
+                "div[style*='background: #fee2e2'], div[style*='background: #f0fdf4'], " +
+                "div[style*='background-color: rgb(236, 253, 245)'], div[style*='background-color: rgb(254, 226, 226)']"
+            );
+
+            // લખાણ આધારે પણ તપાસો (જો ક્લાસ ન લાગ્યા હોય)
+            if (answerElements.length === 0) {
+                var innerDivs = item.querySelectorAll("div, p");
+                var detected = [];
+                innerDivs.forEach(function(d) {
+                    var txt = d.innerText || "";
+                    if (txt.indexOf("સાચો ઉત્તર") !== -1 || txt.indexOf("સાચો જવાબ") !== -1 ||
+                        txt.indexOf("તમારો ઉત્તર") !== -1 || txt.indexOf("તમારો જવાબ") !== -1 ||
+                        txt.indexOf("સમજૂતી:") !== -1 || txt.indexOf("વિગત:") !== -1) {
+                        detected.push(d);
+                    }
+                });
+                answerElements = detected;
+            }
+
             if (type === "blank") {
-                item.style.display = "block";
-                item.querySelectorAll(".ans-correct-section, .ans-user-section, .ans-explanation-section, .pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box, .wrong-tag").forEach(function(el) { el.style.display = "none"; });
+                item.style.setProperty("display", "block", "important");
+                item.style.border = "1.5px solid #cbd5e1";
+                item.style.backgroundColor = "#ffffff";
+
+                // જવાબો અને સમજૂતી છુપાવો
+                answerElements.forEach(function(el) {
+                    el.style.setProperty("display", "none", "important");
+                });
                 visibleCount++;
+
             } else if (type === "wrong") {
-                item.querySelectorAll(".ans-correct-section, .ans-user-section, .ans-explanation-section, .pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box, .wrong-tag").forEach(function(el) { el.style.display = ""; });
-                item.style.display = isW ? "block" : "none";
-                if (isW) visibleCount++;
-            } else {
-                item.style.display = "block";
-                item.querySelectorAll(".ans-correct-section, .ans-user-section, .ans-explanation-section, .pdf-ans-box, .pdf-wrong-user-ans, .pdf-exp-box, .wrong-tag").forEach(function(el) { el.style.display = ""; });
+                if (isW) {
+                    item.style.setProperty("display", "block", "important");
+                    item.style.border = "2px solid #ef4444";
+                    item.style.backgroundColor = "#fff5f5";
+                    answerElements.forEach(function(el) {
+                        el.style.setProperty("display", "", "");
+                    });
+                    visibleCount++;
+                } else {
+                    item.style.setProperty("display", "none", "important");
+                }
+
+            } else { // 'all' (તમામ પ્રશ્નો)
+                item.style.setProperty("display", "block", "important");
+                item.style.border = isW ? "2px solid #ef4444" : "1.5px solid #cbd5e1";
+                item.style.backgroundColor = isW ? "#fff5f5" : "#ffffff";
+                answerElements.forEach(function(el) {
+                    el.style.setProperty("display", "", "");
+                });
                 visibleCount++;
             }
         });
@@ -841,17 +890,31 @@ function filterModalQuestions(type) {
     if (btnBlank) btnBlank.style.opacity = (type === "blank") ? "1" : "0.5";
 }
 
-// 🎯 HTML ને ખોટા/સાચા પ્રશ્નો સાથે ચોક્કસ પારસ કરવું
+// 🎯 HTML ને સાચા અને ખોટા પ્રશ્નો સાથે પારસ કરવું
 function parseAndRenderReviewHtml(rawHtml) {
     var qContainer = document.getElementById("pdfDocQuestions");
     qContainer.innerHTML = rawHtml;
     
+    // મુખ્ય પ્રશ્ન બોક્સ શોધો
     var boxes = qContainer.querySelectorAll("div[style*='border'], .review-item, .question-card, [class*='question'], .pdf-q-item");
-    if (boxes.length > 0) {
-        boxes.forEach(function(box) {
+    
+    // નેસ્ટેડ બોક્સ અલગ કરીને માત્ર મુખ્ય પ્રશ્ન બોક્સ પસંદ કરવા
+    var parentBoxes = [];
+    boxes.forEach(function(box) {
+        var isNested = false;
+        boxes.forEach(function(other) {
+            if (other !== box && other.contains(box)) {
+                isNested = true;
+            }
+        });
+        if (!isNested) parentBoxes.push(box);
+    });
+
+    if (parentBoxes.length > 0) {
+        parentBoxes.forEach(function(box) {
             var text = box.innerHTML;
             
-            // ખોટા પ્રશ્નો માટેના તમામ ટેગ્સ અને કલર કોડ ચેક કરવા
+            // ખોટો પ્રશ્ન ઓળખવો
             var isWrong = text.indexOf("❌") !== -1 || 
                           text.indexOf("ખોટો") !== -1 || 
                           text.indexOf("Wrong") !== -1 || 
@@ -860,15 +923,24 @@ function parseAndRenderReviewHtml(rawHtml) {
                           text.indexOf("#fee2e2") !== -1 ||
                           text.indexOf("rgb(239, 68, 68)") !== -1;
             
-            box.className = "pdf-q-item " + (isWrong ? "is-wrong-answer" : "is-correct-answer");
-            box.setAttribute("data-wrong", isWrong ? "true" : "false");
+            box.classList.add("pdf-q-item");
+            if (isWrong) {
+                box.classList.add("is-wrong-answer");
+                box.setAttribute("data-wrong", "true");
+                box.style.border = "2px solid #ef4444";
+                box.style.backgroundColor = "#fff5f5";
+            } else {
+                box.classList.add("is-correct-answer");
+                box.setAttribute("data-wrong", "false");
+                box.style.border = "1.5px solid #cbd5e1";
+                box.style.backgroundColor = "#ffffff";
+            }
             box.style.display = "block";
             box.style.marginBottom = "14px";
             box.style.padding = "12px";
             box.style.borderRadius = "8px";
-            box.style.border = isWrong ? "2px solid #ef4444" : "1.5px solid #cbd5e1";
-            box.style.backgroundColor = isWrong ? "#fff5f5" : "#ffffff";
 
+            // આંતરિક ઘટકો પર ક્લાસ લગાડવા
             box.querySelectorAll("p, div, span").forEach(function(el) {
                 var inner = el.innerText || "";
                 if (inner.indexOf("સાચો ઉત્તર") !== -1 || inner.indexOf("સાચો જવાબ") !== -1 || inner.indexOf("✅") !== -1) {
@@ -911,7 +983,7 @@ function exportPDF(mode) {
     var scrollBody = document.getElementById("modalScrollBody");
     if (scrollBody) scrollBody.scrollTop = 0;
     
-    var suffix = (mode === "wrong") ? "_માત્ર_ખોટા_પ્રશ્નો" : "_સંપૂર્ણ_ઉત્તરવહી";
+    var suffix = (mode === "wrong") ? "_માત્ર_ખોટા_પ્રશ્નો" : (mode === "blank" ? "_કોરું_પ્રશ્નપત્ર" : "_સંપૂર્ણ_ઉત્તરવહી");
     var filename = currentBaseFilename + suffix + ".pdf";
     
     var opt = {
