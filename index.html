@@ -80,6 +80,7 @@
             .portal-wrapper { padding: 12px; border-radius: 16px; gap: 14px; }
         }
 
+        /* હેડર અને લાઈવ ઘડિયાળ */
         .top-navbar {
             display: flex;
             justify-content: space-between;
@@ -109,6 +110,25 @@
         .brand-text p { font-size: 11.5px; color: var(--text-muted); font-weight: 700; margin-top: 1px; }
 
         .nav-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        
+        .live-clock-badge {
+            background: var(--inner-box);
+            border: 2px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-color);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+        .clock-divider { color: var(--border-color); font-weight: 400; }
+        body.dark-mode .live-clock-badge {
+            background: #17223b; border-color: #334155; color: #f8fafc;
+        }
+
         .creator-tag {
             padding: 6px 14px; border-radius: 30px; font-size: 11.5px; font-weight: 800;
             background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
@@ -129,13 +149,27 @@
         }
         body.dark-mode .badge-role { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border-color: #3b82f6; }
 
-        .btn-action-sm {
-            padding: 6px 14px; font-size: 11.5px; font-weight: 800; border-radius: 8px;
-            border: none; cursor: pointer; color: white; display: inline-flex; align-items: center; gap: 6px;
-            text-decoration: none; transition: all 0.2s;
+        .btn-logout-header {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white !important;
+            border: none;
+            padding: 6px 14px;
+            font-size: 11.5px;
+            font-weight: 800;
+            border-radius: 30px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
+            transition: all 0.2s ease;
         }
-        .btn-action-sm:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); }
+        .btn-logout-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(239, 68, 68, 0.4);
+        }
 
+        /* નેવિગેશન ટેબ્સ */
         .portal-nav-bar {
             display: flex; gap: 8px; flex-wrap: wrap; padding-bottom: 8px;
             border-bottom: 2px dashed var(--border-color);
@@ -152,6 +186,7 @@
             box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
         }
 
+        /* લૉગિન સ્ક્રીન */
         #loginScreen {
             max-width: 440px; margin: 40px auto; text-align: center;
             padding: 32px 24px; background: var(--card-bg);
@@ -180,6 +215,7 @@
 
         #dashboardScreen { display: none; }
 
+        /* ફિલ્ટર રિબન */
         .filter-ribbon {
             background: var(--card-bg); border: 2px solid var(--border-color);
             border-radius: 14px; padding: 12px 16px;
@@ -193,6 +229,7 @@
         }
         .select-styled:focus { border-color: #3b82f6; }
 
+        /* પ્રોફાઈલ કાર્ડ */
         .student-profile-card {
             background: var(--card-bg); border: 2px solid var(--border-color);
             border-radius: 18px; padding: 18px; position: relative;
@@ -237,6 +274,7 @@
         .mini-stat-title { font-size: 11.5px; font-weight: 800; opacity: 0.95; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .mini-stat-val { font-size: 24px; font-weight: 900; margin-top: 4px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
+        /* સ્પીડોમીટર & ચાર્ટ */
         .analytics-two-col { display: grid; grid-template-columns: 1fr 1.35fr; gap: 16px; margin-top: 4px; }
         @media (max-width: 920px) { .analytics-two-col { grid-template-columns: 1fr; } }
         
@@ -251,6 +289,7 @@
         .gauge-value-display { position: absolute; bottom: 4px; text-align: center; }
         .gauge-percent { font-size: 28px; font-weight: 900; color: var(--heading-color); }
 
+        /* કસોટી પત્રક (કોઠો) */
         .history-card {
             background: var(--card-bg); border: 2px solid var(--border-color);
             border-radius: 18px; padding: 18px; margin-top: 4px;
@@ -363,12 +402,22 @@
             </div>
         </div>
         <div class="nav-controls">
-            <span class="creator-tag"><i class="fa-solid fa-code"></i> Nitesh Baria Web Developer</span>
+            <!-- લાઈવ તારીખ, વાર અને ડિજિટલ સેકન્ડ ઘડિયાળ -->
+            <div id="liveClockBadge" class="live-clock-badge">
+                <i class="fa-regular fa-calendar-days" style="color: #2563eb;"></i>
+                <span id="liveDateStr">તારીખ લોડ થાય છે...</span>
+                <span class="clock-divider">|</span>
+                <i class="fa-regular fa-clock" style="color: #10b981;"></i>
+                <span id="liveTimeStr" style="color: #10b981; font-weight: 900; font-family: monospace;">00:00:00</span>
+            </div>
+
             <button id="themeToggleBtn" class="theme-toggle-btn" onclick="switchTheme()">
                 <i class="fa-solid fa-moon" id="themeIcon"></i> <span id="themeText">ડાર્ક મોડ</span>
             </button>
             <span id="roleBadge" class="badge-role"><i class="fa-solid fa-user-graduate"></i> વિદ્યાર્થી પેનલ</span>
-            <button id="logoutBtn" style="display:none; background:linear-gradient(135deg, #ef4444, #dc2626);" onclick="performLogout()" class="btn-action-sm">
+            
+            <!-- હેડરમાં કાયમી લૉગ આઉટ બટન -->
+            <button id="logoutBtn" onclick="performLogout()" class="btn-logout-header">
                 <i class="fa-solid fa-right-from-bracket"></i> લૉગ આઉટ
             </button>
         </div>
@@ -485,13 +534,13 @@
                     <thead>
                         <tr>
                             <th style="width: 50px;">ક્રમ</th>
-                            <th style="width: 90px;">તારીખ</th>
+                            <th style="width: 105px;">તારીખ & વાર</th>
                             <th style="width: 100px;">રિપોઝિટરી</th>
                             <th style="width: 140px;">અપલોડ ફાઇલ</th>
                             <th>ટેસ્ટનું નામ / વિષય</th>
                             <th style="width: 95px;">મેળવેલ ગુણ</th>
                             <th style="width: 80px;">ટકા</th>
-                            <th style="width: 90px;">લીધેલ સમય</th>
+                            <th style="width: 95px;">લીધેલ સમય</th>
                             <th style="width: 120px;">ટેસ્ટ આપો / સ્થિતિ</th>
                         </tr>
                     </thead>
@@ -515,7 +564,7 @@
 <script>
 var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 
-// ૧. સુપરફાસ્ટ કસોટી રિપોઝિટરીઝ & ફાઇલોનું લિસ્ટ (નવો ટેસ્ટ અપલોડ કરો ત્યારે ફક્ત અહીં નામ ઉમેરી દેવું)
+// ૧. કસોટી ફાઈલોની ચોક્કસ યાદી (જેમાં index.html નથી, જેથી ટેબલમાં વધારાની ઇંડેક્સ ન દેખાય)
 var repoFilesCache = {
     "fy": [
         "1anew100question.html",
@@ -534,33 +583,15 @@ var repoFilesCache = {
     "maths": [
         "1.html"
     ],
-    "evs": [
-        "index.html"
-    ],
-    "sy": [
-        "index.html"
-    ],
-    "paryavanrantest": [
-        "index.html"
-    ],
-    "guj": [
-        "index.html"
-    ],
-    "mission27": [
-        "index.html"
-    ],
-    "mocktest": [
-        "index.html"
-    ],
-    "baou": [
-        "index.html"
-    ],
-    "revision": [
-        "index.html"
-    ],
-    "etc": [
-        "index.html"
-    ]
+    "evs": [],
+    "sy": [],
+    "paryavanrantest": [],
+    "guj": [],
+    "mission27": [],
+    "mocktest": [],
+    "baou": [],
+    "revision": [],
+    "etc": []
 };
 
 var userEmail = "";
@@ -570,6 +601,36 @@ var isAdminUser = false;
 var selectedStudentEmail = "";
 var gaugeChart = null;
 var progressChart = null;
+
+// લાઈવ તારીખ, ગુજરાતી વાર અને ડિજિટલ સેકન્ડ ઘડિયાળ
+function startLiveClock() {
+    var daysGuj = ["રવિવાર", "સોમવાર", "મંગળવાર", "બુધવાર", "ગુરુવાર", "શુક્રવાર", "શનિવાર"];
+    
+    function updateClock() {
+        var now = new Date();
+        var day = String(now.getDate()).padStart(2, '0');
+        var month = String(now.getMonth() + 1).padStart(2, '0');
+        var year = String(now.getFullYear()).slice(-2);
+        var dayName = daysGuj[now.getDay()];
+        
+        var hours = String(now.getHours()).padStart(2, '0');
+        var minutes = String(now.getMinutes()).padStart(2, '0');
+        var seconds = String(now.getSeconds()).padStart(2, '0');
+        
+        var dateEl = document.getElementById("liveDateStr");
+        var timeEl = document.getElementById("liveTimeStr");
+        
+        if (dateEl) {
+            dateEl.innerHTML = day + "/" + month + "/" + year + ' <span style="color:#059669; font-weight:800;">(' + dayName + ')</span>';
+        }
+        if (timeEl) {
+            timeEl.innerText = hours + ":" + minutes + ":" + seconds;
+        }
+    }
+    
+    updateClock();
+    setInterval(updateClock, 1000);
+}
 
 function checkSavedLoginSession() {
     var savedEmail = localStorage.getItem("portal_user_email");
@@ -636,7 +697,6 @@ function performLogout() {
 function setupDashboardEnvironment(role, name) {
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("dashboardScreen").style.display = "block";
-    document.getElementById("logoutBtn").style.display = "inline-flex";
     
     isAdminUser = (role === "Admin");
     if (isAdminUser) {
@@ -655,17 +715,24 @@ function switchTheme() {
     renderAllVisuals();
 }
 
-function formatShortDateOnly(dtStr) {
+// તારીખ સાથે ગુજરાતી વાર દર્શાવતું ફંક્શન
+function formatShortDateWithDay(dtStr) {
     if (!dtStr) return "-";
     var s = String(dtStr).trim();
-    if (s.indexOf(' ') !== -1) s = s.split(' ')[0];
-    var parts = s.split(/[-/]/);
-    if (parts.length === 3) {
+    var parts = s.split(/[\s,/ -]+/);
+    var daysGuj = ["રવિ", "સોમ", "મંગળ", "બુધ", "ગુરુ", "શુક્ર", "શનિ"];
+    
+    if (parts.length >= 3) {
         var day = parseInt(parts[0], 10);
         var month = parseInt(parts[1], 10);
-        var year = parts[2];
-        if (year.length === 4) year = year.slice(-2);
-        return day + "/" + month + "/" + year;
+        var year = parseInt(parts[2], 10);
+        if (year < 100) year += 2000;
+        
+        var d = new Date(year, month - 1, day);
+        var dayName = !isNaN(d.getTime()) ? daysGuj[d.getDay()] : "";
+        var shortYear = String(year).slice(-2);
+        
+        return day + "/" + month + "/" + shortYear + (dayName ? '<br><span style="font-size:10.5px; color:#2563eb; font-weight:800;">(' + dayName + ')</span>' : '');
     }
     return s;
 }
@@ -919,7 +986,7 @@ function isFileAttemptedByRecord(fileName, repoName, recordsList) {
     });
 }
 
-// ઝીરો રેટ લિમિટ - સંપૂર્ણ સુપરફાસ્ટ ટેબલ રેન્ડર
+// સંપૂર્ણ સુપરફાસ્ટ ટેબલ રેન્ડર (index.html વગર)
 function renderHistoryTable() {
     var tbody = document.getElementById("testTableBody");
     if (!tbody) return;
@@ -935,7 +1002,13 @@ function renderHistoryTable() {
     var repos = Object.keys(repoFilesCache);
 
     repos.forEach(function(repoName) {
-        var files = repoFilesCache[repoName] || ["index.html"];
+        // index.html ફિલ્ટર કરો અને માત્ર વાસ્તવિક ટેસ્ટ ફાઈલો જ રાખો
+        var rawFiles = repoFilesCache[repoName] || [];
+        var files = rawFiles.filter(function(f) {
+            return f && f.toLowerCase() !== "index.html";
+        });
+
+        if (files.length === 0) return; // જે રિપોમાં ટેસ્ટ ફાઈલ ન હોય તે કોઠામાં ન દેખાય
 
         files.forEach(function(fileName) {
             var attempt = isFileAttemptedByRecord(fileName, repoName, filteredRecords);
@@ -943,11 +1016,11 @@ function renderHistoryTable() {
 
             if (!isAttempted) totalPending++;
 
-            var testUrl = (fileName === "index.html")
-                ? "https://niteshbariya.github.io/" + repoName + "/" + userQuery
-                : "https://niteshbariya.github.io/" + repoName + "/" + fileName + userQuery;
+            var testUrl = "https://niteshbariya.github.io/" + repoName + "/" + fileName + userQuery;
 
-            var dateDisplay = isAttempted ? formatShortDateOnly(attempt.dateTime) : '<span style="color:var(--text-muted);">-</span>';
+            var dateDisplay = isAttempted 
+                ? formatShortDateWithDay(attempt.dateTime) 
+                : '<span style="color:var(--text-muted);">-</span>';
             var testTitle = isAttempted && attempt.subject ? attempt.subject : (repoName.toUpperCase() + " : " + fileName.replace('.html', ''));
             var scoreDisplay = isAttempted ? '<span class="score-badge">' + (attempt.score || "-") + '</span>' : '<span style="color:var(--text-muted);">-</span>';
             
@@ -955,7 +1028,7 @@ function renderHistoryTable() {
             var pctClass = pctNum >= 75 ? "pct-green" : (pctNum >= 40 ? "pct-blue" : "pct-red");
             var pctDisplay = isAttempted ? '<span class="pct-badge ' + pctClass + '">' + pctNum + '%</span>' : '<span style="color:var(--text-muted);">-</span>';
             
-            var timeDisplay = isAttempted ? ('<span class="time-badge">' + formatDurationTime(attempt.timeTaken) + '</span>') : '<span style="color:var(--text-muted); text-align:center; display:block;">-</span>';
+            var timeDisplay = isAttempted ? ('<span class="time-badge"><i class="fa-regular fa-clock"></i> ' + formatDurationTime(attempt.timeTaken) + '</span>') : '<span style="color:var(--text-muted); text-align:center; display:block;">-</span>';
 
             var actionBtn = isAttempted 
                 ? '<a href="' + testUrl + '" target="_blank" class="btn-retake"><i class="fa-solid fa-rotate-right"></i> ફરી આપો</a>'
@@ -981,6 +1054,7 @@ function renderHistoryTable() {
 }
 
 window.addEventListener("DOMContentLoaded", function() {
+    startLiveClock();
     checkSavedLoginSession();
 });
 </script>
