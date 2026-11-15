@@ -120,25 +120,27 @@
             background: var(--card-bg); border: 2px solid var(--border-color);
             border-radius: 14px; padding: 16px;
         }
-        .repo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; }
+        .repo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 10px; }
         .repo-box {
             background: var(--inner-box); border-radius: 10px; padding: 12px;
             border: 2px solid var(--border-color); cursor: pointer;
             transition: all 0.25s ease;
+            display: flex; flex-direction: column; justify-content: space-between;
         }
         .repo-box:hover, .repo-box.active-repo { border-color: #2563eb; transform: translateY(-2px); }
-        .repo-name-tag { font-size: 15px; font-weight: 900; color: var(--heading-color); font-family: monospace; }
+        .repo-name-tag { font-size: 14.5px; font-weight: 900; color: var(--heading-color); font-family: monospace; word-break: break-word; }
         #repoFilesContainer {
             margin-top: 14px; background: var(--inner-box); border: 2px solid #2563eb;
             border-radius: 12px; padding: 14px; display: none;
         }
         .files-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .files-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+        .files-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 10px; }
         .file-card {
             background: var(--card-bg); border-radius: 10px; padding: 12px;
             border: 2px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
         }
-        .file-exact-name { font-size: 13.5px; font-weight: 800; color: var(--heading-color); font-family: monospace; }
+        .file-exact-name { font-size: 13px; font-weight: 800; color: var(--heading-color); font-family: monospace; }
+        .test-subject-title { font-size: 12.5px; font-weight: 700; color: var(--text-color); margin-bottom: 4px; line-height: 1.4; }
         .test-score-banner {
             background: rgba(16, 185, 129, 0.12); border: 1px solid #10b981;
             padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #065f46;
@@ -265,7 +267,11 @@
                 બાકી કસોટીઓ: <span id="statPendingTests" style="color:#ef4444; font-size:14px; font-weight:900;">0</span>
             </div>
         </div>
-        <div class="repo-grid" id="repoCardsGrid"></div>
+        <div class="repo-grid" id="repoCardsGrid">
+            <div style="grid-column: 1/-1; text-align:center; padding:25px; color:var(--text-muted); font-weight:700;">
+                <i class="fa-solid fa-spinner fa-spin"></i> ગૂગલ શીટમાંથી કસોટી રિપોઝિટરી લોડ થઈ રહી છે...
+            </div>
+        </div>
         <div id="repoFilesContainer">
             <div class="files-header">
                 <div>
@@ -314,17 +320,8 @@
 <script>
 var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 
-var REPO_LIST = [
-    "fy", "evs", "sy", "maths", "paryavanrantest", "etc", "revision", "baou", "mocktest", "mission27", "guj"
-];
-
-var repoFilesCache = {
-    "fy": [
-        "1anew100question.html", "1a.html", "1b.html", "1bnew.html", "2a.html", "2b.html",
-        "3.html", "4aguj.html", "4beng.html", "5bevs.html", "5bevspart1q100.html", "module3.html"
-    ]
-};
-
+var repoFilesCache = {};
+var sheetTestMeta = {};
 var userEmail = "";
 var allRawRecords = [];
 var isAdminUser = false;
@@ -337,7 +334,7 @@ function checkSession() {
     var savedName = localStorage.getItem("portal_user_name");
 
     if (!savedEmail) {
-        window.location.href = "index.html"; // લૉગિન ન હોય તો ડેશબોર્ડ પર મોકલી દેશે
+        window.location.href = "index.html";
         return;
     }
 
@@ -377,67 +374,82 @@ function formatPercentDisplay(val) {
 }
 
 function fetchRecordsAndInit() {
-    fetch(SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
-    })
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
-        allRawRecords = data.history || [];
-        scanAllRepoFiles();
+    // ✅ સીધું Google Sheet ની TestsList અને વિદ્યાર્થીનો હિસ્ટ્રી ડેટા એકસાથે લાવશે (Zero GitHub API Limit)
+    Promise.all([
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "getAllAvailableTests" })
+        }).then(function(res) { return res.json(); }),
+
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
+        }).then(function(res) { return res.json(); })
+    ])
+    .then(function(results) {
+        var masterTests = (results[0] && results[0].tests) ? results[0].tests : [];
+        var historyList = (results[1] && results[1].history) ? results[1].history : [];
+
+        // વિદ્યાર્થીના જ રેકોર્ડ્સ ફિલ્ટર કરો (Admin માટે પણ પોતાનો સ્કોર ચેક કરવા)
+        allRawRecords = historyList.filter(function(r) {
+            return (r.email || "").toLowerCase().trim() === userEmail;
+        });
+
+        repoFilesCache = {};
+        sheetTestMeta = {};
+
+        masterTests.forEach(function(t) {
+            var r = (t.repoName || "").toLowerCase().trim();
+            var f = (t.testFileName || "").trim();
+            if (r && f && f.toLowerCase() !== "index.html") {
+                if (!repoFilesCache[r]) repoFilesCache[r] = [];
+                if (repoFilesCache[r].indexOf(f) === -1) {
+                    repoFilesCache[r].push(f);
+                }
+                var key = r + "/" + f.toLowerCase();
+                sheetTestMeta[key] = {
+                    subject: t.subject || "",
+                    uploadDate: t.testUploadDate || ""
+                };
+            }
+        });
+
+        renderRepoGrid();
     })
     .catch(function(err) {
         console.error("Fetch failed", err);
-        scanAllRepoFiles();
-    });
-}
-
-function scanAllRepoFiles() {
-    renderRepoGrid();
-
-    var promises = REPO_LIST.map(function(repo) {
-        return fetch("https://api.github.com/repos/niteshbariya/" + repo + "/contents/")
-            .then(function(res) {
-                if (res.ok) return res.json();
-                return [];
-            })
-            .then(function(items) {
-                if (Array.isArray(items)) {
-                    var htmlFiles = items
-                        .filter(function(f) { return f.name && f.name.toLowerCase().endsWith('.html'); })
-                        .map(function(f) { return f.name; });
-                    if (htmlFiles.length > 0) {
-                        repoFilesCache[repo] = htmlFiles;
-                    }
-                }
-            })
-            .catch(function() {});
-    });
-
-    Promise.all(promises).then(function() {
-        renderRepoGrid();
+        document.getElementById("repoCardsGrid").innerHTML = 
+            '<div style="grid-column:1/-1; text-align:center; padding:20px; color:#ef4444;">ડેટા લોડ કરવામાં ક્ષતિ આવી. પેજ રિફ્રેશ કરો.</div>';
     });
 }
 
 function isFileAttemptedByRecord(fileName, repoName, recordsList) {
     var cleanFileName = fileName.split('/').pop().toLowerCase().trim();
     var cleanRepo = repoName.toLowerCase().trim();
+    var cleanBase = cleanFileName.replace(/\.html$/i, '').trim();
 
     return recordsList.find(function(r) {
-        if (r.repoName && r.testFileName) {
-            var rRepo = String(r.repoName).toLowerCase().trim();
+        if (r.testStatus && r.testStatus.toLowerCase().trim() === "pending") return false;
+        if (!r.score || r.score.trim() === "" || r.score.trim() === "-") return false;
+
+        if (r.testFileName && r.testFileName.trim() !== "") {
+            var rRepo = String(r.repoName || "").toLowerCase().trim();
             var rFile = String(r.testFileName).toLowerCase().trim();
-            return (rRepo === cleanRepo) && (rFile === cleanFileName || rFile === cleanFileName.replace('.html', ''));
+            var rBase = rFile.replace(/\.html$/i, '').trim();
+            if (rFile === cleanFileName || rBase === cleanBase) {
+                return rRepo ? (rRepo === cleanRepo) : true;
+            }
+            return false;
         }
 
         var subRaw = (r.subject || "").toLowerCase().trim();
         var sub = convertGujaratiDigitsToEnglish(subRaw);
         var subNoSpace = sub.replace(/[\s\-_()]+/g, '');
-        var cleanNoSpace = cleanFileName.replace(/\.html$/i, '').replace(/[\s\-_()]+/g, '');
-        var cleanBase = cleanFileName.replace(/\.html$/i, '');
+        var cleanNoSpace = cleanBase.replace(/[\s\-_()]+/g, '');
 
-        if (sub.indexOf(cleanBase) !== -1 || subNoSpace.indexOf(cleanNoSpace) !== -1) return true;
+        if (cleanBase.length >= 3 && (sub.indexOf(cleanBase) !== -1 || subNoSpace.indexOf(cleanNoSpace) !== -1)) return true;
 
         var isPartOr100File = cleanBase.indexOf("100") !== -1 || cleanBase.indexOf("part") !== -1;
         var isPartOr100Sub = sub.indexOf("100") !== -1 || sub.indexOf("part") !== -1;
@@ -447,15 +459,21 @@ function isFileAttemptedByRecord(fileName, repoName, recordsList) {
         var isNewSub = sub.indexOf("new") !== -1 || sub.indexOf("નવું") !== -1;
         if (isNewFile !== isNewSub) return false;
 
-        if (cleanBase === "1b") return (sub.indexOf("1 (બ)") !== -1 || sub.indexOf("1(બ)") !== -1 || sub.indexOf("અધ્યેતા") !== -1) && !isNewSub;
-        if (cleanBase === "1bnew") return (sub.indexOf("1 (બ)") !== -1 || sub.indexOf("1(બ)") !== -1) && isNewSub;
-        if (cleanBase === "5bevs") return (sub.indexOf("5 (બ)") !== -1 || sub.indexOf("5(બ)") !== -1 || sub.indexOf("પર્યાવરણ") !== -1 || sub.indexOf("evs") !== -1) && !isPartOr100Sub;
-        if (cleanBase === "5bevspart1q100") return (sub.indexOf("5 (બ)") !== -1 || sub.indexOf("5(બ)") !== -1 || sub.indexOf("પર્યાવરણ") !== -1 || sub.indexOf("evs") !== -1) && isPartOr100Sub;
-        if (cleanBase === "1a") return (sub.indexOf("1 (અ)") !== -1 || sub.indexOf("1(અ)") !== -1 || sub.indexOf("વિકાસ") !== -1) && !isPartOr100Sub;
-        if (cleanBase === "1anew100question") return (sub.indexOf("1 (અ)") !== -1 || sub.indexOf("1(અ)") !== -1 || sub.indexOf("વિકાસ") !== -1) && isPartOr100Sub;
-        if (cleanBase.indexOf("math") !== -1) return sub.indexOf("ગણિત") !== -1 || sub.indexOf("math") !== -1;
-        if (cleanBase.indexOf("guj") !== -1) return sub.indexOf("ગુજરાતી") !== -1 || sub.indexOf("guj") !== -1;
-        if (cleanBase.indexOf("sy") !== -1) return sub.indexOf("દ્વિતીય") !== -1 || sub.indexOf("બોધ") !== -1 || sub.indexOf("sy") !== -1;
+        if (cleanRepo === "fy") {
+            if (cleanBase === "1b") return (sub.indexOf("1 (બ)") !== -1 || sub.indexOf("1(બ)") !== -1 || sub.indexOf("અધ્યેતા") !== -1) && !isNewSub;
+            if (cleanBase === "1bnew") return (sub.indexOf("1 (બ)") !== -1 || sub.indexOf("1(બ)") !== -1) && isNewSub;
+            if (cleanBase === "5bevs") return (sub.indexOf("5 (બ)") !== -1 || sub.indexOf("5(બ)") !== -1 || sub.indexOf("પર્યાવરણ") !== -1 || sub.indexOf("evs") !== -1) && !isPartOr100Sub;
+            if (cleanBase === "5bevspart1q100") return (sub.indexOf("5 (બ)") !== -1 || sub.indexOf("5(બ)") !== -1 || sub.indexOf("પર્યાવરણ") !== -1 || sub.indexOf("evs") !== -1) && isPartOr100Sub;
+            if (cleanBase === "1a") return (sub.indexOf("1 (અ)") !== -1 || sub.indexOf("1(અ)") !== -1 || sub.indexOf("વિકાસ") !== -1) && !isPartOr100Sub;
+            if (cleanBase === "1anew100question") return (sub.indexOf("1 (અ)") !== -1 || sub.indexOf("1(અ)") !== -1 || sub.indexOf("વિકાસ") !== -1) && isPartOr100Sub;
+        }
+
+        if (cleanRepo === "sy") {
+            if (cleanBase === "1a") return (sub.indexOf("1 (અ)") !== -1 || sub.indexOf("1(અ)") !== -1 || sub.indexOf("બોધ") !== -1) && !isPartOr100Sub;
+            if (cleanBase === "1b") return (sub.indexOf("1 (બ)") !== -1 || sub.indexOf("1(બ)") !== -1);
+            if (cleanBase === "2a") return (sub.indexOf("2 (અ)") !== -1 || sub.indexOf("2(અ)") !== -1);
+            if (cleanBase === "2b") return (sub.indexOf("2 (બ)") !== -1 || sub.indexOf("2(બ)") !== -1);
+        }
 
         return false;
     });
@@ -466,11 +484,15 @@ function renderRepoGrid() {
     grid.innerHTML = "";
     var totalPendingAll = 0;
 
-    REPO_LIST.forEach(function(repoName) {
-        var files = repoFilesCache[repoName] || ["index.html"];
-        if (files.length > 1) {
-            files = files.filter(function(f) { return f.toLowerCase() !== "index.html"; });
-        }
+    var repoNames = Object.keys(repoFilesCache);
+    if (repoNames.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--text-muted);">TestsList શીટમાં કોઈ કસોટી મળી નથી.</div>';
+        return;
+    }
+
+    repoNames.forEach(function(repoName) {
+        var files = repoFilesCache[repoName] || [];
+        if (files.length === 0) return;
 
         var repoPending = 0;
         files.forEach(function(fileName) {
@@ -483,9 +505,9 @@ function renderRepoGrid() {
         card.className = "repo-box " + (currentOpenRepo === repoName ? 'active-repo' : '');
         card.onclick = function() { openRepoFiles(repoName); };
         card.innerHTML = '<div>' +
-            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">' +
+            '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px; margin-bottom:8px;">' +
             '<span class="repo-name-tag"><i class="fa-regular fa-folder" style="color:#2563eb;"></i> ' + repoName + '</span>' +
-            '<span style="font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:12px; background:' + (repoPending > 0 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)') + '; color:' + (repoPending > 0 ? '#ef4444' : '#10b981') + ';">' +
+            '<span style="font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:12px; white-space:nowrap; flex-shrink:0; background:' + (repoPending > 0 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)') + '; color:' + (repoPending > 0 ? '#ef4444' : '#10b981') + ';">' +
             (repoPending > 0 ? '⏳ ' + repoPending + ' બાકી' : '✅ પૂર્ણ') +
             '</span>' +
             '</div>' +
@@ -506,10 +528,7 @@ function openRepoFiles(repoName) {
     document.getElementById("activeRepoTitle").innerHTML = '<i class="fa-regular fa-folder-open"></i> ' + repoName;
     document.getElementById("activeRepoSubtitle").innerText = "કસોટી ફાઈલો:";
     
-    var fileList = repoFilesCache[repoName] || ["index.html"];
-    if (fileList.length > 1) {
-        fileList = fileList.filter(function(f) { return f.toLowerCase() !== "index.html"; });
-    }
+    var fileList = repoFilesCache[repoName] || [];
 
     listGrid.innerHTML = "";
     var currentStudentName = localStorage.getItem("portal_user_name") || "";
@@ -519,9 +538,10 @@ function openRepoFiles(repoName) {
         var attemptRecord = isFileAttemptedByRecord(fileName, repoName, allRawRecords);
         var isAttempted = !!attemptRecord;
         
-        var testUrl = (fileName === "index.html")
-            ? "https://niteshbariya.github.io/" + repoName + "/" + userQuery
-            : "https://niteshbariya.github.io/" + repoName + "/" + fileName + userQuery;
+        var metaKey = repoName.toLowerCase() + "/" + fileName.toLowerCase();
+        var subTitle = (sheetTestMeta[metaKey] && sheetTestMeta[metaKey].subject) ? sheetTestMeta[metaKey].subject : fileName;
+
+        var testUrl = "https://niteshbariya.github.io/" + repoName + "/" + fileName + userQuery;
 
         var fileCard = document.createElement("div");
         fileCard.className = "file-card";
@@ -542,13 +562,13 @@ function openRepoFiles(repoName) {
             '</button>';
 
         fileCard.innerHTML = '<div>' +
-            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">' +
+            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">' +
             '<span class="file-exact-name"><i class="fa-regular fa-file-lines"></i> ' + fileName + '</span>' +
             '<span style="color:' + (isAttempted ? '#10b981' : '#ef4444') + '; background:' + (isAttempted ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)') + '; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:800;">' +
             (isAttempted ? '✅ પૂર્ણ' : '⏳ બાકી') +
             '</span>' +
             '</div>' +
-            '<div style="font-size:11.5px; color:var(--text-muted); font-family:monospace; margin-bottom:4px;">' + repoName + '/' + fileName + '</div>' +
+            '<div class="test-subject-title">' + subTitle + '</div>' +
             scoreHtml +
             '</div>' +
             '<div class="file-action-buttons">' +
@@ -559,6 +579,7 @@ function openRepoFiles(repoName) {
             '</div>';
         listGrid.appendChild(fileCard);
     });
+    container.scrollIntoView({ behavior: "smooth" });
 }
 
 function closeRepoFiles() {
@@ -568,9 +589,7 @@ function closeRepoFiles() {
 }
 
 function loadDirectQuestionPaper(repoName, fileName) {
-    var testUrl = (fileName === "index.html")
-        ? "https://niteshbariya.github.io/" + repoName + "/"
-        : "https://niteshbariya.github.io/" + repoName + "/" + fileName;
+    var testUrl = "https://niteshbariya.github.io/" + repoName + "/" + fileName;
     document.getElementById("modalHeading").innerText = repoName + "/" + fileName + " - પ્રશ્નપત્ર";
     document.getElementById("pdfDocSubject").innerText = repoName + "/" + fileName + " - કસોટી પ્રશ્નપત્ર";
     
