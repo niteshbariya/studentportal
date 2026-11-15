@@ -3,23 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>માસ્ટર કસોટી પત્રક - Nitesh Baria Web Developer</title>
+    <title>કસોટી રિપોઝિટરી કેન્દ્ર - Nitesh Baria Web Developer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
             --bg-color: #f1f5f9;
             --container-bg: #ffffff;
-            --card-bg: #ffffff;
-            --inner-box: #f8fafc;
+            --card-bg: #f8fafc;
             --text-color: #0f172a;
             --text-muted: #64748b;
             --heading-color: #1e3a8a;
             --border-color: #e2e8f0;
-            --table-border: #cbd5e1;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 10px 20px -3px rgba(37, 99, 235, 0.1);
         }
 
@@ -27,12 +25,10 @@
             --bg-color: #060913;
             --container-bg: #0b1120;
             --card-bg: #111a2e;
-            --inner-box: #17223b;
             --text-color: #f8fafc;
             --text-muted: #94a3b8;
             --heading-color: #93c5fd;
             --border-color: #1e293b;
-            --table-border: #334155;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -48,9 +44,9 @@
 
         .portal-wrapper {
             width: 100%;
-            max-width: 1300px;
+            max-width: 1400px;
             background: var(--container-bg);
-            border-radius: 20px;
+            border-radius: 22px;
             border: 2px solid var(--border-color);
             padding: 20px;
             display: flex;
@@ -63,87 +59,221 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 12px;
+            padding-bottom: 14px;
             border-bottom: 2px solid var(--border-color);
             flex-wrap: wrap;
             gap: 10px;
         }
 
-        .portal-brand { display: flex; align-items: center; gap: 10px; }
+        .portal-brand { display: flex; align-items: center; gap: 12px; }
         .portal-logo-icon {
-            width: 42px; height: 42px;
-            background: linear-gradient(135deg, #2563eb, #7c3aed);
-            border-radius: 10px;
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 18px;
+            color: white; font-size: 20px;
         }
-        .brand-text h1 {
-            font-size: 20px; font-weight: 900;
-            color: var(--heading-color);
+        .brand-text h1 { font-size: 20px; font-weight: 900; color: #2563eb; }
+        .brand-text p { font-size: 11.5px; color: var(--text-muted); font-weight: 700; }
+
+        .nav-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .theme-toggle-btn {
+            background: var(--card-bg); color: var(--text-color);
+            border: 1.5px solid var(--border-color); padding: 6px 14px;
+            font-size: 12px; font-weight: 700; border-radius: 30px; cursor: pointer;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .badge-role {
+            padding: 6px 14px; border-radius: 30px; font-size: 12px; font-weight: 800;
+            background: rgba(37, 99, 235, 0.1); color: #2563eb; border: 1.5px solid #93c5fd;
+            display: inline-flex; align-items: center; gap: 6px;
         }
 
         .portal-nav-bar {
-            display: flex; gap: 8px; flex-wrap: wrap; padding-bottom: 8px;
+            display: flex; gap: 8px; flex-wrap: wrap; padding-bottom: 10px;
             border-bottom: 1.5px dashed var(--border-color);
         }
         .nav-link-btn {
-            padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700;
-            color: var(--text-muted); background: var(--inner-box); border: 1.5px solid var(--border-color);
-            text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 16px; border-radius: 10px; font-size: 12.5px; font-weight: 800;
+            color: var(--text-muted); background: var(--card-bg); border: 1.5px solid var(--border-color);
+            text-decoration: none; display: inline-flex; align-items: center; gap: 7px;
         }
         .nav-link-btn.active {
-            background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
             color: #ffffff; border-color: transparent;
         }
 
-        /* કોઠાની સ્ટાઇલ */
-        .table-wrap {
-            overflow-x: auto;
+        /* મુખ્ય રિપોઝિટરી બોક્સ */
+        .repo-section-box {
+            border: 1.5px solid var(--border-color);
+            border-radius: 16px;
+            padding: 18px;
+            background: var(--container-bg);
+        }
+        .repo-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .repo-section-header h2 {
+            font-size: 16px;
+            font-weight: 900;
+            color: var(--heading-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .total-pending-text {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-muted);
+        }
+        .total-pending-text span { color: #ef4444; font-size: 15px; }
+
+        /* ફોલ્ડર ગ્રીડ */
+        .repo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 14px;
+        }
+        .repo-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .repo-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .repo-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 6px;
+        }
+        .repo-name {
+            font-size: 14.5px;
+            font-weight: 900;
+            color: var(--heading-color);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            word-break: break-word;
+        }
+        .pending-pill {
+            background: #fee2e2;
+            color: #dc2626;
+            font-size: 10.5px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 20px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .done-pill {
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 10.5px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 20px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .repo-count {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+        .repo-open-link {
+            font-size: 12px;
+            font-weight: 800;
+            color: #2563eb;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 2px;
+        }
+
+        /* પસંદ કરેલ ફોલ્ડરના ટેસ્ટનું લિસ્ટ */
+        #selectedRepoTestsBox {
+            display: none;
+            margin-top: 20px;
+            padding-top: 18px;
+            border-top: 2px dashed var(--border-color);
+        }
+        .tests-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .btn-back-repos {
+            background: #e2e8f0;
+            color: #1e293b;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .test-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-color);
             border-radius: 12px;
-            border: 2px solid var(--table-border);
-            margin-top: 8px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
-        th, td { padding: 12px 14px; border-right: 1.5px solid var(--border-color); border-bottom: 1.5px solid var(--border-color); vertical-align: middle; }
-        th:last-child, td:last-child { border-right: none; }
-        tr:last-child td { border-bottom: none; }
+        .btn-start-test {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            text-decoration: none;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-retake-test {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            text-decoration: none;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-        th {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-            color: #ffffff; font-weight: 800; font-size: 12.5px;
-            white-space: nowrap; text-align: center;
-        }
-        tbody tr:nth-child(even) { background-color: rgba(241, 245, 249, 0.6); }
-        body.dark-mode tbody tr:nth-child(even) { background-color: rgba(30, 41, 59, 0.4); }
-
-        .repo-badge {
-            font-family: monospace; font-size: 12px; font-weight: 800;
-            background: rgba(37, 99, 235, 0.1); color: #2563eb;
-            padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(37, 99, 235, 0.25);
-            display: inline-block;
-        }
-        .file-badge {
-            font-family: monospace; font-size: 12px; font-weight: 700; color: #475569;
-            background: var(--inner-box); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border-color);
-            display: inline-block;
-        }
-
-        .btn-take-now {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white !important; font-size: 11.5px; font-weight: 800;
-            padding: 6px 12px; border-radius: 8px; text-decoration: none;
-            display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
-        }
-        .btn-retake {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white !important; font-size: 11.5px; font-weight: 800;
-            padding: 6px 12px; border-radius: 8px; text-decoration: none;
-            display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
-        }
-        .score-pill {
-            background: rgba(16, 185, 129, 0.12); color: #047857;
-            padding: 4px 8px; border-radius: 6px; font-weight: 800; font-family: monospace;
-            border: 1px solid #10b981; display: inline-block;
+        .portal-footer {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-top: 6px;
         }
     </style>
 </head>
@@ -151,137 +281,210 @@
 <div class="portal-wrapper">
     <header class="top-navbar">
         <div class="portal-brand">
-            <div class="portal-logo-icon"><i class="fa-solid fa-table-list"></i></div>
+            <div class="portal-logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
             <div class="brand-text">
-                <h1>માસ્ટર કસોટી પત્રક (Google Sheet Live)</h1>
+                <h1>કસોટી રિપોઝિટરી કેન્દ્ર</h1>
+                <p>Nitesh Baria - Web Developer</p>
             </div>
         </div>
-        <div id="userInfoBadge" style="font-size: 12.5px; font-weight: 800; color: #2563eb;">
-            <i class="fa-solid fa-user-graduate"></i> લોડ થઈ રહ્યું છે...
+        <div class="nav-controls">
+            <button class="theme-toggle-btn" onclick="document.body.classList.toggle('dark-mode')">
+                <i class="fa-solid fa-moon"></i> ડાર્ક મોડ
+            </button>
+            <span id="userBadge" class="badge-role"><i class="fa-solid fa-user-graduate"></i> વિદ્યાર્થી</span>
         </div>
     </header>
 
     <nav class="portal-nav-bar">
         <a href="index.html" class="nav-link-btn"><i class="fa-solid fa-chart-line"></i> ડેશબોર્ડ</a>
-        <a href="tests.html" class="nav-link-btn"><i class="fa-solid fa-folder-tree"></i> કસોટી કેન્દ્ર</a>
-        <a href="alltests.html" class="nav-link-btn active"><i class="fa-solid fa-table"></i> માસ્ટર ટેસ્ટ લિસ્ટ</a>
-        <a href="history.html" class="nav-link-btn"><i class="fa-solid fa-clock-rotate-left"></i> પરિણામ પત્રક</a>
+        <a href="tests.html" class="nav-link-btn active"><i class="fa-solid fa-folder-tree"></i> કસોટી કેન્દ્ર</a>
+        <a href="library.html" class="nav-link-btn"><i class="fa-solid fa-book-bookmark"></i> પુસ્તકાલય</a>
+        <a href="history.html" class="nav-link-btn"><i class="fa-solid fa-table-list"></i> પરિણામ પત્રક</a>
     </nav>
 
-    <div class="table-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 50px;">ક્રમ</th>
-                    <th style="width: 100px;">રિપોઝિટરી</th>
-                    <th style="width: 160px;">ફાઇલ નામ</th>
-                    <th>કસોટી / વિષયનું નામ</th>
-                    <th style="width: 110px;">અપલોડ તારીખ</th>
-                    <th style="width: 110px;">મેળવેલ ગુણ</th>
-                    <th style="width: 130px;">સ્થિતિ / એક્શન</th>
-                </tr>
-            </thead>
-            <tbody id="masterTableBody">
-                <tr>
-                    <td colspan="7" style="text-align: center; padding: 25px; color: var(--text-muted); font-weight: 700;">
-                        <i class="fa-solid fa-spinner fa-spin"></i> ગૂગલ શીટમાંથી માસ્ટર કસોટીઓ લોડ થઈ રહી છે...
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <section class="repo-section-box">
+        <div class="repo-section-header">
+            <h2><i class="fa-solid fa-folder-open" style="color:#2563eb;"></i> તમામ કસોટી રિપોઝિટરીઝ</h2>
+            <div class="total-pending-text">બાકી કસોટીઓ: <span id="globalPendingCount">0</span></div>
+        </div>
+
+        <!-- ફોલ્ડર કાર્ડ્સ -->
+        <div id="repoGridContainer" class="repo-grid">
+            <div style="grid-column: 1/-1; text-align:center; padding:30px; color:var(--text-muted); font-weight:700;">
+                <i class="fa-solid fa-spinner fa-spin"></i> ગૂગલ શીટમાંથી રિપોઝિટરી અને કસોટીઓ લોડ થઈ રહી છે...
+            </div>
+        </div>
+
+        <!-- કોઈ રિપોઝિટરી પર ક્લિક કરવાથી ખૂલતું ટેસ્ટ લિસ્ટ -->
+        <div id="selectedRepoTestsBox">
+            <div class="tests-list-header">
+                <h3 id="selectedRepoTitle" style="font-size:16px; font-weight:900; color:var(--heading-color);"></h3>
+                <button class="btn-back-repos" onclick="closeRepoTests()"><i class="fa-solid fa-arrow-left"></i> બધા ફોલ્ડર જુઓ</button>
+            </div>
+            <div id="selectedRepoTestsList"></div>
+        </div>
+    </section>
+
+    <footer class="portal-footer">
+        Design & Development: <strong>Nitesh Baria Web Developer</strong> | All Rights Reserved
+    </footer>
 </div>
 
 <script>
 var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 
-var userEmail = localStorage.getItem("portal_user_email") || "";
-var userName = localStorage.getItem("portal_user_name") || userEmail;
+var userEmail = (localStorage.getItem("portal_user_email") || "").toLowerCase().trim();
+var userName = localStorage.getItem("portal_user_name") || "વિદ્યાર્થી";
 
 if (!userEmail) {
     window.location.href = "index.html";
 } else {
-    document.getElementById("userInfoBadge").innerHTML = "🎓 " + userName;
+    document.getElementById("userBadge").innerHTML = '<i class="fa-solid fa-user-graduate"></i> ' + userName;
 }
 
-function loadMasterSheetTests() {
-    var tbody = document.getElementById("masterTableBody");
-    var userQuery = "?email=" + encodeURIComponent(userEmail) + "&name=" + encodeURIComponent(userName);
+var groupedRepos = {};
+var studentHistory = [];
 
-    // ૧. માસ્ટર લિસ્ટ (TestsList) અને ૨. વિદ્યાર્થીનો સ્કોર બંને એકસાથે લાવશે
+function initRepositoryCenter() {
     Promise.all([
         fetch(SCRIPT_URL, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify({ action: "getAllAvailableTests" })
-        }).then(function(res) { return res.json(); }),
-        
+        }).then(function(r) { return r.json(); }),
+
         fetch(SCRIPT_URL, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify({ action: "getStudentHistory", email: userEmail })
-        }).then(function(res) { return res.json(); })
+        }).then(function(r) { return r.json(); })
     ])
     .then(function(results) {
-        var masterData = results[0].tests || [];
-        var historyRecords = results[1].history || [];
+        var allTests = results[0].tests || [];
+        studentHistory = (results[1].history || []).filter(function(h) {
+            return (h.email || "").toLowerCase().trim() === userEmail;
+        });
 
-        if (masterData.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#ef4444;">ગૂગલ શીટમાં કસોટીઓ મળી નહીં.</td></tr>';
-            return;
-        }
+        groupedRepos = {};
+        var globalPending = 0;
 
-        tbody.innerHTML = "";
-        var serial = 1;
+        allTests.forEach(function(t) {
+            var repo = (t.repoName || "other").toLowerCase().trim();
+            var file = (t.testFileName || "").trim();
+            if (!file || file.toLowerCase() === "index.html") return;
 
-        masterData.forEach(function(item) {
-            var rRepo = (item.repoName || "").toLowerCase().trim();
-            var rFile = (item.testFileName || "").trim();
-            var rSub = item.subject || "-";
-            var rDate = item.testUploadDate ? String(item.testUploadDate).split("T")[0] : "-";
+            if (!groupedRepos[repo]) {
+                groupedRepos[repo] = [];
+            }
 
-            // ચોક્કસ ૧-ટુ-૧ મેચિંગ (વિદ્યાર્થીએ આ ચોક્કસ ફાઈલ આપી છે કે નહીં?)
-            var attempt = historyRecords.find(function(h) {
+            // વિદ્યાર્થીએ આ ટેસ્ટ આપ્યો છે કે નહીં તે ચકાસો
+            var attempt = studentHistory.find(function(h) {
                 if (!h.score || h.score.trim() === "" || h.score.trim() === "-") return false;
                 if (h.testStatus && h.testStatus.toLowerCase().trim() === "pending") return false;
-
-                if (h.testFileName && h.testFileName.trim() !== "") {
-                    return String(h.testFileName).toLowerCase().trim() === rFile.toLowerCase() &&
-                           String(h.repoName || "").toLowerCase().trim() === rRepo;
-                }
-                return false;
+                return String(h.testFileName || "").toLowerCase().trim() === file.toLowerCase() &&
+                       String(h.repoName || "").toLowerCase().trim() === repo;
             });
 
-            var isAttempted = !!attempt;
-            var testUrl = "https://niteshbariya.github.io/" + rRepo + "/" + rFile + userQuery;
+            var isDone = !!attempt;
+            if (!isDone) globalPending++;
 
-            var scoreDisplay = isAttempted 
-                ? '<span class="score-pill">' + attempt.score + ' (' + (attempt.percentage || '') + ')</span>' 
-                : '<span style="color:var(--text-muted);">-</span>';
-
-            var actionBtn = isAttempted 
-                ? '<a href="' + testUrl + '" target="_blank" class="btn-retake"><i class="fa-solid fa-rotate-right"></i> ફરી આપો</a>'
-                : '<a href="' + testUrl + '" target="_blank" class="btn-take-now"><i class="fa-solid fa-play"></i> કસોટી આપો</a>';
-
-            var tr = document.createElement("tr");
-            tr.innerHTML = 
-                '<td style="text-align:center; font-weight:800;">' + (serial++) + '</td>' +
-                '<td style="text-align:center;"><span class="repo-badge">' + rRepo + '</span></td>' +
-                '<td><span class="file-badge">' + rFile + '</span></td>' +
-                '<td><strong>' + rSub + '</strong></td>' +
-                '<td style="text-align:center; color:var(--text-muted);">' + rDate + '</td>' +
-                '<td style="text-align:center;">' + scoreDisplay + '</td>' +
-                '<td style="text-align:center;">' + actionBtn + '</td>';
-
-            tbody.appendChild(tr);
+            groupedRepos[repo].push({
+                repoName: repo,
+                fileName: file,
+                subject: t.subject || (repo.toUpperCase() + " : " + file.replace(".html", "")),
+                isDone: isDone,
+                score: isDone ? attempt.score : "",
+                percentage: isDone ? attempt.percentage : ""
+            });
         });
+
+        document.getElementById("globalPendingCount").innerText = globalPending;
+        renderRepoCards();
     })
     .catch(function(err) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#ef4444;">ડેટા લોડ કરવામાં ક્ષતિ આવી.</td></tr>';
+        document.getElementById("repoGridContainer").innerHTML = 
+            '<div style="grid-column:1/-1; text-align:center; color:#ef4444; padding:20px;">ડેટા લોડ કરવામાં ભૂલ આવી. પેજ રિફ્રેશ કરો.</div>';
     });
 }
 
-window.addEventListener("DOMContentLoaded", loadMasterSheetTests);
+function renderRepoCards() {
+    var grid = document.getElementById("repoGridContainer");
+    var repoNames = Object.keys(groupedRepos);
+
+    if (repoNames.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:20px;">કોઈ કસોટી ઉપલબ્ધ નથી.</div>';
+        return;
+    }
+
+    grid.innerHTML = "";
+    repoNames.forEach(function(repo) {
+        var tests = groupedRepos[repo];
+        var total = tests.length;
+        var pending = tests.filter(function(x) { return !x.isDone; }).length;
+
+        var badgeHtml = pending > 0 
+            ? '<span class="pending-pill">⏳ ' + pending + ' બાકી</span>'
+            : '<span class="done-pill">✅ પૂર્ણ</span>';
+
+        var card = document.createElement("div");
+        card.className = "repo-card";
+        card.onclick = function() { openRepoTests(repo); };
+        card.innerHTML = 
+            '<div class="repo-card-top">' +
+                '<div class="repo-name"><i class="fa-regular fa-folder" style="color:#2563eb;"></i> ' + repo + '</div>' +
+                badgeHtml +
+            '</div>' +
+            '<div class="repo-count">કુલ ટેસ્ટ: ' + total + '</div>' +
+            '<div class="repo-open-link">ટેસ્ટ ખોલો <i class="fa-solid fa-chevron-right" style="font-size:10px;"></i></div>';
+
+        grid.appendChild(card);
+    });
+}
+
+function openRepoTests(repo) {
+    var box = document.getElementById("selectedRepoTestsBox");
+    var list = document.getElementById("selectedRepoTestsList");
+    var title = document.getElementById("selectedRepoTitle");
+
+    var tests = groupedRepos[repo] || [];
+    title.innerHTML = '<i class="fa-solid fa-folder-open" style="color:#2563eb;"></i> ' + repo.toUpperCase() + ' - ઉપલબ્ધ કસોટીઓ (' + tests.length + ')';
+    list.innerHTML = "";
+
+    var userQuery = "?email=" + encodeURIComponent(userEmail) + "&name=" + encodeURIComponent(userName);
+
+    tests.forEach(function(t, idx) {
+        var testUrl = "https://niteshbariya.github.io/" + t.repoName + "/" + t.fileName + userQuery;
+        var statusHtml = t.isDone 
+            ? '<span style="color:#059669; font-weight:800; font-size:12px; margin-right:10px;">✅ ગુણ: ' + t.score + ' (' + t.percentage + ')</span>'
+            : '<span style="color:#dc2626; font-weight:800; font-size:12px; margin-right:10px;">⏳ બાકી</span>';
+
+        var btnHtml = t.isDone
+            ? '<a href="' + testUrl + '" target="_blank" class="btn-retake-test"><i class="fa-solid fa-rotate-right"></i> ફરી આપો</a>'
+            : '<a href="' + testUrl + '" target="_blank" class="btn-start-test"><i class="fa-solid fa-play"></i> કસોટી આપો</a>';
+
+        var row = document.createElement("div");
+        row.className = "test-item-row";
+        row.innerHTML = 
+            '<div>' +
+                '<div style="font-weight:800; font-size:14px; color:var(--heading-color);">' + (idx + 1) + '. ' + t.subject + '</div>' +
+                '<div style="font-size:11.5px; color:var(--text-muted); font-family:monospace; margin-top:2px;">ફાઇલ: ' + t.fileName + '</div>' +
+            '</div>' +
+            '<div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px;">' +
+                statusHtml + btnHtml +
+            '</div>';
+
+        list.appendChild(row);
+    });
+
+    box.style.display = "block";
+    box.scrollIntoView({ behavior: "smooth" });
+}
+
+function closeRepoTests() {
+    document.getElementById("selectedRepoTestsBox").style.display = "none";
+}
+
+window.addEventListener("DOMContentLoaded", initRepositoryCenter);
 </script>
 </body>
 </html>
