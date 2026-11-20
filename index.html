@@ -565,42 +565,31 @@
 <script>
 var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-khogtnFjvjzRuv_ieBYJfx0TAxluM9OfoXlf72h9Yce14rdQu9_Xbmx3fnprk5Q30g/exec";
 
-// ૧. કસોટી ફાઈલોની ચોક્કસ યાદી (જેમાં index.html નથી, જેથી ટેબલમાં વધારાની ઇંડેક્સ ન દેખાય)
-var repoFilesCache = {
-    "fy": [
-        "1anew100question.html",
-        "1a.html",
-        "1b.html",
-        "1bnew.html",
-        "2a.html",
-        "2b.html",
-        "3.html",
-        "4aguj.html",
-        "4beng.html",
-        "5bevs.html",
-        "5bevspart1q100.html",
-        "module3.html"
-    ],
-    "maths": [
-        "1.html"
-    ],
-    "evs": [],
-    "sy": [
-        "1a.html",
-        "1b.html",
-        "2a.html",
-        "2b.html",
-        "sy1apart1.html",
-        "sy1apart2.html"
-    ],
-    "paryavanrantest": [],
-    "guj": [],
-    "mission27": [],
-    "mocktest": [],
-    "baou": [],
-    "revision": [],
-    "etc": []
-};
+// ૧. ફૉલબેક કસોટી યાદી (જો ગૂગલ શીટ લોડ ન થાય તો)
+var fallbackTestsList = [
+    { repoName: "fy", testFileName: "1anew100question.html", subject: "", testUploadDate: "" },
+    { repoName: "fy", testFileName: "1a.html", subject: "", testUploadDate: "" },
+    { repoName: "fy", testFileName: "1b.html", subject: "", testUploadDate: "" },
+    { repoName: "fy", testFileName: "1bnew.html", subject: "", testUploadDate: "" },
+    { repoName: "fy", testFileName: "2a.html", subject: "", testUploadDate: "" },
+    { repoName: "fy", testFileName: "2b.html", subject: "", testUploadDate: "" },
+    { repoName: "fy", testFileName: "3.html", subject: "", testUploadDate: "" },
+    { repoName: "fy", testFileName: "4aguj.html", subject: "", testUploadDate: "" },
+    { repoName: "fy", testFileName: "4beng.html", subject: "", testUploadDate: "" },
+    { repoName: "fy", testFileName: "5bevs.html", subject: "", testUploadDate: "" },
+    { repoName: "fy", testFileName: "5bevspart1q100.html", subject: "", testUploadDate: "" },
+    { repoName: "fy", testFileName: "module3.html", subject: "", testUploadDate: "" },
+    { repoName: "maths", testFileName: "1.html", subject: "", testUploadDate: "" },
+    { repoName: "sy", testFileName: "1a.html", subject: "", testUploadDate: "" },
+    { repoName: "sy", testFileName: "1b.html", subject: "", testUploadDate: "" },
+    { repoName: "sy", testFileName: "2a.html", subject: "", testUploadDate: "" },
+    { repoName: "sy", testFileName: "2b.html", subject: "", testUploadDate: "" },
+    { repoName: "sy", testFileName: "sy1apart1.html", subject: "", testUploadDate: "" },
+    { repoName: "sy", testFileName: "sy1apart2.html", subject: "", testUploadDate: "" }
+];
+
+// ગૂગલ શીટમાંથી આવેલા ક્રમમાં જ કસોટીઓ સાચવવા માટેનો એરે
+var orderedTestsList = fallbackTestsList.slice();
 
 var userEmail = "";
 var allRawRecords = [];
@@ -723,24 +712,53 @@ function switchTheme() {
     renderAllVisuals();
 }
 
-// તારીખ સાથે ગુજરાતી વાર દર્શાવતું ફંક્શન
+// તારીખને ચોક્કસ dd/mm/yy અને સાચા ગુજરાતી વાર સાથે દર્શાવતું સુધારેલું ફંક્શન
 function formatShortDateWithDay(dtStr) {
     if (!dtStr) return "-";
     var s = String(dtStr).trim();
-    var parts = s.split(/[\s,/ -]+/);
     var daysGuj = ["રવિ", "સોમ", "મંગળ", "બુધ", "ગુરુ", "શુક્ર", "શનિ"];
-    
-    if (parts.length >= 3) {
-        var day = parseInt(parts[0], 10);
-        var month = parseInt(parts[1], 10);
-        var year = parseInt(parts[2], 10);
-        if (year < 100) year += 2000;
+    var day, month, year, d;
+
+    // ૧. જો ગૂગલ શીટમાંથી ISO ફોર્મેટ (2026-11-20T... કે 2026-11-20) આવે તો
+    if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+        if (s.indexOf('T') !== -1) {
+            var isoDate = new Date(s);
+            if (!isNaN(isoDate.getTime())) {
+                // ભારતીય ટાઈમઝોન (IST +05:30) મુજબ તારીખ મેળવો જેથી 1 દિવસ પાછળ ન જાય
+                var istOffset = 5.5 * 60 * 60 * 1000;
+                var istDate = new Date(isoDate.getTime() + istOffset);
+                day = istDate.getUTCDate();
+                month = istDate.getUTCMonth() + 1;
+                year = istDate.getUTCFullYear();
+                d = new Date(year, month - 1, day);
+            }
+        } else {
+            var isoParts = s.split('-');
+            year = parseInt(isoParts[0], 10);
+            month = parseInt(isoParts[1], 10);
+            day = parseInt(isoParts[2], 10);
+            d = new Date(year, month - 1, day);
+        }
+    } 
+    // ૨. જો તારીખ dd/mm/yyyy કે dd-mm-yy ફોર્મેટમાં હોય તો
+    else {
+        var parts = s.split(/[\s,/ -]+/);
+        if (parts.length >= 3) {
+            day = parseInt(parts[0], 10);
+            month = parseInt(parts[1], 10);
+            year = parseInt(parts[2], 10);
+            if (year < 100) year += 2000;
+            d = new Date(year, month - 1, day);
+        }
+    }
+
+    if (day && month && year) {
+        var dd = String(day).padStart(2, '0');
+        var mm = String(month).padStart(2, '0');
+        var yy = String(year).slice(-2);
+        var dayName = (d && !isNaN(d.getTime())) ? daysGuj[d.getDay()] : "";
         
-        var d = new Date(year, month - 1, day);
-        var dayName = !isNaN(d.getTime()) ? daysGuj[d.getDay()] : "";
-        var shortYear = String(year).slice(-2);
-        
-        return day + "/" + month + "/" + shortYear + (dayName ? '<br><span style="font-size:10.5px; color:#2563eb; font-weight:800;">(' + dayName + ')</span>' : '');
+        return dd + "/" + mm + "/" + yy + (dayName ? '<br><span style="font-size:10.5px; color:#2563eb; font-weight:800;">(' + dayName + ')</span>' : '');
     }
     return s;
 }
@@ -782,10 +800,8 @@ function convertGujaratiDigitsToEnglish(str) {
     return res;
 }
 
-var sheetTestMeta = {};
-
 function fetchDataAndInit() {
-    // ૧. ગૂગલ શીટની માસ્ટર લિસ્ટ (TestsList) માંથી તમામ કસોટીઓ આપોઆપ લાવો
+    // ૧. ગૂગલ શીટની માસ્ટર લિસ્ટ (TestsList) માંથી તમામ કસોટીઓ અપલોડ કર્યા મુજબના જ ક્રમમાં લાવો
     fetch(SCRIPT_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -794,23 +810,27 @@ function fetchDataAndInit() {
     .then(function(res) { return res.json(); })
     .then(function(data) {
         if (data && data.tests && data.tests.length > 0) {
-            repoFilesCache = {};
-            sheetTestMeta = {};
+            var newList = [];
+            var seenKeys = {};
             data.tests.forEach(function(t) {
                 var r = (t.repoName || "").toLowerCase().trim();
                 var f = (t.testFileName || "").trim();
                 if (r && f && f.toLowerCase() !== "index.html") {
-                    if (!repoFilesCache[r]) repoFilesCache[r] = [];
-                    if (repoFilesCache[r].indexOf(f) === -1) {
-                        repoFilesCache[r].push(f);
-                    }
                     var key = r + "/" + f.toLowerCase();
-                    sheetTestMeta[key] = {
-                        subject: t.subject || "",
-                        uploadDate: t.testUploadDate || ""
-                    };
+                    if (!seenKeys[key]) {
+                        seenKeys[key] = true;
+                        newList.push({
+                            repoName: r,
+                            testFileName: f,
+                            subject: t.subject || "",
+                            testUploadDate: t.testUploadDate || ""
+                        });
+                    }
                 }
             });
+            if (newList.length > 0) {
+                orderedTestsList = newList;
+            }
         }
         
         // ૨. વિદ્યાર્થીનો અગાઉનો હિસ્ટ્રી/પરિણામ ડેટા લાવો
@@ -1054,7 +1074,7 @@ function isFileAttemptedByRecord(fileName, repoName, recordsList) {
     });
 }
 
-// સંપૂર્ણ સુપરફાસ્ટ ટેબલ રેન્ડર (index.html વગર)
+// અપલોડ કર્યા મુજબના જ ક્રમમાં ટેબલ રેન્ડર
 function renderHistoryTable() {
     var tbody = document.getElementById("testTableBody");
     if (!tbody) return;
@@ -1067,65 +1087,55 @@ function renderHistoryTable() {
     var userQuery = "?email=" + encodeURIComponent(currentStudentEmail) + 
                     "&name=" + encodeURIComponent(currentStudentName);
 
-    var repos = Object.keys(repoFilesCache);
+    orderedTestsList.forEach(function(testItem) {
+        var repoName = testItem.repoName;
+        var fileName = testItem.testFileName;
 
-    repos.forEach(function(repoName) {
-        // index.html ફિલ્ટર કરો અને માત્ર વાસ્તવિક ટેસ્ટ ફાઈલો જ રાખો
-        var rawFiles = repoFilesCache[repoName] || [];
-        var files = rawFiles.filter(function(f) {
-            return f && f.toLowerCase() !== "index.html";
-        });
+        if (!repoName || !fileName || fileName.toLowerCase() === "index.html") return;
 
-        if (files.length === 0) return; // જે રિપોમાં ટેસ્ટ ફાઈલ ન હોય તે કોઠામાં ન દેખાય
+        var attempt = isFileAttemptedByRecord(fileName, repoName, filteredRecords);
+        var isAttempted = !!attempt;
 
-        files.forEach(function(fileName) {
-            var attempt = isFileAttemptedByRecord(fileName, repoName, filteredRecords);
-            var isAttempted = !!attempt;
+        if (!isAttempted) totalPending++;
 
-            if (!isAttempted) totalPending++;
+        var testUrl = "https://niteshbariya.github.io/" + repoName + "/" + fileName + userQuery;
+        
+        var uploadDateDisplay = testItem.testUploadDate 
+            ? formatShortDateWithDay(testItem.testUploadDate) 
+            : '<span style="color:var(--text-muted);">-</span>';
 
-            var testUrl = "https://niteshbariya.github.io/" + repoName + "/" + fileName + userQuery;
+        var attemptedDateDisplay = isAttempted 
+            ? formatShortDateWithDay(attempt.dateTime) 
+            : '<span style="color:var(--text-muted);">-</span>';
 
-            var metaKey = repoName.toLowerCase() + "/" + fileName.toLowerCase();
-            var metaInfo = sheetTestMeta[metaKey] || {};
-            
-            var uploadDateDisplay = metaInfo.uploadDate 
-                ? formatShortDateWithDay(metaInfo.uploadDate) 
-                : '<span style="color:var(--text-muted);">-</span>';
+        var metaSub = testItem.subject || "";
+        var testTitle = isAttempted && attempt.subject ? attempt.subject : (metaSub || (repoName.toUpperCase() + " : " + fileName.replace('.html', '')));
+        var scoreDisplay = isAttempted ? '<span class="score-badge">' + (attempt.score || "-") + '</span>' : '<span style="color:var(--text-muted);">-</span>';
+        
+        var pctNum = isAttempted ? parsePercentValue(attempt.percentage) : 0;
+        var pctClass = pctNum >= 75 ? "pct-green" : (pctNum >= 40 ? "pct-blue" : "pct-red");
+        var pctDisplay = isAttempted ? '<span class="pct-badge ' + pctClass + '">' + pctNum + '%</span>' : '<span style="color:var(--text-muted);">-</span>';
+        
+        var timeDisplay = isAttempted ? ('<span class="time-badge"><i class="fa-regular fa-clock"></i> ' + formatDurationTime(attempt.timeTaken) + '</span>') : '<span style="color:var(--text-muted); text-align:center; display:block;">-</span>';
 
-            var attemptedDateDisplay = isAttempted 
-                ? formatShortDateWithDay(attempt.dateTime) 
-                : '<span style="color:var(--text-muted);">-</span>';
+        var actionBtn = isAttempted 
+            ? '<a href="' + testUrl + '" target="_blank" class="btn-retake"><i class="fa-solid fa-rotate-right"></i> ફરી આપો</a>'
+            : '<a href="' + testUrl + '" target="_blank" class="btn-take-now"><i class="fa-solid fa-play"></i> કસોટી આપો</a>';
 
-            var metaSub = metaInfo.subject || "";
-            var testTitle = isAttempted && attempt.subject ? attempt.subject : (metaSub || (repoName.toUpperCase() + " : " + fileName.replace('.html', '')));
-            var scoreDisplay = isAttempted ? '<span class="score-badge">' + (attempt.score || "-") + '</span>' : '<span style="color:var(--text-muted);">-</span>';
-            
-            var pctNum = isAttempted ? parsePercentValue(attempt.percentage) : 0;
-            var pctClass = pctNum >= 75 ? "pct-green" : (pctNum >= 40 ? "pct-blue" : "pct-red");
-            var pctDisplay = isAttempted ? '<span class="pct-badge ' + pctClass + '">' + pctNum + '%</span>' : '<span style="color:var(--text-muted);">-</span>';
-            
-            var timeDisplay = isAttempted ? ('<span class="time-badge"><i class="fa-regular fa-clock"></i> ' + formatDurationTime(attempt.timeTaken) + '</span>') : '<span style="color:var(--text-muted); text-align:center; display:block;">-</span>';
+        var tr = document.createElement("tr");
+        tr.innerHTML = 
+            '<td style="text-align:center; font-weight:800; color:var(--heading-color);">' + (serialNo++) + '</td>' +
+            '<td><span class="date-badge">' + uploadDateDisplay + '</span></td>' +
+            '<td style="text-align:center;"><span class="repo-badge"><i class="fa-regular fa-folder"></i> ' + repoName + '</span></td>' +
+            '<td><span class="file-badge"><i class="fa-regular fa-file-code"></i> ' + fileName + '</span></td>' +
+            '<td><strong style="color:var(--heading-color); font-size:12.5px; line-height:1.4; display:block;">' + testTitle + '</strong></td>' +
+            '<td><span class="date-badge">' + attemptedDateDisplay + '</span></td>' +
+            '<td style="text-align:center;">' + scoreDisplay + '</td>' +
+            '<td style="text-align:center;">' + pctDisplay + '</td>' +
+            '<td>' + timeDisplay + '</td>' +
+            '<td style="text-align:center;">' + actionBtn + '</td>';
 
-            var actionBtn = isAttempted 
-                ? '<a href="' + testUrl + '" target="_blank" class="btn-retake"><i class="fa-solid fa-rotate-right"></i> ફરી આપો</a>'
-                : '<a href="' + testUrl + '" target="_blank" class="btn-take-now"><i class="fa-solid fa-play"></i> કસોટી આપો</a>';
-
-            var tr = document.createElement("tr");
-            tr.innerHTML = 
-                '<td style="text-align:center; font-weight:800; color:var(--heading-color);">' + (serialNo++) + '</td>' +
-                '<td><span class="date-badge">' + uploadDateDisplay + '</span></td>' +
-                '<td style="text-align:center;"><span class="repo-badge"><i class="fa-regular fa-folder"></i> ' + repoName + '</span></td>' +
-                '<td><span class="file-badge"><i class="fa-regular fa-file-code"></i> ' + fileName + '</span></td>' +
-                '<td><strong style="color:var(--heading-color); font-size:12.5px; line-height:1.4; display:block;">' + testTitle + '</strong></td>' +
-                '<td><span class="date-badge">' + attemptedDateDisplay + '</span></td>' +
-                '<td style="text-align:center;">' + scoreDisplay + '</td>' +
-                '<td style="text-align:center;">' + pctDisplay + '</td>' +
-                '<td>' + timeDisplay + '</td>' +
-                '<td style="text-align:center;">' + actionBtn + '</td>';
-
-            tbody.appendChild(tr);
-        });
+        tbody.appendChild(tr);
     });
 
     document.getElementById("statPendingTests").innerText = totalPending;
