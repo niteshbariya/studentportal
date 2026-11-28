@@ -185,6 +185,24 @@
             color: #ffffff; border-color: transparent;
             box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
         }
+        .nav-link-magic {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.12) 0%, rgba(236, 72, 153, 0.12) 100%);
+            color: #7c3aed;
+            border: 2px solid #8b5cf6;
+        }
+        .nav-link-magic:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+        }
+        body.dark-mode .nav-link-magic {
+            color: #c4b5fd;
+            border-color: #7c3aed;
+        }
+        body.dark-mode .nav-link-magic:hover {
+            color: #ffffff;
+        }
 
         /* લૉગિન સ્ક્રીન */
         #loginScreen {
@@ -443,6 +461,9 @@
             <a href="tests.html" class="nav-link-btn"><i class="fa-solid fa-folder-tree"></i> કસોટી કેન્દ્ર</a>
             <a href="library.html" class="nav-link-btn"><i class="fa-solid fa-book-bookmark"></i> પુસ્તકાલય</a>
             <a href="history.html" class="nav-link-btn"><i class="fa-solid fa-table-list"></i> પરિણામ પત્રક</a>
+            <a href="https://niteshbariya.github.io/magic-maths/" target="_blank" class="nav-link-btn nav-link-magic">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> ગણિતની જાદુઈ દુનિયા
+            </a>
         </nav>
 
         <section class="filter-ribbon">
